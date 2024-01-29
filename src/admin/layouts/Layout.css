@@ -1,0 +1,29 @@
+.sidebar_container{
+    background: #f8f7f3;
+}
+
+/* .sidebar_container li span{
+    color: black;
+    font-weight: 600;
+    font-size: 20px;
+} */
+
+.sidebar_container .sidebar_ul li{
+    flex-direction: column;
+    margin-top: 12px;
+    padding: 15px;
+    font-size: 20px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.active{
+    background-color: #e4f6fd !important;
+}
+
+.sidebar_container .sidebar_ul li a{
+    color: black;
+}
+ .bread_crumb_btn{
+    background: #00acef;
+    font-weight: 700;
+}

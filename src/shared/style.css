@@ -1,0 +1,50 @@
+.inner_container{
+    width: 100wv;
+    height: 100vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+.left_conainer{
+    /* background: red; */
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+    /* width: 100%; */
+}
+
+.left_conainer .logo_container{
+    width: 550px;
+    height: 550px;
+    padding-top: 2rem;
+}
+
+
+.right_container{
+    width: 500px;
+    height: 450px;
+    padding: 1.5rem;
+}
+
+.right_container .form_Container input{
+    width: 100%;
+}
+
+.right_container .form_Container .login_btn_container{
+    margin-top: 6rem;
+    
+}
+
+.right_container .form_Container .login_btn_container button{
+    background: #00acef;
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.copyright_container{
+    width: 100%;
+    border-top: 2px solid black;
+    font-size: 18px;
+}
