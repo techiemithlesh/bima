@@ -14,23 +14,23 @@ const Sidebar = () => {
     <div className="text-white mr-4 sidebar_container mb-4 w-44 shadow-sm">
       
       <ul className="sidebar_ul">
-        <li className="flex items-center mb-4 active">
+        <li className="flex items-center mb-4 active border-b-2 border-gray-300">
           <FontAwesomeIcon icon={faHome} className="mr-2 text-blue-300 text-2xl"/>
           <Link to='/admin/dashboard'>Dashboard</Link>
         </li>
-        <li className="flex items-center mb-4">
+        <li className="flex items-center mb-4 border-b-2 border-gray-300">
           <FontAwesomeIcon icon={faHandshake} className="mr-2 text-blue-300 text-2xl"/>
           <Link to='/admin/partners' color="">Partners</Link>
         </li>
-        <li className="flex items-center mb-4">
+        <li className="flex items-center mb-4 border-b-2 border-gray-300">
           <FontAwesomeIcon icon={faFileAlt} className="mr-2 text-blue-300 text-2xl"/>
           <Link to='#'>Policies</Link>
         </li>
-        <li className="flex items-center mb-4">
+        <li className="flex items-center mb-4 border-b-2 border-gray-300">
           <FontAwesomeIcon icon={faMoneyBill} className="mr-2 text-blue-300 text-2xl"/>
           <Link to='#'>Payout</Link>
         </li>
-        <li className="flex items-center mb-4">
+        <li className="flex items-center mb-4 border-b-2 border-gray-300">
           <FontAwesomeIcon icon={faInfoCircle} className="mr-2 text-blue-300 text-2xl"/>
           <Link to="#">About</Link>
         </li>
