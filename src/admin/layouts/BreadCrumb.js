@@ -31,9 +31,9 @@ const BreadCrumb = ({ leftItems, middleContent, rightItems }) => {
       </div>
       <div>
         {rightItems && (
-          <button className="text-white px-16 rounded-full py-2 rounded bread_crumb_btn">
-            {rightItems.label}
-          </button>
+          <div className="flex items-center">
+            {rightItems}
+          </div>
         )}
       </div>
     </div>

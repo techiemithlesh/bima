@@ -4,7 +4,7 @@ import Card from "../Components/Card";
 
 
 const AddComission = () => {
-  function generateBreadcrumbData() {
+  function generateBreadcrumbData(rightContent = null) {
 
     return {
       leftItems: [
@@ -12,12 +12,18 @@ const AddComission = () => {
         { label: "Commision", link: "/admin/dashboard" },
       ],
       middleContent: "User Name",
-      rightItems: { label: "Save", action: () => console.log("Save clicked") },
+      rightItems: rightContent,
     };
   }
 
+  const RightContent = (
+    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full">
+      Save
+    </button>
+  );
+
   return (
-    <Layout title="Add Partner Comission" breadcrumbData={generateBreadcrumbData}>
+    <Layout title="Add Partner Comission" breadcrumbData={generateBreadcrumbData(RightContent)}>
       <Card bgColor="gray">
 
         {/* FORM INPUT CONTAINER START HERE */}

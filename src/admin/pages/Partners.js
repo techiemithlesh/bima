@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faWallet, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faWallet, faUser, faCircleRight, faCircleArrowRight, faCircleChevronRight, faCircleChevronLeft, } from "@fortawesome/free-solid-svg-icons";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import { Link } from "react-router-dom";
@@ -19,27 +19,117 @@ const Partners = () => {
         { id: 10, imdCode: "010", Name: "Olivia Lee", Number: "321012345", Type: "Sales Person", Status: "Inactive" },
     ];
 
+    const [PartnerList, SetPartnerList] = useState([]);
 
-    function generateBreadcrumbData() {
+
+    function generateBreadcrumbData(rightContent = null) {
         return {
             leftItems: [
-                { label: "Dashboard", link: "/" },
+                { label: "", link: "/" },
                 { label: "Partners", link: "/admin/partners" },
             ],
             middleContent: "",
-            rightItems: (
-                <input
-                    type="text"
-                    placeholder="Search"
-                    onChange={(e) => console.log("Search:", e.target.value)}
-                    className="border border-gray-300 px-2 py-1 rounded focus:outline-none focus:border-blue-500"
-                />
-            ),
+            rightItems: rightContent
         };
     }
 
+
+    const searchRightContent = (
+        <input
+            type="text"
+            placeholder="Search with name"
+            onChange={(e) => console.log("Search:", e.target.value)}
+            className="border border-gray-300 px-8 py-2 rounded focus:outline-none focus:border-blue-500"
+        />
+    );
+
+
+    /* PAGINATION START HERE */
+
+    const pageSize = 5;
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const currentData = tableData.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(tableData.length / pageSize);
+
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    const renderPaginationButtons = () => {
+        const buttons = [];
+
+        // Previous button
+        buttons.push(
+            <button
+                key="prev"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-2 py-2 text-xl"
+            >
+                <FontAwesomeIcon icon={faCircleChevronLeft} />
+            </button>
+        );
+
+        // Current page number
+        buttons.push(
+            <div key="current" className="px-2 py-2">
+                {currentPage}
+            </div>
+        );
+
+        // Next button
+        buttons.push(
+            <button
+                key="next"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-2 py-2 text-black text-xl"
+            >
+                <FontAwesomeIcon icon={faCircleChevronRight} />
+            </button>
+        );
+
+        return buttons;
+    };
+
+
+    const renderLeftPaginationButtons = () => {
+        const buttons = [];
+    
+        // Calculate the page range
+        const pageRangeStart = Math.max(currentPage - 4, 1);
+        const pageRangeEnd = Math.min(pageRangeStart + 7, totalPages);
+    
+        // Previous button
+        buttons.push(
+            <button
+                key="prev"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-xl text-black"
+            >
+                
+            </button>
+        );
+    
+        // Display the page range
+        buttons.push(
+            <div key="pageRange" className="px-4 py-2 text-black">
+                [{pageRangeStart}-{pageRangeEnd}({totalPages})]
+            </div>
+        );
+    
+        return buttons;
+    };
+
+
+    /* PAGINATION END HERE */
+
     return (
-        <Layout title="Partner List" breadcrumbData={generateBreadcrumbData}>
+        <Layout title="Partner List" breadcrumbData={generateBreadcrumbData(searchRightContent)}>
             <Card>
                 <table className="min-w-full table-auto border border-gray-300">
                     <thead>
@@ -53,7 +143,7 @@ const Partners = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {tableData.map((row, index) => (
+                        {currentData.map((row, index) => (
                             <tr key={index} className={index % 2 === 0 ? "bg-gray-50" : ""}>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{row.imdCode}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{row.Name}</td>
@@ -73,21 +163,35 @@ const Partners = () => {
                                     >
                                         <FontAwesomeIcon icon={faWallet} />
                                     </Link>
-                                    <button
-                                        onClick={() => console.log("Person clicked")}
+                                    <Link
+                                        to={`/partner/details/add/${row.id}`}    
                                         className="bg-indigo-500 text-white px-2 py-1 rounded"
                                     >
                                         <FontAwesomeIcon icon={faUser} />
-                                    </button>
+                                    </Link>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
-
                 </table>
+
+                {/* PAGINATION */}
+                <div className="flex justify-between mt-4">
+                <div className="flex justify-around items-center">
+                    {renderLeftPaginationButtons("left")}
+                </div>
+                <div className="flex justify-around items-center">
+                    {renderPaginationButtons("right")}
+                </div>
+            </div>
+
             </Card>
         </Layout>
     );
 };
+
+
+
+
 
 export default Partners;
