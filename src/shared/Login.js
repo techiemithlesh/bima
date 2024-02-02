@@ -89,7 +89,7 @@ const Login = () => {
 
      <div className="text-center copyright_container py-2">
       <p className="border-black inline-block">
-        © {CurrentYear} Designed and Developed By <a href="#">iTechBuddy</a>
+        © {CurrentYear} Designed and Developed By <a href="/">iTechBuddy</a>
       </p>
     </div>
 

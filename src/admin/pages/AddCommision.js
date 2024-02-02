@@ -1,17 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
+import { useParams } from "react-router-dom";
+import { data } from "autoprefixer";
 
 
 const AddComission = () => {
-  function generateBreadcrumbData(rightContent = null) {
+  const { id } = useParams();
+
+  const [partnerData, setPartnerData] = useState(null);
+
+
+  useEffect(() => {
+
+    const apiUrl = `https://premium.treatweb.com/public/api/admin/partner/commissionoptions/${id}`;
+    fetch(apiUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setPartnerData(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching partner data:", error);
+      });
+  }, [id]);
+
+  function generateBreadcrumbData(data, rightContent = null) {
+    const { partner } = data || {};
+
 
     return {
       leftItems: [
         { label: "Partners", link: "/admin/partners" },
         { label: "Commision", link: "/admin/dashboard" },
       ],
-      middleContent: "User Name",
+      middleContent: partner && partner.name ? ` ${partner.name}` : "User Name",
       rightItems: rightContent,
     };
   }
@@ -23,7 +46,7 @@ const AddComission = () => {
   );
 
   return (
-    <Layout title="Add Partner Comission" breadcrumbData={generateBreadcrumbData(RightContent)}>
+    <Layout title="Add Partner Comission" breadcrumbData={generateBreadcrumbData(partnerData, RightContent)}>
       <Card bgColor="gray">
 
         {/* FORM INPUT CONTAINER START HERE */}
@@ -31,55 +54,105 @@ const AddComission = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {/* Form Element 1 */}
             <div className="mb-2">
-              <label className="block text-sm font-medium text-gray-600">Insurer</label>
-              <select className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                <option>SBI General Insurance</option>
-                <option>HDFC General Insurance</option>
+              <label className="block text-sm font-medium text-gray-600" htmlFor="insurerList">Insurer</label>
+              <select
+                name="insurer_list"
+                id="insurerList"
+                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              >
+
+                {partnerData && partnerData.commission_options.insurer_list.map((item) => (
+                  <option key={item.value} value={item.value}>
+                    {item.text}
+                  </option>
+                ))}
               </select>
             </div>
+
 
             {/* Form Element 2 */}
             <div className="mb-2">
               <label className="block text-sm font-medium text-gray-600">Lines Of Business</label>
-              <select className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                <option>Motor</option>
-                <option>Gadget</option>
+              <select
+                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                name="business_types"
+                id="business_types"
+              >
+                {partnerData &&
+                  partnerData.commission_options.business_types.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.text}
+                    </option>
+                  ))}
               </select>
+
             </div>
 
             {/* Form Element 3 */}
             <div className="mb-2">
               <label className="block text-sm font-medium text-gray-600">Veicle Type</label>
-              <select className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                <option>Motor</option>
-                <option>Gadget</option>
+              <select
+                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                name="business_types"
+                id="business_types"
+              >
+                {partnerData &&
+                  partnerData.commission_options.makes.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.text}
+                    </option>
+                  ))}
               </select>
             </div>
 
             {/* Form Element 4 */}
             <div className="mb-2">
               <label className="block text-sm font-medium text-gray-600">Veicle Sub Type</label>
-              <select className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                <option>Motor</option>
-                <option>Gadget</option>
+              <select
+                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                name="business_types"
+                id="business_types"
+              >
+                {partnerData &&
+                  partnerData.commission_options.vehicle_subtype_list['two-wheeler'].map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.text}
+                    </option>
+                  ))}
               </select>
             </div>
 
             {/* Form Element 5 */}
             <div className="mb-2">
               <label className="block text-sm font-medium text-gray-600">Fuel Type</label>
-              <select className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                <option>Motor</option>
-                <option>Gadget</option>
+              <select
+                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                name="fuel_types"
+                id="fuel_types"
+              >
+                {partnerData &&
+                  partnerData.commission_options.fuel_types.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.text}
+                    </option>
+                  ))}
               </select>
             </div>
 
             {/* Form Element 6 */}
             <div className="mb-2">
               <label className="block text-sm font-medium text-gray-600">Seating Capacity</label>
-              <select className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                <option>2</option>
-                <option>3</option>
+              <select
+                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                name="seats"
+                id="seats"
+              >
+                {partnerData &&
+                  partnerData.commission_options.seats.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.text}
+                    </option>
+                  ))}
               </select>
             </div>
 
@@ -152,7 +225,7 @@ const AddComission = () => {
               <tr>
                 <td className="flex max-w-screen-md mb-4">
                   {/* First Input with Background Color */}
-                  <input className="bg-gray-300 text-white p-2 mr-2" value=".0-75" />
+                  <input className="bg-gray-300 text-white p-2" value=".0-75" />
 
                   {/* Second Input with White Background */}
                   <input className="bg-white p-2 " />
@@ -232,7 +305,7 @@ const AddComission = () => {
 
 
       </Card>
-    </Layout>
+    </Layout >
 
   )
 }
