@@ -17,19 +17,24 @@ const AddComission = () => {
     vehicleSubTypes: '',
     fuelTypes: '',
     seats: '',
+    engines: [],
 
   })
 
   
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const handleInputChange = (engineText, index, value) => {
+    setFormData((prevData) => {
+      const engines = [...prevData.engines];
+      if (!engines[index]) {
+        engines[index] = { [engineText]: [] };
+      }
+      engines[index][engineText] = value;
+      return { ...prevData, engines };
+    });
   };
 
+  
   const handleSave = () => {
    alert(formData);
     console.log('Form Data:', formData);
@@ -220,7 +225,8 @@ const AddComission = () => {
                   <tr key={engine.value}>
                     <td className="flex max-w-screen-md mb-4">
 
-                      <input className="bg-gray-300 text-white p-2" value={engine.text} />
+                      <input className="bg-gray-300 text-white p-2" value={engine.text} 
+                      onChange={(e) => handleInputChange(engine.text, 0, e.target.value)}/>
 
                       <input className="bg-white p-2 mr-2" />
 
@@ -231,6 +237,14 @@ const AddComission = () => {
                       <input className="p-2 mx-2" />
 
                       <input className="p-2 mx-2" />
+
+                      {[1, 2, 3, 4, 5].map((index) => (
+                      <input
+                        key={index}
+                        className="p-2 mx-2"
+                        onChange={(e) => handleInputChange(engine.text, index, e.target.value)}
+                      />
+                    ))}
 
                     </td>
                   </tr>
