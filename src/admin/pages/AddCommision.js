@@ -9,7 +9,31 @@ const AddComission = () => {
   const { id } = useParams();
 
   const [partnerData, setPartnerData] = useState(null);
+  const [isChecked, setIsChecked] = useState(false);
+  const [formData, setFormData] = useState({
+    insurer: '',
+    businessTypes: '',
+    vehicleTypes: '',
+    vehicleSubTypes: '',
+    fuelTypes: '',
+    seats: '',
 
+  })
+
+  
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = () => {
+   alert(formData);
+    console.log('Form Data:', formData);
+  };
 
   useEffect(() => {
 
@@ -40,7 +64,7 @@ const AddComission = () => {
   }
 
   const RightContent = (
-    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full">
+    <button onClick={handleSave} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full">
       Save
     </button>
   );
@@ -56,8 +80,10 @@ const AddComission = () => {
             <div className="mb-2">
               <label className="block text-sm font-medium text-gray-600" htmlFor="insurerList">Insurer</label>
               <select
-                name="insurer_list"
+                name="insurer"
                 id="insurerList"
+                value={formData.insurer}
+                onChange={handleInputChange}
                 className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               >
 
@@ -75,8 +101,11 @@ const AddComission = () => {
               <label className="block text-sm font-medium text-gray-600">Lines Of Business</label>
               <select
                 className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                name="business_types"
+                disabled={!formData.insurer}
+                name="businessTypes"
                 id="business_types"
+                value={formData.businessTypes}
+                onChange={handleInputChange}
               >
                 {partnerData &&
                   partnerData.commission_options.business_types.map((item) => (
@@ -93,8 +122,10 @@ const AddComission = () => {
               <label className="block text-sm font-medium text-gray-600">Veicle Type</label>
               <select
                 className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                name="business_types"
-                id="business_types"
+                name="vehicleTypes"
+                id="vehicle_types"
+                value={formData.vehicleTypes}
+                onChange={handleInputChange}
               >
                 {partnerData &&
                   partnerData.commission_options.makes.map((item) => (
@@ -110,8 +141,10 @@ const AddComission = () => {
               <label className="block text-sm font-medium text-gray-600">Veicle Sub Type</label>
               <select
                 className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                name="business_types"
-                id="business_types"
+                name="vehicleSubTypes"
+                id="vehicle_sub_types"
+                value={formData.vehicleSubTypes}
+                onChange={handleInputChange}
               >
                 {partnerData &&
                   partnerData.commission_options.vehicle_subtype_list['two-wheeler'].map((item) => (
@@ -127,8 +160,10 @@ const AddComission = () => {
               <label className="block text-sm font-medium text-gray-600">Fuel Type</label>
               <select
                 className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                name="fuel_types"
+                name="fuelTypes"
                 id="fuel_types"
+                value={formData.fuelTypes}
+                onChange={handleInputChange}
               >
                 {partnerData &&
                   partnerData.commission_options.fuel_types.map((item) => (
@@ -146,6 +181,8 @@ const AddComission = () => {
                 className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                 name="seats"
                 id="seats"
+                value={formData.seats}
+                onChange={handleInputChange}
               >
                 {partnerData &&
                   partnerData.commission_options.seats.map((item) => (
@@ -178,97 +215,27 @@ const AddComission = () => {
             </thead>
 
             <tbody>
-              <tr>
-                <td className="flex max-w-screen-md mt-4 mb-4">
-                  {/* First Input with Background Color */}
-                  <input className="bg-gray-300 text-white p-2 " value=".0-75" />
+              {partnerData &&
+                partnerData.commission_options.engines.map((engine) => (
+                  <tr key={engine.value}>
+                    <td className="flex max-w-screen-md mb-4">
 
-                  {/* Second Input with White Background */}
-                  <input className="bg-white p-2 mr-2" />
+                      <input className="bg-gray-300 text-white p-2" value={engine.text} />
 
-                  {/* Third Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
+                      <input className="bg-white p-2 mr-2" />
 
-                  {/* Fourth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
+                      <input className="p-2 mx-2" />
 
-                  {/* Fifth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
+                      <input className="p-2 mx-2" />
 
-                  {/* Sixth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-                </td>
-              </tr>
+                      <input className="p-2 mx-2" />
 
-              <tr>
-                <td className="flex max-w-screen-md mb-4">
-                  {/* First Input with Background Color */}
-                  <input className="bg-gray-300 text-white p-2" value=".0-75" />
+                      <input className="p-2 mx-2" />
 
-                  {/* Second Input with White Background */}
-                  <input className="bg-white p-2 mr-2" />
-
-                  {/* Third Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-
-                  {/* Fourth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-
-                  {/* Fifth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-
-                  {/* Sixth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-                </td>
-              </tr>
-
-              <tr>
-                <td className="flex max-w-screen-md mb-4">
-                  {/* First Input with Background Color */}
-                  <input className="bg-gray-300 text-white p-2" value=".0-75" />
-
-                  {/* Second Input with White Background */}
-                  <input className="bg-white p-2 " />
-
-                  {/* Third Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-
-                  {/* Fourth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-
-                  {/* Fifth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-
-                  {/* Sixth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-                </td>
-              </tr>
-
-              <tr>
-                <td className="flex max-w-screen-md">
-                  {/* First Input with Background Color */}
-                  <input className="bg-gray-300 text-white p-2 " value=".0-75" />
-
-                  {/* Second Input with White Background */}
-                  <input className="bg-white p-2 mr-2" />
-
-                  {/* Third Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-
-                  {/* Fourth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-
-                  {/* Fifth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-
-                  {/* Sixth Input with Margin from Both Sides */}
-                  <input className="p-2 mx-2" />
-                </td>
-              </tr>
-
+                    </td>
+                  </tr>
+                ))}
             </tbody>
-
-
 
           </table>
 
@@ -287,8 +254,17 @@ const AddComission = () => {
 
               {/* Third Input Box with Checkbox */}
               <div className="flex-1 flex items-center mr-2">
-                <input className="w-full p-2" placeholder="Net Commission %" />
-                <input type="checkbox" className="ml-2" />
+                <input
+                  className="w-full p-2 border"
+                  placeholder="Net Commission %"
+                  disabled={!isChecked}
+                />
+                <input
+                  type="checkbox"
+                  className="ml-2"
+                  checked={isChecked}
+                  onChange={() => setIsChecked(!isChecked)}
+                />
               </div>
 
               {/* Fourth Input Box */}
