@@ -17,26 +17,30 @@ const AddComission = () => {
     vehicleSubTypes: '',
     fuelTypes: '',
     seats: '',
-    engines: [],
-
+    ageCapacity: {},
   })
 
-  
 
-  const handleInputChange = (engineText, index, value) => {
-    setFormData((prevData) => {
-      const engines = [...prevData.engines];
-      if (!engines[index]) {
-        engines[index] = { [engineText]: [] };
-      }
-      engines[index][engineText] = value;
-      return { ...prevData, engines };
-    });
+
+  const handleInputChange = (e, engineValue, index, rowIndex) => {
+    const { name, value } = e.target;
+
+    const updatedAgeCapacity = {
+      ...formData.ageCapacity,
+      [engineValue]: formData.ageCapacity[engineValue] || Array(5).fill(''), 
+    };
+
+    updatedAgeCapacity[engineValue][index] = value;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+      ageCapacity: updatedAgeCapacity,
+    }));
   };
 
-  
   const handleSave = () => {
-   alert(formData);
+
     console.log('Form Data:', formData);
   };
 
@@ -77,6 +81,7 @@ const AddComission = () => {
   return (
     <Layout title="Add Partner Comission" breadcrumbData={generateBreadcrumbData(partnerData, RightContent)}>
       <Card bgColor="gray">
+
         {/* FORM INPUT CONTAINER START HERE */}
         <div className="input_container">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -90,7 +95,7 @@ const AddComission = () => {
                 onChange={handleInputChange}
                 className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               >
-
+                <option value="">Select Insurer</option>
                 {partnerData && partnerData.commission_options.insurer_list.map((item) => (
                   <option key={item.value} value={item.value}>
                     {item.text}
@@ -204,43 +209,39 @@ const AddComission = () => {
 
         {/* TABLE CONTAINER START HERE */}
         <div className="table_container">
-          <table className="min-w-full table-auto border-2 border-gray-300">
-            {/*<thead>*/}
-            {/*  <tr className="bg-gray-300">*/}
-            {/*    <div className="flex items-center">*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x">Age/Capacity</th>*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x">New</th>*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x">.1-5</th>*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x">.5-7</th>*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x"> &gt; 10</th>*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x">DEAL</th>*/}
-            {/*    </div>*/}
-            {/*  </tr>*/}
-            {/*</thead>*/}
+          <table className="min-w-full table-auto border border-gray-300">
+            <thead>
+              <tr className="bg-gray-300">
+                <div className="flex items-center">
+                  {partnerData &&
+                    partnerData.commission_options.vehicle_ages.map((item) => (
+                      <th key={item.value} className="px-4 py-2 w-1/6 text-x">
+                        {item.text}
+                      </th>
+                    ))}
+
+                  <th className="px-4 py-2 w-1/6 text-x">DEAL</th>
+                </div>
+              </tr>
+            </thead>
 
             <tbody>
-            {
-              //partnerData.commission_options.engines.append('Age/Capacity')
-              partnerData &&
-                partnerData.commission_options.engines.map((engine, index) => (
-                    <tr key={engine.value}>
-                      <th className="border-b">
-                        <input className="bg-gray-300 text-x text-center p-2" name={index} value={engine.text} />
-                      </th>
-                      {partnerData &&
-                          partnerData.commission_options.vehicle_ages.map((ages, sn) => (
-                              // eslint-disable-next-line react/style-prop-object
-
-                              index===0 ? <td className="border-2" key={sn}>{ages.text}</td> : <td className="border-2" key={sn}>
-                                  <input className="text-x p-2 bordersm" value="" />
-                                </td>
-
-                              ))}
-                    </tr>
-
+            {partnerData &&
+                partnerData.commission_options.engines.map((engine, rowIndex) => (
+                  <tr key={engine.value}>
+                    <td className="flex max-w-screen-md mb-4">
+                      <input className="bg-gray-300 text-white p-2" value={engine.text} readOnly />
+                      {[1, 2, 3, 4, 5].map((index) => (
+                        <input
+                          key={index}
+                          className="p-2 mx-2"
+                          onChange={(e) => handleInputChange(e, engine.value,index, rowIndex)}
+                        />
+                      ))}
+                    </td>
+                  </tr>
                 ))}
             </tbody>
-
 
           </table>
 

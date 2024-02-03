@@ -8,10 +8,7 @@ import { useEffect } from "react";
 import { data } from "autoprefixer";
 
 const Partners = () => {
-    const tableData = [
-        { id: 1, imdCode: "001", Name: "John Doe", Number: "123456789", Type: "Type A", Status: "Active" },
-        { id: 2, imdCode: "002", Name: "Jane Smith", Number: "987654321", Type: "Type B", Status: "Inactive" },
-    ];
+   
 
     const [PartnerList, SetPartnerList] = useState([]);
     
@@ -67,8 +64,8 @@ const Partners = () => {
 
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const currentData = tableData.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(tableData.length / pageSize);
+    const currentData = PartnerList.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(PartnerList.length / pageSize);
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
