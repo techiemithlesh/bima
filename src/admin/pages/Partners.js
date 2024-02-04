@@ -8,32 +8,32 @@ import { useEffect } from "react";
 import { data } from "autoprefixer";
 
 const Partners = () => {
-   
+
 
     const [PartnerList, SetPartnerList] = useState([]);
-    
+
     useEffect(() => {
         const apiUrl = 'https://premium.treatweb.com/public/api/admin/partner/list';
-    
+
         const requestOptions = {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         };
-    
+
         fetch(apiUrl, requestOptions)
             .then(response => response.json())
             .then(data => {
                 console.log(data.data);
                 SetPartnerList(data.data);
                 console.log("PartnerList:", PartnerList);
-            
+
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
     }, []);
-    
-    
+
+
 
     function generateBreadcrumbData(rightContent = null) {
         return {
@@ -111,11 +111,11 @@ const Partners = () => {
 
     const renderLeftPaginationButtons = () => {
         const buttons = [];
-    
+
         // Calculate the page range
         const pageRangeStart = Math.max(currentPage - 4, 1);
         const pageRangeEnd = Math.min(pageRangeStart + 7, totalPages);
-    
+
         // Previous button
         buttons.push(
             <button
@@ -124,17 +124,17 @@ const Partners = () => {
                 disabled={currentPage === 1}
                 className="px-4 py-2 text-xl text-black"
             >
-                
+
             </button>
         );
-    
+
         // Display the page range
         buttons.push(
             <div key="pageRange" className="px-4 py-2 text-black">
                 [{pageRangeStart}-{pageRangeEnd}({totalPages})]
             </div>
         );
-    
+
         return buttons;
     };
 
@@ -162,7 +162,7 @@ const Partners = () => {
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.name}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.mobile}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.partner_type}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.partner_status}</td>
+                                <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.partner_status.toUpperCase()}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">
                                     <button
                                         onClick={() => console.log("View clicked")}
@@ -174,11 +174,11 @@ const Partners = () => {
                                         to={`/partner/addcommision/${partner.id}`}
                                         className="bg-green-500 text-white px-2 py-1 rounded mr-2"
                                     >
-                                        
+
                                         <FontAwesomeIcon icon={faWallet} />
                                     </Link>
                                     <Link
-                                        to={`/partner/details/add/${partner.id}`}    
+                                        to={`/partner/details/add/${partner.id}`}
                                         className="bg-indigo-500 text-white px-2 py-1 rounded"
                                     >
                                         <FontAwesomeIcon icon={faUser} />
@@ -191,13 +191,13 @@ const Partners = () => {
 
                 {/* PAGINATION */}
                 <div className="flex justify-between mt-4">
-                <div className="flex justify-around items-center">
-                    {renderLeftPaginationButtons("left")}
+                    <div className="flex justify-around items-center">
+                        {renderLeftPaginationButtons("left")}
+                    </div>
+                    <div className="flex justify-around items-center">
+                        {renderPaginationButtons("right")}
+                    </div>
                 </div>
-                <div className="flex justify-around items-center">
-                    {renderPaginationButtons("right")}
-                </div>
-            </div>
 
             </Card>
         </Layout>

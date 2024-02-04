@@ -7,6 +7,7 @@ import { formToJSON } from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Policy = () => {
+    const [selectedTabIndex, setSelectedTabIndex] = useState(0);
     const [formData, setFormData] = useState({
         insurer: '',
         businessTypes: '',
@@ -18,6 +19,7 @@ const Policy = () => {
 
     const handleSave = () => {
         console.log('Form Data:', formData);
+        // setSelectedTabIndex((prevIndex) => prevIndex + 1);
     };
 
     const handleInputChange = (e) => {
@@ -41,14 +43,14 @@ const Policy = () => {
 
     const RightContent = (
         <button onClick={handleSave} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full">
-          Save
+            Save
         </button>
-      );
+    );
 
     return (
         <Layout title="Policy Page" breadcrumbData={generateBreadcrumbData(RightContent)}>
             <Card bgColor="gray-100">
-                <Tabs>
+                <Tabs selectedIndex={selectedTabIndex} onSelect={(index) => setSelectedTabIndex(index)}>
                     <TabList style={{ display: "flex", margin: 0, padding: 0 }}>
                         <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><FontAwesomeIcon icon={faCircleUser} /></Tab>
                         <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><FontAwesomeIcon icon={faLocationDot} /></Tab>
@@ -243,9 +245,9 @@ const Policy = () => {
                                             type="text"
                                             className="w-full p-2 border"
                                             placeholder="Vehicle Registration No."
-                                            
+
                                         />
-                                       
+
                                     </div>
 
                                     {/* Fourth Input Box */}
@@ -261,6 +263,12 @@ const Policy = () => {
                     </TabPanel>
 
                     {/* Other TabPanels go here */}
+
+                    <div className="flex justify-center">
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full">
+                            Save & Next
+                        </button>
+                    </div>
                 </Tabs>
             </Card>
         </Layout >

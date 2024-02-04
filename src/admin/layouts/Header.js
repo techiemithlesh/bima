@@ -2,6 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faCog } from "@fortawesome/free-solid-svg-icons"; // Import the icons you need
 import Logo from "../../assets/logo.jpeg";
+import UserIcon from '../../assets/icons/settings 1.svg';
 
 const Header = () => {
   return (
@@ -16,15 +17,8 @@ const Header = () => {
       <span className="text-3xl font-bold">Admin Panel</span>
 
       {/* Right side */}
-      <div className="flex items-center">
-        <div className="mr-4">
-          {/* Person Icon */}
-          <FontAwesomeIcon icon={faUser} className="text-gray-600" />
-        </div>
-        <div>
-          {/* Settings Icon */}
-          <FontAwesomeIcon icon={faCog} className="text-gray-600" />
-        </div>
+      <div className="flex items-center justify-center mr-4">
+        <img src={UserIcon} />
       </div>
     </div>
   );
