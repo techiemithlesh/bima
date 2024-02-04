@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import { useParams } from "react-router-dom";
-import { data } from "autoprefixer";
+import { formToJSON } from "axios";
 
 
 const AddComission = () => {
@@ -10,33 +10,32 @@ const AddComission = () => {
 
   const [partnerData, setPartnerData] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
-  const [formData, setFormData] = useState({
+  let [formData, setFormData] = useState({
     insurer: '',
     businessTypes: '',
     vehicleTypes: '',
     vehicleSubTypes: '',
     fuelTypes: '',
     seats: '',
-    engines: [],
-
+    agecapacity: []
   })
 
-  
 
-  const handleInputChange = (engineText, index, value) => {
-    setFormData((prevData) => {
-      const engines = [...prevData.engines];
-      if (!engines[index]) {
-        engines[index] = { [engineText]: [] };
-      }
-      engines[index][engineText] = value;
-      return { ...prevData, engines };
-    });
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+  
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
-
   
+
   const handleSave = () => {
-   alert(formData);
+    const Data = new FormData(document.getElementById('form'));
+    formData = formToJSON(Data);
+
     console.log('Form Data:', formData);
   };
 
@@ -78,213 +77,207 @@ const AddComission = () => {
     <Layout title="Add Partner Comission" breadcrumbData={generateBreadcrumbData(partnerData, RightContent)}>
       <Card bgColor="gray">
         {/* FORM INPUT CONTAINER START HERE */}
-        <div className="input_container">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {/* Form Element 1 */}
-            <div className="mb-2">
-              <label className="block text-sm font-medium text-gray-600" htmlFor="insurerList">Insurer</label>
-              <select
-                name="insurer"
-                id="insurerList"
-                value={formData.insurer}
-                onChange={handleInputChange}
-                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              >
-
-                {partnerData && partnerData.commission_options.insurer_list.map((item) => (
-                  <option key={item.value} value={item.value}>
-                    {item.text}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-
-            {/* Form Element 2 */}
-            <div className="mb-2">
-              <label className="block text-sm font-medium text-gray-600">Lines Of Business</label>
-              <select
-                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                disabled={!formData.insurer}
-                name="businessTypes"
-                id="business_types"
-                value={formData.businessTypes}
-                onChange={handleInputChange}
-              >
-                {partnerData &&
-                  partnerData.commission_options.business_types.map((item) => (
+        <form id="form">
+          <div className="input_container">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              {/* Form Element 1 */}
+              <div className="mb-2">
+                <label className="block text-sm font-medium text-gray-600" htmlFor="insurerList">Insurer</label>
+                <select
+                  name="insurer"
+                  id="insurerList"
+                  value={formData.insurer}
+                  onChange={handleInputChange}
+                  className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                >
+                  <option value="">Select Insurer</option>
+                  {partnerData && partnerData.commission_options.insurer_list.map((item) => (
                     <option key={item.value} value={item.value}>
                       {item.text}
                     </option>
                   ))}
-              </select>
+                </select>
+              </div>
+
+
+              {/* Form Element 2 */}
+              <div className="mb-2">
+                <label className="block text-sm font-medium text-gray-600">Lines Of Business</label>
+                <select
+                  className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                  disabled={!formData.insurer}
+                  name="businessTypes"
+                  id="business_types"
+                  value={formData.businessTypes}
+                  onChange={handleInputChange}
+                >
+                  {partnerData &&
+                    partnerData.commission_options.business_types.map((item) => (
+                      <option key={item.value} value={item.value}>
+                        {item.text}
+                      </option>
+                    ))}
+                </select>
+
+              </div>
+
+              {/* Form Element 3 */}
+              <div className="mb-2">
+                <label className="block text-sm font-medium text-gray-600">Veicle Type</label>
+                <select
+                  className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                  name="vehicleTypes"
+                  id="vehicle_types"
+                  value={formData.vehicleTypes}
+                  onChange={handleInputChange}
+                >
+                  {partnerData &&
+                    partnerData.commission_options.makes.map((item) => (
+                      <option key={item.value} value={item.value}>
+                        {item.text}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* Form Element 4 */}
+              <div className="mb-2">
+                <label className="block text-sm font-medium text-gray-600">Veicle Sub Type</label>
+                <select
+                  className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                  name="vehicleSubTypes"
+                  id="vehicle_sub_types"
+                  value={formData.vehicleSubTypes}
+                  onChange={handleInputChange}
+                >
+                  {partnerData &&
+                    partnerData.commission_options.vehicle_subtype_list['two-wheeler'].map((item) => (
+                      <option key={item.value} value={item.value}>
+                        {item.text}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* Form Element 5 */}
+              <div className="mb-2">
+                <label className="block text-sm font-medium text-gray-600">Fuel Type</label>
+                <select
+                  className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                  name="fuelTypes"
+                  id="fuel_types"
+                  value={formData.fuelTypes}
+                  onChange={handleInputChange}
+                >
+                  {partnerData &&
+                    partnerData.commission_options.fuel_types.map((item) => (
+                      <option key={item.value} value={item.value}>
+                        {item.text}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* Form Element 6 */}
+              <div className="mb-2">
+                <label className="block text-sm font-medium text-gray-600">Seating Capacity</label>
+                <select
+                  className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                  name="seats"
+                  id="seats"
+                  value={formData.seats}
+                  onChange={handleInputChange}
+                >
+                  {partnerData &&
+                    partnerData.commission_options.seats.map((item) => (
+                      <option key={item.value} value={item.value}>
+                        {item.text}
+                      </option>
+                    ))}
+                </select>
+              </div>
 
             </div>
-
-            {/* Form Element 3 */}
-            <div className="mb-2">
-              <label className="block text-sm font-medium text-gray-600">Veicle Type</label>
-              <select
-                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                name="vehicleTypes"
-                id="vehicle_types"
-                value={formData.vehicleTypes}
-                onChange={handleInputChange}
-              >
-                {partnerData &&
-                  partnerData.commission_options.makes.map((item) => (
-                    <option key={item.value} value={item.value}>
-                      {item.text}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            {/* Form Element 4 */}
-            <div className="mb-2">
-              <label className="block text-sm font-medium text-gray-600">Veicle Sub Type</label>
-              <select
-                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                name="vehicleSubTypes"
-                id="vehicle_sub_types"
-                value={formData.vehicleSubTypes}
-                onChange={handleInputChange}
-              >
-                {partnerData &&
-                  partnerData.commission_options.vehicle_subtype_list['two-wheeler'].map((item) => (
-                    <option key={item.value} value={item.value}>
-                      {item.text}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            {/* Form Element 5 */}
-            <div className="mb-2">
-              <label className="block text-sm font-medium text-gray-600">Fuel Type</label>
-              <select
-                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                name="fuelTypes"
-                id="fuel_types"
-                value={formData.fuelTypes}
-                onChange={handleInputChange}
-              >
-                {partnerData &&
-                  partnerData.commission_options.fuel_types.map((item) => (
-                    <option key={item.value} value={item.value}>
-                      {item.text}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            {/* Form Element 6 */}
-            <div className="mb-2">
-              <label className="block text-sm font-medium text-gray-600">Seating Capacity</label>
-              <select
-                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                name="seats"
-                id="seats"
-                value={formData.seats}
-                onChange={handleInputChange}
-              >
-                {partnerData &&
-                  partnerData.commission_options.seats.map((item) => (
-                    <option key={item.value} value={item.value}>
-                      {item.text}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
           </div>
-        </div>
 
-        {/* FORM INPUT CONTAINER END HERE */}
+          {/* FORM INPUT CONTAINER END HERE */}
 
-        {/* TABLE CONTAINER START HERE */}
-        <div className="table_container">
-          <table className="min-w-full table-auto border-2 border-gray-300">
-            {/*<thead>*/}
-            {/*  <tr className="bg-gray-300">*/}
-            {/*    <div className="flex items-center">*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x">Age/Capacity</th>*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x">New</th>*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x">.1-5</th>*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x">.5-7</th>*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x"> &gt; 10</th>*/}
-            {/*      <th className="px-4 py-2 w-1/6 text-x">DEAL</th>*/}
-            {/*    </div>*/}
-            {/*  </tr>*/}
-            {/*</thead>*/}
+          {/* TABLE CONTAINER START HERE */}
+          <div className="table_container">
+            <table className="min-w-full table-auto border-2 border-gray-300 comission">
 
-            <tbody>
-            {
-              //partnerData.commission_options.engines.append('Age/Capacity')
-              partnerData &&
-                partnerData.commission_options.engines.map((engine, index) => (
-                    <tr key={engine.value}>
-                      <th className="border-b">
-                        <input className="bg-gray-300 text-x text-center p-2" name={index} value={engine.text} />
-                      </th>
+              <tbody>
+                {
+                  partnerData &&
+                  partnerData.commission_options.engines.map((engine, index) => (
+                    <tr className="shade" key={engine.value}>
+                      {index === 0 ? <th className="border-b shade p-2">{engine.text}</th> :
+                        <th className=""> <input className="text-x text-center shade" value={engine.text} />
+                        </th>
+                      }
                       {partnerData &&
-                          partnerData.commission_options.vehicle_ages.map((ages, sn) => (
-                              // eslint-disable-next-line react/style-prop-object
+                        partnerData.commission_options.vehicle_ages.map((ages, sn) => (
+                          
+                          index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}</th> : <td className="border-2 text-center" key={sn}>
+                            <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
+                            <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
+                            <input type="number" className={" text-x p-2 bordersm"} name={"agecapacity[" + engine.value + "][" + ages.value + "][value]"} />
 
-                              index===0 ? <td className="border-2" key={sn}>{ages.text}</td> : <td className="border-2" key={sn}>
-                                  <input className="text-x p-2 bordersm" value="" />
-                                </td>
+                          </td>
 
-                              ))}
+                        ))}
+                      {index === 0 ? <th className="border-2 shade text-center">DEAL</th> :
+                        <td className="text-center">
+                          <input type="text" className="text-x p-2 bordersm" name={"agecapacity[" + engine.value + "][deal]"} />
+                        </td>
+                      }
                     </tr>
 
-                ))}
-            </tbody>
+                  ))}
+              </tbody>
 
 
-          </table>
+            </table>
+            {/* FOOTER INPUT BOX CONTAINER START HERE */}
+            <div className="footer_input_box_container mt-4 mb-24">
+              <div className="flex">
+                {/* First Input Box */}
+                <div className="flex-1 mr-2">
+                  <input className="w-full p-2" placeholder="OD Commission %" />
+                </div>
 
-          {/* FOOTER INPUT BOX CONTAINER START HERE */}
-          <div className="footer_input_box_container mt-4 mb-24">
-            <div className="flex">
-              {/* First Input Box */}
-              <div className="flex-1 mr-2">
-                <input className="w-full p-2" placeholder="OD Commission %" />
-              </div>
+                {/* Second Input Box */}
+                <div className="flex-1 mr-2">
+                  <input className="w-full p-2" placeholder="TP Comission %" />
+                </div>
 
-              {/* Second Input Box */}
-              <div className="flex-1 mr-2">
-                <input className="w-full p-2" placeholder="TP Comission %" />
-              </div>
+                {/* Third Input Box with Checkbox */}
+                <div className="flex-1 flex items-center mr-2">
+                  <input
+                    className="w-full p-2 border"
+                    placeholder="Net Commission %"
+                    disabled={!isChecked}
+                  />
+                  <input
+                    type="checkbox"
+                    className="ml-2"
+                    checked={isChecked}
+                    onChange={() => setIsChecked(!isChecked)}
+                  />
+                </div>
 
-              {/* Third Input Box with Checkbox */}
-              <div className="flex-1 flex items-center mr-2">
-                <input
-                  className="w-full p-2 border"
-                  placeholder="Net Commission %"
-                  disabled={!isChecked}
-                />
-                <input
-                  type="checkbox"
-                  className="ml-2"
-                  checked={isChecked}
-                  onChange={() => setIsChecked(!isChecked)}
-                />
-              </div>
-
-              {/* Fourth Input Box */}
-              <div className="flex-1">
-                <input className="w-full p-2" placeholder="Flat Amount" />
+                {/* Fourth Input Box */}
+                <div className="flex-1">
+                  <input className="w-full p-2" placeholder="Flat Amount" />
+                </div>
               </div>
             </div>
+
+            {/* FOOTER INPUT BOX CONTAINER END HERE */}
           </div>
+          {/* TABLE CONTAINER END HERE */}
 
-          {/* FOOTER INPUT BOX CONTAINER END HERE */}
-        </div>
-        {/* TABLE CONTAINER END HERE */}
-
-
-
+        </form>
       </Card>
     </Layout >
 

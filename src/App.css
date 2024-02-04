@@ -1,0 +1,14 @@
+.bordersm{
+    border: 1px solid #d6c9c9 !important;
+    width: 80%;
+}
+.shade{
+    background: #e0dfdc;
+}
+.comission tr{
+    border-bottom: 15px solid #fff;
+    border-top: 15px solid #fff;
+}
+.comission {
+    font-size: 19px;
+}

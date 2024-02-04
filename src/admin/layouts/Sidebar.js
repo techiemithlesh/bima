@@ -24,7 +24,7 @@ const Sidebar = () => {
         </li>
         <li className="flex items-center mb-4 border-b-2 border-gray-300">
           <FontAwesomeIcon icon={faFileAlt} className="mr-2 text-blue-300 text-2xl"/>
-          <Link to='#'>Policies</Link>
+          <Link to='/policy/add'>Policies</Link>
         </li>
         <li className="flex items-center mb-4 border-b-2 border-gray-300">
           <FontAwesomeIcon icon={faMoneyBill} className="mr-2 text-blue-300 text-2xl"/>
