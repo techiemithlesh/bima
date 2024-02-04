@@ -3,11 +3,12 @@ import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import { useParams } from "react-router-dom";
 import { formToJSON } from "axios";
+import Loading from "react-loading";
 
 
 const AddComission = () => {
   const { id } = useParams();
-
+  
   const [partnerData, setPartnerData] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
   let [formData, setFormData] = useState({
@@ -20,7 +21,7 @@ const AddComission = () => {
     agecapacity: []
   })
 
-
+  const [loading, setLoading] = useState(true);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -47,6 +48,7 @@ const AddComission = () => {
       .then((data) => {
         console.log(data);
         setPartnerData(data);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching partner data:", error);
@@ -77,7 +79,11 @@ const AddComission = () => {
     <Layout title="Add Partner Comission" breadcrumbData={generateBreadcrumbData(partnerData, RightContent)}>
       <Card bgColor="gray">
         {/* FORM INPUT CONTAINER START HERE */}
-        <form id="form">
+        {loading ? <div className="loading-overlay">
+            <div className="loading">
+              <Loading type="ball-triangle" color="#4fa94d" height={100} width={100} />
+            </div>
+          </div> : <form id="form">
           <div className="input_container">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {/* Form Element 1 */}
@@ -294,7 +300,7 @@ const AddComission = () => {
 
           {/* TABLE CONTAINER END HERE */}
 
-        </form>
+        </form>}
       </Card>
     </Layout >
 

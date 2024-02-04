@@ -6,11 +6,13 @@ import Card from "../Components/Card";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { data } from "autoprefixer";
+import Loading from "react-loading";
 
 const Partners = () => {
 
 
     const [PartnerList, SetPartnerList] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const apiUrl = 'https://premium.treatweb.com/public/api/admin/partner/list';
@@ -25,7 +27,7 @@ const Partners = () => {
             .then(data => {
                 console.log(data.data);
                 SetPartnerList(data.data);
-                console.log("PartnerList:", PartnerList);
+                setLoading(false);
 
             })
             .catch(error => {
@@ -144,7 +146,11 @@ const Partners = () => {
     return (
         <Layout title="Partner List" breadcrumbData={generateBreadcrumbData(searchRightContent)}>
             <Card>
-                <table className="min-w-full table-auto border border-gray-300">
+                {loading ? <div className="loading-overlay">
+                    <div className="loading">
+                        <Loading type="ball-triangle" color="#4fa94d" height={100} width={100} />
+                    </div>
+                </div> : <table className="min-w-full table-auto border border-gray-300">
                     <thead>
                         <tr className="bg-gray-300 ">
                             <th className="px-4 py-2">Imd Code.</th>
@@ -187,17 +193,24 @@ const Partners = () => {
                             </tr>
                         ))}
                     </tbody>
-                </table>
+                </table>}
+
 
                 {/* PAGINATION */}
-                <div className="flex justify-between mt-4">
+
+                {loading ? <div className="loading-overlay">
+                    <div className="loading">
+                        <Loading type="ball-triangle" color="#4fa94d" height={100} width={100} />
+                    </div>
+                </div> :<div className="flex justify-between mt-4">
                     <div className="flex justify-around items-center">
                         {renderLeftPaginationButtons("left")}
                     </div>
                     <div className="flex justify-around items-center">
                         {renderPaginationButtons("right")}
                     </div>
-                </div>
+                </div> }
+                
 
             </Card>
         </Layout>
