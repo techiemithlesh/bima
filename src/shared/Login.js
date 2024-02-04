@@ -1,10 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import Logo from '../assets/logo.jpeg';
+import axios from "axios";
+import { setAuthToken } from "../utils/auth";
+import { Navigate, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import Cookies from "js-cookie";
+
 
 const Login = () => {
   const CurrentYear = new Date().getFullYear();
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.get('https://premium.treatweb.com/public/sanctum/csrf-cookie')
+      setAuthToken();
+      navigate('/admin/dashboard');
+      toast.success("Login Successfully", {
+        position: 'top-right',
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="container">
@@ -17,7 +40,7 @@ const Login = () => {
         <div className="right_container bg-white shadow-xl border-gray-900 rounded-2xl">
           <div className="form_Container">
             <h2 className="text-center text-3xl font-extrabold pb-12">Login</h2>
-            <form>
+            <form onClick={handleSubmit}>
               {/* USER ID START HERE */}
               <div className="mb-8">
                 <label htmlFor="user_id" className="sr-only">
@@ -87,13 +110,13 @@ const Login = () => {
         </div>
       </div>
 
-     <div className="text-center copyright_container py-2">
-      <p className="border-black inline-block">
-        © {CurrentYear} Designed and Developed By <a href="/">iTechBuddy</a>
-      </p>
-    </div>
+      <div className="text-center copyright_container py-2">
+        <p className="border-black inline-block">
+          © {CurrentYear} Designed and Developed By <a href="/">iTechBuddy</a>
+        </p>
+      </div>
 
-      
+
     </div>
   );
 };

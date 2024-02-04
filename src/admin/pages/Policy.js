@@ -5,6 +5,11 @@ import { faCircleUser, faCreditCardAlt, faFileArrowUp, faLocationDot, faMessage 
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { formToJSON } from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import tab1 from "../../assets/images/price.png";
+import tab2 from "../../assets/images/insurance (1).png";
+import tab3 from "../../assets/images/user.png";
+import tab4 from "../../assets/images/upload-file.png";
+import tab5 from "../../assets/images/speech-bubble.png";
 
 const Policy = () => {
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -48,18 +53,18 @@ const Policy = () => {
     );
 
     return (
-        <Layout title="Policy Page" breadcrumbData={generateBreadcrumbData(RightContent)}>
-            <Card bgColor="gray-100">
+        <Layout title="Add Policy" breadcrumbData={generateBreadcrumbData(RightContent)} className="policy">
+            <Card bgColor="gray-100" >
                 <Tabs selectedIndex={selectedTabIndex} onSelect={(index) => setSelectedTabIndex(index)}>
-                    <TabList style={{ display: "flex", margin: 0, padding: 0 }}>
-                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><FontAwesomeIcon icon={faCircleUser} /></Tab>
-                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><FontAwesomeIcon icon={faLocationDot} /></Tab>
-                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><FontAwesomeIcon icon={faFileArrowUp} /></Tab>
-                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><FontAwesomeIcon icon={faCreditCardAlt} /></Tab>
-                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><FontAwesomeIcon icon={faMessage} /></Tab>
+                    <TabList style={{ display: "flex", margin: 0, padding: 0 }} className="policytab">
+                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={tab1} alt=""/></span></Tab>
+                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={tab2} alt=""/></span></Tab>
+                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={tab3} alt=""/></span></Tab>
+                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={tab4} alt=""/></span></Tab>
+                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={tab5} alt=""/></span></Tab>
                     </TabList>
 
-                    <TabPanel>
+                    <TabPanel className="policytabone">
                         <div className="container my-4">
                             <div className="flex justify-between">
                                 {/* DROPDOWN CONTAINER START HERE */}
@@ -75,7 +80,7 @@ const Policy = () => {
                                                 onChange={handleInputChange}
                                                 className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                                             >
-                                                <option value="">Lines of Business</option>
+                                                <option value="">Select Lines of Business</option>
 
                                             </select>
                                         </div>
@@ -90,7 +95,7 @@ const Policy = () => {
                                                 value={formData.businessTypes}
                                                 onChange={handleInputChange}
                                             >
-                                                <option value="">Select Vehicle Types</option>
+                                                <option value="">Select Vehicle Type</option>
                                             </select>
                                         </div>
 
@@ -151,11 +156,11 @@ const Policy = () => {
                             </div>
 
                             {/* TABLE CONTAINER START HERE  */}
-                            <table className="min-w-full table-auto border border-gray-300">
+                            <table className="min-w-full table-auto border comission">
                                 <thead>
-                                    <tr className="bg-gray-300">
+                                    <tr className="bg-gray-300 shade">
                                         <div className="flex items-center">
-                                            <th className="px-4 py-2 w-1/6 text-x">Age/Capacity</th>
+                                            <th className="px-4 py-2 w-1/6 text-x ">Age/Capacity</th>
                                             <th className="px-4 py-2 w-1/6 text-x">New</th>
                                             <th className="px-4 py-2 w-1/6 text-x">.1-5</th>
                                             <th className="px-4 py-2 w-1/6 text-x">.5-7</th>
@@ -167,59 +172,49 @@ const Policy = () => {
                                 <tbody>
 
                                     <tr >
-                                        <td className="flex max-w-screen-md mb-4">
-                                            <input className="bg-gray-300 text-white p-2" value="0-75"
+                                        <th className="flex shade mb-4">
+                                            <input className="text-center shade" value="0-75"
                                             />
-                                            <input className="bg-white p-2 mr-2" />
-
-                                            <input className="p-2 mx-2" />
-                                            <input className="p-2 mx-2" />
-
-                                            <input className="p-2 mx-2" />
-                                            <input className="p-2 mx-2" />
-                                        </td>
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                        </th>
+                                    </tr>
+                                    <tr >
+                                        <th className="flex shade mb-4">
+                                            <input className="text-center shade" value="75-150"
+                                            />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                        </th>
                                     </tr>
 
                                     <tr >
-                                        <td className="flex max-w-screen-md mb-4">
-                                            <input className="bg-gray-300 text-white p-2" value="0-75"
+                                        <th className="flex shade mb-4">
+                                            <input className=" text-center shade " value="150-350"
                                             />
-                                            <input className="bg-white p-2 mr-2" />
-
-                                            <input className="p-2 mx-2" />
-                                            <input className="p-2 mx-2" />
-
-                                            <input className="p-2 mx-2" />
-                                            <input className="p-2 mx-2" />
-                                        </td>
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                        </th>
                                     </tr>
-
-                                    <tr >
-                                        <td className="flex max-w-screen-md mb-4">
-                                            <input className="bg-gray-300 text-white p-2" value="0-75"
+   <tr >
+                                        <th className="flex shade mb-4">
+                                            <input className=" text-center shade " value=">350"
                                             />
-                                            <input className="bg-white p-2 mr-2" />
-
-                                            <input className="p-2 mx-2" />
-                                            <input className="p-2 mx-2" />
-
-                                            <input className="p-2 mx-2" />
-                                            <input className="p-2 mx-2" />
-                                        </td>
-                                    </tr>
-
-                                    <tr >
-                                        <td className="flex max-w-screen-md mb-4">
-                                            <input className="bg-gray-300 text-white p-2" value="0-75"
-                                            />
-                                            <input className="bg-white p-2 mr-2" />
-
-                                            <input className="p-2 mx-2" />
-                                            <input className="p-2 mx-2" />
-
-                                            <input className="p-2 mx-2" />
-                                            <input className="p-2 mx-2" />
-                                        </td>
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                            <input className="bordersm mx-2" />
+                                        </th>
                                     </tr>
 
                                 </tbody>
@@ -262,10 +257,169 @@ const Policy = () => {
 
                     </TabPanel>
 
-                    {/* Other TabPanels go here */}
+                    <TabPanel className="policytabtwo">
+                        <div className="container my-4">
+                            <div className="flex justify-between">
+                                {/* DROPDOWN CONTAINER START HERE */}
+                                <div className="input_container w-full">
+                                    <div className="w-full grid grid-cols-1 md:grid-cols-4 gap-8">
+                                        {/* Form Element 1 */}
+                                        <div className="mb-2">
+
+                                            <select
+                                                name="insurer"
+                                                id="insurerList"
+                                                value={formData.insurer}
+                                                onChange={handleInputChange}
+                                                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                                            >
+                                                <option value="">Select Insurer</option>
+
+                                            </select>
+                                        </div>
+
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2" placeholder="Enter Policy Number" />
+                                        </div>
+
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2" placeholder="Risk Start Date" />
+                                        </div>
+
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2" placeholder="Risk Start Date" />
+                                        </div>
+
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2" placeholder="Enter TP Amount" />
+                                        </div>
+
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2" placeholder="Enter NET Amount" />
+                                        </div>
+
+                                        {/* Form Element 3 */}
+                                        <div className="mb-2">
+
+                                            <select
+                                                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                                                name="vehicleTypes"
+                                                value={formData.vehicleTypes}
+                                                onChange={handleInputChange}
+                                            >
+                                                <option value="">IMD Code</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Form Element 4 */}
+                                        <div className="mb-2">
+
+                                            <select
+                                                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                                                name="vehicleSubTypes"
+                                                value={formData.vehicleSubTypes}
+                                                onChange={handleInputChange}
+                                            >
+                                                <option value="">Select Payment Type</option>
+                                            </select>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                {/* DROPDOWN CONTAINER END HERE */}
+                            </div>
+
+                        </div>
+
+                    </TabPanel>
+
+
+
+                    <TabPanel className="policytabtwo">
+                        <div className="container my-4">
+                            <div className="flex justify-between">
+                                {/* DROPDOWN CONTAINER START HERE */}
+                                <div className="input_container w-full">
+                                    <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+                                        {/* Form Element 1 */}
+
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2" placeholder="Customer Name" />
+                                        </div>
+
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2" placeholder="Customer Mobile" />
+                                        </div>
+
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2" placeholder="Customer Email" />
+                                        </div>
+
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2" placeholder="Customer Address" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </TabPanel>
+
+                    <TabPanel className="policytabtwo policytabfour">
+                        <div className="container my-4">
+                            <div className="flex justify-between">
+                                <div className="input_container w-full">
+                                    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        {/* Form Element 1 */}
+
+                                        <div className="flex-1 mr-2">
+                                            {/*<label for="currentpolicy">Current Policy</label>*/}
+                                            <input type="file" id="currentpolicy" className="w-full p-2 custom-file-input" title="s e "/>
+                                        </div>
+
+
+                                        <div className="flex-1 mr-2">
+                                            <input type="file" id="inscopy" className="w-full p-2 custom-file-input" title="s e "/>
+                                        </div>
+
+                                        <div className="flex-1 mr-2">
+                                            <input type="file" id="rccopy" className="w-full p-2 custom-file-input" title="s e "/>
+                                        </div>
+
+                                        <div className="flex-1 mr-2">
+                                            <input type="file" id="vehiclephoto" className="w-full p-2 custom-file-input" title="s e "/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </TabPanel>
+
+
+                    <TabPanel className="policytabtwo policytabfour">
+                        <div className="container my-4">
+                            <div className="flex justify-between">
+                                <div className="input_container w-full">
+                                    <div className="w-full grid grid-cols-1 md:grid-cols-1 gap-8">
+                                        <div className="flex-1 mr-2">
+                                            <label for="">Any Comment or Remark ?</label>
+                                            <textarea className="w-full p-2 custom-file-input w-full"  placeholder=""/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </TabPanel>
 
                     <div className="flex justify-center">
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full">
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 save">
                             Save & Next
                         </button>
                     </div>

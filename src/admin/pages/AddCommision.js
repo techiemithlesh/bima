@@ -2,22 +2,23 @@ import React, { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import { useParams } from "react-router-dom";
-import { formToJSON } from "axios";
+import axios, { formToJSON } from "axios";
 import Loading from "react-loading";
+import Cookies from "js-cookie";
 
 
 const AddComission = () => {
   const { id } = useParams();
-  
+
   const [partnerData, setPartnerData] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
   let [formData, setFormData] = useState({
     insurer: '',
-    businessTypes: '',
-    vehicleTypes: '',
-    vehicleSubTypes: '',
-    fuelTypes: '',
-    seats: '',
+    commission_type: '',
+    vehicle_type: '',
+    vehicle_subtype: '',
+    fuel_type: '',
+    seat: '',
     agecapacity: []
   })
 
@@ -32,12 +33,30 @@ const AddComission = () => {
     }));
   };
 
+ 
 
   const handleSave = () => {
+    
     const Data = new FormData(document.getElementById('form'));
     formData = formToJSON(Data);
 
     console.log('Form Data:', formData);
+
+    const csrfToken = Cookies.get('XSRF-TOKEN');
+    console.log('CSRF Token:', csrfToken);
+    axios.post('https://premium.treatweb.com/public/api/admin/partner/commission/save', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'X-CSRF-TOKEN': csrfToken,
+      },
+    }).then((response) => {
+      console.log("API Response", response);
+      
+    })
+    .catch((error) => {
+      console.error("Error submitting form:", error);
+      
+    });
   };
 
   useEffect(() => {
@@ -55,7 +74,7 @@ const AddComission = () => {
       });
   }, [id]);
 
-  function generateBreadcrumbData(data, rightContent = null) {
+  function generateBreadcrumbData(data, RightContent = null) {
     const { partner } = data || {};
 
 
@@ -65,7 +84,7 @@ const AddComission = () => {
         { label: "Commision", link: "/admin/dashboard" },
       ],
       middleContent: partner && partner.name ? ` ${partner.name}` : "User Name",
-      rightItems: rightContent,
+      rightItems: RightContent,
     };
   }
 
@@ -80,10 +99,10 @@ const AddComission = () => {
       <Card bgColor="gray">
         {/* FORM INPUT CONTAINER START HERE */}
         {loading ? <div className="loading-overlay">
-            <div className="loading">
-              <Loading type="ball-triangle" color="#4fa94d" height={100} width={100} />
-            </div>
-          </div> : <form id="form">
+          <div className="loading">
+            <Loading type="ball-triangle" color="#4fa94d" height={100} width={100} />
+          </div>
+        </div> : <form id="form">
           <div className="input_container">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {/* Form Element 1 */}
@@ -112,9 +131,9 @@ const AddComission = () => {
                 <select
                   className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                   disabled={!formData.insurer}
-                  name="businessTypes"
+                  name="commission_type"
                   id="business_types"
-                  value={formData.businessTypes}
+                  value={formData.commission_type}
                   onChange={handleInputChange}
                 >
                   {partnerData &&
@@ -128,14 +147,14 @@ const AddComission = () => {
               </div>
 
               {/* Form Element 3 (Vehicle Type) */}
-              {formData.businessTypes === 'motor' && (
+              {formData.commission_type === 'motor' && (
                 <div className="mb-2">
                   <label className="block text-sm font-medium text-gray-600">Vehicle Type</label>
                   <select
                     className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                    name="vehicleTypes"
-                    id="vehicle_types"
-                    value={formData.vehicleTypes}
+                    name="vehicle_type"
+                    id="vehicle_type"
+                    value={formData.vehicle_type}
                     onChange={handleInputChange}
                   >
                     {partnerData &&
@@ -149,14 +168,14 @@ const AddComission = () => {
               )}
 
               {/* Form Element 4 (Vehicle Sub Type) */}
-              {formData.vehicleTypes === 'two-wheeler' && (
+              {formData.vehicle_type === 'two-wheeler' && (
                 <div className="mb-2">
                   <label className="block text-sm font-medium text-gray-600">Vehicle Sub Type</label>
                   <select
                     className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                    name="vehicleSubTypes"
+                    name="vehicle_subtype"
                     id="vehicle_sub_types"
-                    value={formData.vehicleSubTypes}
+                    value={formData.vehicle_subtype}
                     onChange={handleInputChange}
                   >
                     {partnerData &&
@@ -172,14 +191,14 @@ const AddComission = () => {
 
 
               {/* Form Element 5 */}
-              {formData.vehicleTypes === 'two-wheeler' && (
+              {formData.vehicle_type === 'two-wheeler' && (
                 <div className="mb-2">
                   <label className="block text-sm font-medium text-gray-600">Fuel Type</label>
                   <select
                     className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                    name="fuelTypes"
-                    id="fuel_types"
-                    value={formData.fuelTypes}
+                    name="fuel_type"
+                    id="fuel_type"
+                    value={formData.fuel_type}
                     onChange={handleInputChange}
                   >
                     {partnerData &&
@@ -194,14 +213,14 @@ const AddComission = () => {
 
 
               {/* Form Element 6 */}
-              {formData.vehicleTypes === 'two-wheeler' && (
+              {formData.vehicle_type === 'two-wheeler' && (
                 <div className="mb-2">
                   <label className="block text-sm font-medium text-gray-600">Seating Capacity</label>
                   <select
                     className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                    name="seats"
-                    id="seats"
-                    value={formData.seats}
+                    name="seat"
+                    id="seat"
+                    value={formData.seat}
                     onChange={handleInputChange}
                   >
                     {partnerData &&
@@ -221,7 +240,7 @@ const AddComission = () => {
           {/* FORM INPUT CONTAINER END HERE */}
 
           {/* TABLE CONTAINER START HERE */}
-          {formData.vehicleTypes === 'two-wheeler' && (
+          {formData.vehicle_type === 'two-wheeler' && (
             <div className="table_container">
               <table className="min-w-full table-auto border-2 border-gray-300 comission">
 
@@ -229,10 +248,11 @@ const AddComission = () => {
                   {
                     partnerData &&
                     partnerData.commission_options.engines
-                      .filter((engine) => engine.text.toLowerCase().includes('cc'))
+                      .filter((engine) => engine.text.toLowerCase().includes('cc') | engine.text.toLowerCase().includes('age'))
                       .map((engine, index) => (
-                        <tr className="shade" key={engine.value}>
-                          {index === 0 ? <th className="border-b shade p-2">{engine.text}</th> :
+
+                        <tr className="shade" data-index={engine} data-index_={index == '0'}>
+                          {index === '0' ? <th className="border-b shade p-2">{partnerData.commission_options.engines[0].text}</th> :
                             <th className=""> <input className="text-x text-center shade" value={engine.text} />
                             </th>
                           }
@@ -264,23 +284,25 @@ const AddComission = () => {
                 <div className="flex">
                   {/* First Input Box */}
                   <div className="flex-1 mr-2">
-                    <input className="w-full p-2" placeholder="OD Commission %" />
+                    <input className="w-full p-2" name="od_percent" placeholder="OD Commission %" />
                   </div>
 
                   {/* Second Input Box */}
                   <div className="flex-1 mr-2">
-                    <input className="w-full p-2" placeholder="TP Comission %" />
+                    <input className="w-full p-2" name="tp_percent" placeholder="TP Comission %" />
                   </div>
 
                   {/* Third Input Box with Checkbox */}
                   <div className="flex-1 flex items-center mr-2">
                     <input
+                      name="net_percent"
                       className="w-full p-2 border"
                       placeholder="Net Commission %"
                       disabled={!isChecked}
                     />
                     <input
                       type="checkbox"
+                      name="net_percent_checkbox"
                       className="ml-2"
                       checked={isChecked}
                       onChange={() => setIsChecked(!isChecked)}
@@ -289,7 +311,7 @@ const AddComission = () => {
 
                   {/* Fourth Input Box */}
                   <div className="flex-1">
-                    <input className="w-full p-2" placeholder="Flat Amount" />
+                    <input name="flat_amount" className="w-full p-2" placeholder="Flat Amount" />
                   </div>
                 </div>
               </div>

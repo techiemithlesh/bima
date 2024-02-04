@@ -31,4 +31,82 @@
     align-items: center;
     justify-content: center;
   }
-  
+  .save{
+      background: #00acef;
+      border-radius: 9px;
+      padding: 6px 30px;
+      font-size: 15px;
+  }
+  input::placeholder{
+      color: #000;
+  }
+
+  .policytabtwo input{
+      font-size: 23.5px;
+      font-weight: 350;
+  }
+.policytabtwo label
+{
+    font-size: 23.5px;
+    font-weight: 350;
+}
+    .policytabtwo select{
+      font-size: 23.5px;
+      font-weight: 350;
+      border: 0;
+      /*border: 1px solid #8a8a8a;*/
+  }
+.policytabfour .custom-file-input::before {
+    content: 'Current Policy';
+    font-weight: 400;
+    width: 145px;
+    display: inline-block;
+}
+.policytabfour .custom-file-input:active::before {
+    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+.policytabfour .custom-file-input:hover::before {
+    border-color: black;
+}
+.policytabfour .custom-file-input::-webkit-file-upload-button {
+    visibility: hidden;
+}
+.policytabfour .custom-file-input{
+    content: 'Browse files';
+    display: inline-block;
+    background: linear-gradient(top, #f9f9f9, #e3e3e3);
+    border-radius: 3px;
+    padding: 7px 10px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    text-shadow: 1px 1px #fff;
+    font-weight: 500;
+}
+.policytabfour #inscopy::before {
+    content: 'Previous Insurance Copy';
+}
+.policytabfour #rccopy::before {
+    content: 'RC Copy';
+}
+.policytabfour #vehiclephoto::before {
+    content: 'Vehicle Photo';
+}
+.tabicon {
+    display: inline-block;
+    border: 3px solid #e0dfdc;
+    border-radius: 50%;
+    padding: 10px;
+}
+.tabicon img{
+    width: 40px
+}
+.policytab
+{
+    margin-bottom: 45px !important;
+}
+.policytab li
+{
+    border: none;
+}
