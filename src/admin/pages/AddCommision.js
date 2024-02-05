@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import axios, { formToJSON } from "axios";
 import Loading from "react-loading";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 
 const AddComission = () => {
@@ -33,10 +34,10 @@ const AddComission = () => {
     }));
   };
 
- 
+
 
   const handleSave = () => {
-    
+
     const Data = new FormData(document.getElementById('form'));
     formData = formToJSON(Data);
 
@@ -50,13 +51,25 @@ const AddComission = () => {
         'X-CSRF-TOKEN': csrfToken,
       },
     }).then((response) => {
-      console.log("API Response", response);
-      
+      console.log("Form Submitted", response.data.message);
+      const { success, message } = response.data;
+      console.log("destructure", success, message);
+
+      if (success) {
+        alert(message);
+        toast("Hello", {
+          position: 'bottom-right'
+        })
+        toast.success(message);
+      } else {
+        toast.error("Oops! Something Went Wrong");
+      }
+
     })
-    .catch((error) => {
-      console.error("Error submitting form:", error);
-      
-    });
+      .catch((error) => {
+        console.error("Error submitting form:", error);
+
+      });
   };
 
   useEffect(() => {
@@ -284,12 +297,12 @@ const AddComission = () => {
                 <div className="flex">
                   {/* First Input Box */}
                   <div className="flex-1 mr-2">
-                    <input className="w-full p-2" name="od_percent" placeholder="OD Commission %" />
+                    <input className="w-full p-2" name="od_percent" value={partnerData.commissions[0].od_percent} placeholder="OD Commission %" />
                   </div>
 
                   {/* Second Input Box */}
                   <div className="flex-1 mr-2">
-                    <input className="w-full p-2" name="tp_percent" placeholder="TP Comission %" />
+                    <input className="w-full p-2" name="tp_percent" value={partnerData.commissions[0].tp_percent} placeholder="TP Comission %" />
                   </div>
 
                   {/* Third Input Box with Checkbox */}
@@ -297,6 +310,7 @@ const AddComission = () => {
                     <input
                       name="net_percent"
                       className="w-full p-2 border"
+                      value={partnerData.commissions[0].net_percent}
                       placeholder="Net Commission %"
                       disabled={!isChecked}
                     />
@@ -311,7 +325,11 @@ const AddComission = () => {
 
                   {/* Fourth Input Box */}
                   <div className="flex-1">
-                    <input name="flat_amount" className="w-full p-2" placeholder="Flat Amount" />
+                    <input name="flat_amount" value={partnerData.commissions[0].flat_amount} className="w-full p-2" placeholder="Flat Amount" />
+                  </div>
+
+                  <div className="flex-1">
+                    <input name="partner_id" type="hidden" className="w-full p-2" value={partnerData.partner.id} />
                   </div>
                 </div>
               </div>
