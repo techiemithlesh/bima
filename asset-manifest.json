@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/techiemithlesh/bima/static/css/main.6960a093.css",
+    "main.js": "/techiemithlesh/bima/static/js/main.db44f82d.js",
+    "static/js/787.07bd374a.chunk.js": "/techiemithlesh/bima/static/js/787.07bd374a.chunk.js",
+    "static/media/settings 1.svg": "/techiemithlesh/bima/static/media/settings 1.f76744fb80bdf2d29399d65259e19840.svg",
+    "static/media/logo.jpeg": "/techiemithlesh/bima/static/media/logo.7d8fdd06abc6b3f89824.jpeg",
+    "static/media/price.png": "/techiemithlesh/bima/static/media/price.4e236cba723e327c5802.png",
+    "static/media/speech-bubble.png": "/techiemithlesh/bima/static/media/speech-bubble.d7da8ae60391118cb40f.png",
+    "static/media/user.png": "/techiemithlesh/bima/static/media/user.32f30264e97f265effd5.png",
+    "static/media/insurance (1).png": "/techiemithlesh/bima/static/media/insurance (1).24846dfbd2d639223446.png",
+    "static/media/upload-file.png": "/techiemithlesh/bima/static/media/upload-file.5f213bb46543ed8456a2.png",
+    "static/media/fraction.cjs": "/techiemithlesh/bima/static/media/fraction.7992481f3d8339b77604.cjs",
+    "index.html": "/techiemithlesh/bima/index.html",
+    "static/media/index.cjs": "/techiemithlesh/bima/static/media/index.cd351d7c31d0d3fccf96.cjs",
+    "main.6960a093.css.map": "/techiemithlesh/bima/static/css/main.6960a093.css.map",
+    "main.db44f82d.js.map": "/techiemithlesh/bima/static/js/main.db44f82d.js.map",
+    "787.07bd374a.chunk.js.map": "/techiemithlesh/bima/static/js/787.07bd374a.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6960a093.css",
+    "static/js/main.db44f82d.js"
+  ]
+}
