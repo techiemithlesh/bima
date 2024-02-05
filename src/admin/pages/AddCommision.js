@@ -20,6 +20,10 @@ const AddComission = () => {
     vehicle_subtype: '',
     fuel_type: '',
     seat: '',
+    od_percent: '',
+    flat_amount: '',
+    net_percent: '',
+    tp_percent: '',
     agecapacity: []
   })
 
@@ -53,13 +57,23 @@ const AddComission = () => {
     }).then((response) => {
       console.log("Form Submitted", response.data.message);
       const { success, message } = response.data;
-      console.log("destructure", success, message);
+
 
       if (success) {
         alert(message);
-        toast("Hello", {
-          position: 'bottom-right'
-        })
+        setFormData({
+          insurer: '',
+          commission_type: '',
+          vehicle_type: '',
+          vehicle_subtype: '',
+          fuel_type: '',
+          seat: '',
+          od_percent: '',
+          flat_amount: '',
+          net_percent: '',
+          tp_percent: '',
+          agecapacity: []
+        });
         toast.success(message);
       } else {
         toast.error("Oops! Something Went Wrong");
@@ -297,12 +311,19 @@ const AddComission = () => {
                 <div className="flex">
                   {/* First Input Box */}
                   <div className="flex-1 mr-2">
-                    <input className="w-full p-2" name="od_percent" value={partnerData.commissions[0].od_percent} placeholder="OD Commission %" />
+                    <input className="w-full p-2" 
+                    name="od_percent" id="od_percent" 
+                    value={formData.od_precent} 
+                    onChange={handleInputChange} placeholder="OD Commission %" />
                   </div>
 
                   {/* Second Input Box */}
                   <div className="flex-1 mr-2">
-                    <input className="w-full p-2" name="tp_percent" value={partnerData.commissions[0].tp_percent} placeholder="TP Comission %" />
+                    <input className="w-full p-2"
+                      name="tp_percent"
+                      value={formData.tp_percent}
+                      onChange={handleInputChange}
+                      placeholder="TP Comission %" />
                   </div>
 
                   {/* Third Input Box with Checkbox */}
@@ -310,7 +331,9 @@ const AddComission = () => {
                     <input
                       name="net_percent"
                       className="w-full p-2 border"
-                      value={partnerData.commissions[0].net_percent}
+                      id="net_percent"
+                      value={formData.net_percent}
+                      onChange={handleInputChange}
                       placeholder="Net Commission %"
                       disabled={!isChecked}
                     />
@@ -325,11 +348,15 @@ const AddComission = () => {
 
                   {/* Fourth Input Box */}
                   <div className="flex-1">
-                    <input name="flat_amount" value={partnerData.commissions[0].flat_amount} className="w-full p-2" placeholder="Flat Amount" />
+                    <input name="flat_amount"
+                      id="flat_amount"
+                      value={formData.flat_amount}
+                      onChange={handleInputChange}
+                      className="w-full p-2" placeholder="Flat Amount" />
                   </div>
 
                   <div className="flex-1">
-                    <input name="partner_id" type="hidden" className="w-full p-2" value={partnerData.partner.id} />
+                    <input name="partner_id" on type="hidden" className="w-full p-2" value={partnerData.partner.id} />
                   </div>
                 </div>
               </div>
