@@ -1,13 +1,6 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHome,
-  faHandshake,
-  faFileAlt,
-  faMoneyBill,
-  faInfoCircle,
-} from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { Icons } from "../../shared/Assets";
 
 const Sidebar = () => {
   return (
@@ -15,23 +8,23 @@ const Sidebar = () => {
       
       <ul className="sidebar_ul">
         <li className="flex items-center mb-4 active border-b-2 border-gray-300">
-          <FontAwesomeIcon icon={faHome} className="mr-2 text-blue-300 text-2xl"/>
+          <img src={Icons.DashboardIcon} alt="Dashboard" className="object-fill"/>
           <Link to='/admin/dashboard'>Dashboard</Link>
         </li>
         <li className="flex items-center mb-4 border-b-2 border-gray-300">
-          <FontAwesomeIcon icon={faHandshake} className="mr-2 text-blue-300 text-2xl"/>
+        <img src={Icons.PartnerIcon} alt="Partner" className="object-fill"/>
           <Link to='/admin/partners' color="">Partners</Link>
         </li>
         <li className="flex items-center mb-4 border-b-2 border-gray-300">
-          <FontAwesomeIcon icon={faFileAlt} className="mr-2 text-blue-300 text-2xl"/>
+        <img src={Icons.PolicyIcon} alt="Policy" className="object-fill"/>
           <Link to='/policy/add'>Policies</Link>
         </li>
         <li className="flex items-center mb-4 border-b-2 border-gray-300">
-          <FontAwesomeIcon icon={faMoneyBill} className="mr-2 text-blue-300 text-2xl"/>
+        <img src={Icons.PayoutIcon} alt="Payout"/>
           <Link to='#'>Payout</Link>
         </li>
         <li className="flex items-center mb-4 border-b-2 border-gray-300">
-          <FontAwesomeIcon icon={faInfoCircle} className="mr-2 text-blue-300 text-2xl"/>
+        <img src={Icons.About} alt="About" className="object-fill"/>
           <Link to="#">About</Link>
         </li>
       </ul>
