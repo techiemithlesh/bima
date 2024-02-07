@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import axios, { formToJSON } from "axios";
 import Loading from "react-loading";
 import Cookies from "js-cookie";
@@ -10,6 +10,8 @@ import toast from "react-hot-toast";
 
 const AddComission = () => {
   const { id } = useParams();
+
+  const location = useLocation();
 
   const [partnerData, setPartnerData] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
@@ -101,19 +103,22 @@ const AddComission = () => {
       });
   }, [id]);
 
+
   function generateBreadcrumbData(data, RightContent = null) {
+    
     const { partner } = data || {};
 
+    const isActive = location.pathname.includes('/admin/partners') && location.pathname.includes('/addcommision');
 
     return {
-      leftItems: [
-        { label: "Partners", link: "/admin/partners" },
-        { label: "Commision", link: "/admin/dashboard" },
-      ],
-      middleContent: partner && partner.name ? ` ${partner.name}` : "User Name",
-      rightItems: RightContent,
+        leftItems: [
+            { label: "Partners", link: "/admin/partners", className: isActive ? "active" : "" },
+            { label: "Commision", link: "/admin/dashboard" },
+        ],
+        middleContent: partner && partner.name ? ` ${partner.name}` : "User Name",
+        rightItems: RightContent,
     };
-  }
+}
 
   const RightContent = (
     <button onClick={handleSave} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full">

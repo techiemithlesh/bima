@@ -1,15 +1,9 @@
 import React, { useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
-import { faCircleUser, faCreditCardAlt, faFileArrowUp, faLocationDot, faMessage } from "@fortawesome/free-solid-svg-icons";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { formToJSON } from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import tab1 from "../../assets/images/price.png";
-import tab2 from "../../assets/images/insurance (1).png";
-import tab3 from "../../assets/images/user.png";
-import tab4 from "../../assets/images/upload-file.png";
-import tab5 from "../../assets/images/speech-bubble.png";
+import { TabsIcon } from "../../shared/Assets";
 
 const Policy = () => {
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -35,16 +29,37 @@ const Policy = () => {
         }));
     };
 
-    function generateBreadcrumbData(rightContent = null) {
+    function generateBreadcrumbData(selectedTabIndex, rightContent = null){
+        let middleContent;
+
+        switch(selectedTabIndex){
+            case 0:
+                middleContent = "Business Details";
+                break;
+            case 1:
+                middleContent = "Policy Details";
+                break;
+            case 2:
+                middleContent = "Customer Details";
+                break;
+            case 3:
+                middleContent = "Documents";
+                break;
+            case 4:
+                middleContent = "Comments";
+                break;
+        }
+
         return {
             leftItems: [
                 { label: "", link: "/" },
                 { label: "Partners", link: "/admin/partners" },
             ],
-            middleContent: "Business Details",
-            rightItems: rightContent
-        };
+            middleContent: middleContent,
+            rightItems: RightContent
+        }
     }
+
 
     const RightContent = (
         <button onClick={handleSave} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full">
@@ -53,15 +68,15 @@ const Policy = () => {
     );
 
     return (
-        <Layout title="Add Policy" breadcrumbData={generateBreadcrumbData(RightContent)} className="policy">
+        <Layout title="Add Policy" breadcrumbData={generateBreadcrumbData(selectedTabIndex)} className="policy">
             <Card bgColor="gray-100" >
                 <Tabs selectedIndex={selectedTabIndex} onSelect={(index) => setSelectedTabIndex(index)}>
                     <TabList style={{ display: "flex", margin: 0, padding: 0 }} className="policytab">
-                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={tab1} alt=""/></span></Tab>
-                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={tab2} alt=""/></span></Tab>
-                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={tab3} alt=""/></span></Tab>
-                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={tab4} alt=""/></span></Tab>
-                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={tab5} alt=""/></span></Tab>
+                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={TabsIcon.Tab1} alt=""/></span></Tab>
+                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={TabsIcon.Tab2} alt=""/></span></Tab>
+                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={TabsIcon.Tab3} alt=""/></span></Tab>
+                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={TabsIcon.Tab4} alt=""/></span></Tab>
+                        <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={TabsIcon.Tab5} alt=""/></span></Tab>
                     </TabList>
 
                     <TabPanel className="policytabone">
