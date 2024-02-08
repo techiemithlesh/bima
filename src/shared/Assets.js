@@ -10,6 +10,11 @@ import tab2 from "../assets/images/insurance (1).png";
 import tab3 from "../assets/images/user.png";
 import tab4 from "../assets/images/upload-file.png";
 import tab5 from "../assets/images/speech-bubble.png";
+import partnertab1 from "../assets/images/user.png";
+import partnertab2 from "../assets/images/email-address.png";
+import partnertab3 from "../assets/images/upload-file.png";
+import partnertab4 from "../assets/images/credit-card-payment.png";
+import partnertab5 from "../assets/images/speech-bubble.png";
 import { tab } from '@testing-library/user-event/dist/tab';
 
 export const Icons = {
@@ -32,5 +37,10 @@ export const TabsIcon = {
     Tab2: tab2,
     Tab3: tab3,
     Tab4: tab4,
-    Tab5: tab5
+    Tab5: tab5,
+    Partner1: partnertab1,
+    Partner2: partnertab2,
+    Partner3: partnertab3,
+    Partner4: partnertab4,
+    Partner5: partnertab5,
 }

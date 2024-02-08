@@ -22,8 +22,15 @@
 
 .sidebar_container .sidebar_ul li a{
     color: black;
+    font-size: 24px;
+    font-weight: 700;
 }
  .bread_crumb_btn{
     background: #00acef;
     font-weight: 700;
 }
+ .breadcumb{
+     color: black;
+     font-size: 24px;
+     font-weight: 700;
+ }
