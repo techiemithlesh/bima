@@ -9,6 +9,7 @@ import AddComission from './admin/pages/AddCommision';
 import PartnerDetails from './admin/pages/PartnerDetails';
 import Policy from './admin/pages/Policy';
 import PrivateRoute from './Components/PrivateRoute';
+import PolicyList from './admin/pages/PolicyList';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route path='/admin/partners' element={<PrivateRoute><Partners/></PrivateRoute>} />
       <Route path='/partner/addcommision/:id' element={<PrivateRoute><AddComission/></PrivateRoute>} />
       <Route path='/partner/details/add/:id' element={<PrivateRoute><PartnerDetails/></PrivateRoute>} />
+      <Route path='/policy/list' element={<PrivateRoute><PolicyList/></PrivateRoute>}/>
       <Route path='/policy/add' element={<Policy/>}/>
     </Routes>
    </Router>

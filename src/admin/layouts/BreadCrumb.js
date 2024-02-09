@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const BreadCrumb = ({ leftItems, middleContent, rightItems }) => {
   return (
-    <div className="flex items-center bg-gray-200 p-4">
+    <div className="flex items-center bg-gray-200 p-4 breadcumb">
       <div>
         {leftItems &&
           leftItems.map((item, index) => (
@@ -12,7 +12,7 @@ const BreadCrumb = ({ leftItems, middleContent, rightItems }) => {
               {item.link ? (
                 <Link
                   to={item.link}
-                  className="text-blue-500 text-xl cursor-pointer"
+                  className=" text-xl cursor-pointer"
                 >
                   {item.label}
                 </Link>

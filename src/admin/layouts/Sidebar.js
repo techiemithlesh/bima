@@ -23,9 +23,9 @@ const Sidebar = () => {
           <img src={Icons.PartnerIcon} alt="Partner" className="object-fill"/>
           <Link to='/admin/partners'>Partners</Link>
         </li>
-        <li className={`flex items-center mb-4 ${isActive("/policy/add")}`}>
+        <li className={`flex items-center mb-4 ${isActive("/policy/list")}`}>
           <img src={Icons.PolicyIcon} alt="Policy" className="object-fill"/>
-          <Link to='/policy/add'>Policies</Link>
+          <Link to='/policy/list'>Policies</Link>
         </li>
         <li className={`flex items-center mb-4 ${isActive("/payout")}`}>
           <img src={Icons.PayoutIcon} alt="Payout"/>
