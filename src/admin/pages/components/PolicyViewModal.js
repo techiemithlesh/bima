@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
-const Modal = ({ onClose, children }) => {
+const PolicyViewModal = ({ onClose, children }) => {
     return (
         <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white rounded-lg w-1/2 p-8">
@@ -21,9 +21,9 @@ const Modal = ({ onClose, children }) => {
     );
 };
 
-Modal.propTypes = {
+PolicyViewModal.propTypes = {
     onClose: PropTypes.func.isRequired,
     children: PropTypes.node.isRequired,
 };
 
-export default Modal;
+export default PolicyViewModal;
