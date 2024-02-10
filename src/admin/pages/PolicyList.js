@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import axios from "axios";
-import { faEye, faUser, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faPlus, faUser, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import Modal from "./components/Modal";
 
 const PolicyList = () => {
@@ -52,14 +52,23 @@ const PolicyList = () => {
 
     function closeModal() {
         setIsModalVisible(false);
-        setSelectedPolicy(null); 
+        setSelectedPolicy(null);
     }
 
 
     return (
         <Layout title="Policy List" breadcrumbData={generateBreadcrumbData(searchRightContent)}>
             <Card>
+            <div className="text-right flex-justify-end mb-4">
+                   <Link
+                        to={`/policy/add`}
+                        className="bg-indigo-500 text-white px-2 py-1 rounded"
+                    >
+                        <FontAwesomeIcon icon={faPlus} />
+                    </Link>
+                   </div>
                 <table className="min-w-full table-auto border border-gray-300">
+                   
                     <thead>
                         <tr>
                             <th className="px-4 py-2">SI</th>
@@ -95,13 +104,8 @@ const PolicyList = () => {
                                     >
                                         <FontAwesomeIcon icon={faEye} />
                                     </button>
-                                   
-                                    <Link
-                                        to={`/policy/add`}
-                                        className="bg-indigo-500 text-white px-2 py-1 rounded"
-                                    >
-                                        <FontAwesomeIcon icon={faUser} />
-                                    </Link>
+
+
                                 </td>
                             </tr>
                         ))}
@@ -111,12 +115,12 @@ const PolicyList = () => {
 
             {isModalVisible && (
                 <Modal onClose={closeModal}>
-                   
+
                     <h2 className="text-xl font-semibold mb-4">Policy Details</h2>
                     {selectedPolicy && (
                         <div>
                             <p>Policy ID: {selectedPolicy.id}</p>
-                            
+
                         </div>
                     )}
                 </Modal>

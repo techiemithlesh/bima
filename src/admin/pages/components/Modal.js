@@ -8,7 +8,7 @@ const Modal = ({ onClose, children }) => {
         <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white rounded-lg w-1/2 p-8">
                 <div className="flex justify-end">
-                    {/* Close button with Font Awesome icon */}
+                   
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                         <FontAwesomeIcon icon={faTimes} className="w-6 h-6" />
                     </button>

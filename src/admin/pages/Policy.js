@@ -5,6 +5,7 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { TabsIcon } from "../../shared/Assets";
 import axios, { formToJSON } from "axios";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 
 const Policy = () => {
@@ -22,6 +23,43 @@ const Policy = () => {
         agecapacity: []
 
     });
+
+    const [errors, setErrors] = useState({
+        vehicle_manufacture: '',
+        vehicle_model: '',
+        registration_number: '',
+        vehicle_registration_date: ''
+    });
+
+    const validateForm = () => {
+        let valid = true;
+        let newErrors = {};
+
+        if (!formData.vehicle_manufacture) {
+            newErrors.vehicle_manufacture = 'Vehicle Make is required.';
+            valid = false;
+        }
+
+        if (!formData.vehicle_model) {
+            newErrors.vehicle_model = 'Vehicle Model is required.';
+            valid = false;
+        }
+
+        if (!formData.registration_number) {
+            newErrors.registration_number = 'Vehicle Registration No. is required.';
+            valid = false;
+        }
+
+        if (!formData.vehicle_registration_date) {
+            newErrors.vehicle_registration_date = 'Vehicle Registration Date is required.';
+            valid = false;
+        }
+
+        setErrors({ ...errors, ...newErrors });
+
+        return valid;
+    };
+
 
     useEffect(() => {
         fetch(`https://premium.treatweb.com/public/api/admin/policies/options`, {
@@ -53,22 +91,19 @@ const Policy = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        
-        
-        let checkclass=document.querySelectorAll('.policytabone #form');
+
+
+        let checkclass = document.querySelectorAll('.policytabone #form');
         console.log(checkclass);
-        if(checkclass.length>0)
-        {
+        if (checkclass.length > 0) {
             const Data = new FormData(document.getElementById('form'));
-        
             const updatedFormData = formToJSON(Data);
             console.log(updatedFormData.agecapacity);
-            //prevData.append('agecapacity',updatedFormData.agecapacity);
             setFormData((prevData) => ({
                 ...prevData,
                 ['agecapacity']: updatedFormData.agecapacity,
             }));
-    
+
         }
 
         setFormData((prevData) => ({
@@ -81,7 +116,7 @@ const Policy = () => {
     function generateBreadcrumbData(selectedTabIndex, rightContent = null) {
         let middleContent;
         let isSaveDisabled = true;
-    
+
         switch (selectedTabIndex) {
             case 0:
                 middleContent = "Business Details";
@@ -103,63 +138,58 @@ const Policy = () => {
                 middleContent = "";
                 break;
         }
-    
+
         return {
             leftItems: [
                 { label: "", link: "/" },
-                { label: "Partners", link: "/admin/partners" },
+                { label: "Policies", link: "/policy/list" },
             ],
             middleContent: middleContent,
             rightItems: (
                 <button
                     onClick={handleSave}
                     className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full`}
-                    // disabled={isSaveDisabled}
                 >
                     Save
                 </button>
             )
         };
     }
-    
 
-    
-    const handleSave = () => {
-    
-        console.log('Form Data:', formData);
-    
+    const handleSave = (e) => {
+        e.preventDefault();
+        const isValid = validateForm();
+        if (!isValid) {
+            return;
+        }
+
+        setErrors({});
         const csrfToken = Cookies.get('XSRF-TOKEN');
         console.log('CSRF Token:', csrfToken);
         axios.post('https://premium.treatweb.com/public/api/admin/policies/store', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'X-CSRF-TOKEN': csrfToken,
-          },
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'X-CSRF-TOKEN': csrfToken,
+            },
         }).then((response) => {
-          console.log("Form Submitted", response.data.message);
-        //   const { success, message } = response.data;
-    
-        })
-          .catch((error) => {
+            const { success, message } = response.data;
+            if (!success) {
+                setErrors(message);
+            } else {
+                toast.success(message, {
+                    position: 'top-right'
+                });
+            }
+        }).catch((error) => {
             console.error("Error submitting form:", error);
-    
-          });
-      };
-
-
+            setErrors({ server: "An error occurred while processing your request. Please try again later." });
+        });
+    };
 
 
     const handleSaveAndNext = () => {
-
-        switch(selectedTabIndex){
-            case 0:
-
-            break;
-            
-        }
         setSelectedTabIndex(prevIndex => prevIndex + 1);
     }
-
 
     return (
         <Layout title="Add Policy" breadcrumbData={generateBreadcrumbData(selectedTabIndex)} className="policy">
@@ -173,7 +203,7 @@ const Policy = () => {
                         <Tab style={{ flex: 1, textAlign: "center", padding: "10px" }}><span className="tabicon"><img src={TabsIcon.Tab5} alt="" /></span></Tab>
                     </TabList>
 
-                    
+
                     <TabPanel className="policytabone">
                         <div className="container my-4">
                             <div className="flex justify-between">
@@ -196,6 +226,7 @@ const Policy = () => {
                                                     </option>
                                                 ))}
                                             </select>
+                                            {errors.business_type && <span className="error">{errors.business_type}</span>}
                                         </div>
 
                                         {/* Form Element 2 */}
@@ -213,13 +244,13 @@ const Policy = () => {
                                                             {item.text}
                                                         </option>
                                                     ))}
-
+                                                    {errors.vehicle_type && <span className="error">{errors.vehicle_type}</span>}
                                                 </select>
                                             </div>
                                         )}
 
                                         {/* Form Element 3 */}
-                                        {(formData.vehicle_type === '1' && formData.business_type === '1' ) && (
+                                        {(formData.vehicle_type === '1' && formData.business_type === '1') && (
                                             <div className="mb-2">
 
                                                 <select
@@ -235,6 +266,7 @@ const Policy = () => {
                                                     ))}
 
                                                 </select>
+                                                {errors.two_wheeler_type && <span className="error text-red-400">{errors.two_wheeler_type}</span>}
                                             </div>
                                         )}
 
@@ -242,61 +274,64 @@ const Policy = () => {
                                         {/* Form Element 4 */}
                                         {(((formData.two_wheeler_type === '1' || formData.two_wheeler_type === '2') && formData.business_type === '1')
                                             || (formData.business_type === '2') || (formData.business_type === '3')) && (
+                                                <div className="mb-2">
+                                                    <select
+                                                        className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                                                        name="policy_type"
+                                                        value={formData.policy_type}
+                                                        onChange={handleInputChange}
+                                                    >
+                                                        {insurance && insurance.business_options.policy_type_list[formData.business_type].map((item) => (
+                                                            <option key={item.value} value={item.value}>
+                                                                {item.text}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {errors.policy_type && <span className="error text-red-400">{errors.policy_type}</span>}
+                                                </div>
+                                            )}
+
+
+                                        {/* Form Element 5 */}
+                                        {(formData.policy_type === '1' || formData.policy_type === '2') && (
+
                                             <div className="mb-2">
+
                                                 <select
                                                     className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                                                    name="policy_type"
-                                                    value={formData.policy_type}
+                                                    name="coverage_type"
+                                                    value={formData.coverage_type}
                                                     onChange={handleInputChange}
                                                 >
-                                                   {insurance && insurance.business_options.policy_type_list[formData.business_type].map((item) => (
+                                                    {insurance && insurance.business_options.coverage_types.map((item) => (
+                                                        <option key={item.value} value={item.value}>
+                                                            {item.text}
+                                                        </option>
+                                                    ))}
+
+                                                </select>
+                                                {errors.coverage_type && <span className="error text-red-400">{errors.coverage_type}</span>}
+                                            </div>
+                                        )}
+
+                                        {/* Form Element 6 */}
+                                        {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3') && (
+                                            <div className="mb-2">
+
+                                                <select
+                                                    className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                                                    name="fuel_type"
+                                                    value={formData.fuel_type}
+                                                    onChange={handleInputChange}
+                                                >
+                                                    {insurance && insurance.business_options.fuel_types.map((item) => (
                                                         <option key={item.value} value={item.value}>
                                                             {item.text}
                                                         </option>
                                                     ))}
                                                 </select>
+                                                {errors.fuel_type && <span className="error text-red-400">{errors.fuel_type}</span>}
                                             </div>
-                                        )}
-
-
-                                        {/* Form Element 5 */}
-                                        {(formData.policy_type === '1' || formData.policy_type === '2' ) && (
-
-                                        <div className="mb-2">
-
-                                            <select
-                                                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                                                name="coverage_type"
-                                                value={formData.coverage_type}
-                                                onChange={handleInputChange}
-                                            >
-                                                {insurance && insurance.business_options.coverage_types.map((item) => (
-                                                    <option key={item.value} value={item.value}>
-                                                    {item.text}
-                                                </option> 
-                                                ))}
-                                               
-                                            </select>
-                                        </div>
-                                        )}
-
-                                        {/* Form Element 6 */}
-                                        {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3' ) && (
-                                        <div className="mb-2">
-
-                                            <select
-                                                className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                                                name="fuel_type"
-                                                value={formData.fuel_type}
-                                                onChange={handleInputChange}
-                                            >
-                                               {insurance && insurance.business_options.fuel_types.map((item) => (
-                                                    <option key={item.value} value={item.value}>
-                                                    {item.text}
-                                                </option> 
-                                                ))}
-                                            </select>
-                                        </div>
                                         )}
 
                                     </div>
@@ -305,50 +340,50 @@ const Policy = () => {
                             </div>
 
                             {/* TABLE CONTAINER START HERE  */}
-                            {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3' ) && (
-                            <form id="form">
-                            <table className="min-w-full table-auto border comission">
-                               
-                                <tbody>
-                                {
-                                    insurance &&
-                                    insurance.business_options.engines
-                                        .filter((engine) => engine.text.toLowerCase().includes('cc') | engine.text.toLowerCase().includes('age'))
-                                        .map((engine, index) => (
+                            {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3') && (
+                                <form id="form">
+                                    <table className="min-w-full table-auto border comission">
 
-                                            <tr className="shade" data-index={engine} data-index_={index == '0'}>
-                                                {index === '0' ? <th className="border-b shade p-2">{insurance.business_options.engines[0].text}</th> :
-                                                    <th className=""> <input className="text-x text-center shade" value={engine.text} />
-                                                    </th>
-                                                }
-                                                {insurance &&
-                                                    insurance.business_options.vehicle_ages.map((ages, sn) => (
+                                        <tbody>
+                                            {
+                                                insurance &&
+                                                insurance.business_options.engines
+                                                    .filter((engine) => engine.text.toLowerCase().includes('cc') | engine.text.toLowerCase().includes('age'))
+                                                    .map((engine, index) => (
 
-                                                        index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}</th> : <td className="border-2 text-center" key={sn}>
-                                                            <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
-                                                            <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
-                                                            <input type="number" className={" text-x p-2 bordersm"} name={"agecapacity[" + engine.value + "][" + ages.value + "][value]"} />
+                                                        <tr className="shade" data-index={engine} data-index_={index == '0'}>
+                                                            {index === '0' ? <th className="border-b shade p-2">{insurance.business_options.engines[0].text}</th> :
+                                                                <th className=""> <input className="text-x text-center shade" value={engine.text} />
+                                                                </th>
+                                                            }
+                                                            {insurance &&
+                                                                insurance.business_options.vehicle_ages.map((ages, sn) => (
 
-                                                        </td>
+                                                                    index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}</th> : <td className="border-2 text-center" key={sn}>
+                                                                        <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
+                                                                        <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
+                                                                        <input type="number" className={" text-x p-2 bordersm"} name={"agecapacity[" + engine.value + "][" + ages.value + "][value]"} />
+
+                                                                    </td>
+
+                                                                ))}
+                                                            {index === 0 ? <th className="border-2 shade text-center">DEAL</th> :
+                                                                <td className="text-center">
+                                                                    <input type="text" className="text-x p-2 bordersm" name={"agecapacity[" + engine.value + "][deal]"} />
+                                                                </td>
+                                                            }
+                                                        </tr>
 
                                                     ))}
-                                                {index === 0 ? <th className="border-2 shade text-center">DEAL</th> :
-                                                    <td className="text-center">
-                                                        <input type="text" className="text-x p-2 bordersm" name={"agecapacity[" + engine.value + "][deal]"} />
-                                                    </td>
-                                                }
-                                            </tr>
+                                        </tbody>
 
-                                        ))}
-                                </tbody>
+                                    </table>
+                                </form>
 
-                            </table>
-                            </form>
 
-                           
                             )}
 
-                           
+
 
                             {/* TABLE CONTAINER END HERE  */}
 
@@ -356,38 +391,41 @@ const Policy = () => {
                             <div className="footer_input_box_container mt-4 mb-24">
                                 <div className="flex">
                                     {/* First Input Box */}
-                                    {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3' ) && (
-                                    <div className="flex-1 mr-2">
-                                        <input className="w-full p-2" placeholder="Vehicle Make" onChange={handleInputChange} name="vehicle_manufacture"/>
-                                    </div>
+                                    {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3') && (
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2" placeholder="Vehicle Make" onChange={handleInputChange} name="vehicle_manufacture" />
+                                            {errors.vehicle_manufacture && <span className="error">{errors.vehicle_manufacture}</span>}
+                                        </div>
                                     )}
 
                                     {/* Second Input Box */}
-                                    {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3' ) && (
-                                    <div className="flex-1 mr-2">
-                                        <input className="w-full p-2" placeholder="Vehicle Model" onChange={handleInputChange} name="vehicle_model"/>
-                                    </div>
+                                    {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3') && (
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2" placeholder="Vehicle Model" onChange={handleInputChange} name="vehicle_model" />
+                                            {errors.vehicle_model && <span className="error">{errors.vehicle_model}</span>}
+                                        </div>
                                     )}
-                                    {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3' ) && (
+                                    {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3') && (
 
-                                    <div className="flex-1 flex items-center mr-2">
-                                        <input
-                                            type="text"
-                                            className="w-full p-2 border"
-                                            placeholder="Vehicle Registration No."
-                                            name="registration_number"
-                                            onChange={handleInputChange}
-                                        />
-
-                                    </div>
-                                        )}
+                                        <div className="flex-1 flex items-center mr-2">
+                                            <input
+                                                type="text"
+                                                className="w-full p-2 border"
+                                                placeholder="Vehicle Registration No."
+                                                name="registration_number"
+                                                onChange={handleInputChange}
+                                            />
+                                            {errors.registration_number && <span className="error">{errors.registration_number}</span>}
+                                        </div>
+                                    )}
                                     {/* Fourth Input Box */}
-                                    {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3' ) && (
+                                    {(formData.policy_type === '1' || formData.policy_type === '2' || formData.policy_type === '3') && (
 
-                                    <div className="flex-1">
-                                        <input type="date" className="w-full p-2" name="vehicle_registration_date" onChange={handleInputChange} placeholder="Vehicle Registration Date" />
-                                    </div>
-                                        )}
+                                        <div className="flex-1">
+                                            <input type="date" className="w-full p-2" name="vehicle_registration_date" onChange={handleInputChange} placeholder="Vehicle Registration Date" />
+                                            {errors.vehicle_registration_date && <span className="error">{errors.vehicle_registration_date}</span>}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -422,7 +460,7 @@ const Policy = () => {
 
                                         <div className="flex-1 mr-2">
                                             <input className="w-full p-2" name="policy_number" value={formData.policy_number}
-                                                   onChange={handleInputChange} placeholder="Enter Policy Number" />
+                                                onChange={handleInputChange} placeholder="Enter Policy Number" />
                                         </div>
 
                                         <div className="flex-1 mr-2">
@@ -495,30 +533,30 @@ const Policy = () => {
 
                                         <div className="flex-1 mr-2">
                                             <input className="w-full p-2" name="customer_name"
-                                                   value={formData.customer_name}
-                                                   onChange={handleInputChange}
-                                                   placeholder="Customer Name" />
+                                                value={formData.customer_name}
+                                                onChange={handleInputChange}
+                                                placeholder="Customer Name" />
                                         </div>
 
                                         <div className="flex-1 mr-2">
                                             <input className="w-full p-2" name="customer_mobile"
-                                                   value={formData.customer_mobile}
-                                                   onChange={handleInputChange}
-                                                   placeholder="Customer Mobile" />
+                                                value={formData.customer_mobile}
+                                                onChange={handleInputChange}
+                                                placeholder="Customer Mobile" />
                                         </div>
 
                                         <div className="flex-1 mr-2">
                                             <input className="w-full p-2" name="customer_email"
-                                                   value={formData.customer_email}
-                                                   onChange={handleInputChange}
-                                                   placeholder="Customer Email" />
+                                                value={formData.customer_email}
+                                                onChange={handleInputChange}
+                                                placeholder="Customer Email" />
                                         </div>
 
                                         <div className="flex-1 mr-2">
                                             <input className="w-full p-2" name="customer_address"
-                                                   value={formData.customer_address}
-                                                   onChange={handleInputChange}
-                                                   placeholder="Customer Address" />
+                                                value={formData.customer_address}
+                                                onChange={handleInputChange}
+                                                placeholder="Customer Address" />
                                         </div>
 
                                     </div>
@@ -543,7 +581,7 @@ const Policy = () => {
 
 
                                         <div className="flex-1 mr-2">
-                                            <input type="file" id="inscopy"  className="w-full p-2 custom-file-input" title="s e " />
+                                            <input type="file" id="inscopy" className="w-full p-2 custom-file-input" title="s e " />
                                         </div>
 
                                         <div className="flex-1 mr-2">
@@ -556,7 +594,7 @@ const Policy = () => {
 
                                         {/* KYC Document Input */}
                                         <div className="flex-1 mr-2">
-                                            <select value={FormData.kycdocument} name="kyc_document"  onChange={handleKYCDocumentChange} className="w-full p-2 custom-file-input">
+                                            <select value={FormData.kycdocument} name="kyc_document" onChange={handleKYCDocumentChange} className="w-full p-2 custom-file-input">
                                                 <option value="">Select KYC Document</option>
                                                 <option value="adhar">Adhar</option>
                                                 <option value="pancard">Pancard</option>
@@ -584,8 +622,8 @@ const Policy = () => {
                                         <div className="flex-1 mr-2">
                                             <label for="">Any Comment or Remark ?</label>
                                             <textarea className="w-full p-2 custom-file-input w-full" name="comments"
-                                                      value={formData.comments}
-                                                      onChange={handleInputChange} placeholder="" />
+                                                value={formData.comments}
+                                                onChange={handleInputChange} placeholder="" />
                                         </div>
                                     </div>
                                 </div>
@@ -594,16 +632,16 @@ const Policy = () => {
                         </div>
 
                     </TabPanel>
-                    
 
-                    {selectedTabIndex != 4  &&(
+
+                    {selectedTabIndex != 4 && (
                         <div className="flex justify-center">
-                        <button onClick={handleSaveAndNext} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 save">
-                            Save & Next
-                        </button>
-                    </div>
+                            <button onClick={handleSaveAndNext} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 save">
+                                Save & Next
+                            </button>
+                        </div>
                     )}
-                    
+
                 </Tabs>
             </Card>
         </Layout >
