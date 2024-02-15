@@ -115,3 +115,20 @@
     color: red;
     font-weight: bold;
 }
+.policymodal .title{
+    font-size: 20px;
+}
+.policymodal .title{
+    font-size: 20px;
+}
+.policymodal .subtitle{
+    font-size: 16px;
+}
+.policymodal .label{
+    font-size: 14px;
+}
+.policymodal .labelvalue{
+    font-size: 14px;
+    padding-left: 8px;
+    font-weight: 400;
+}

@@ -38,7 +38,7 @@ const PolicyList = () => {
     return {
       leftItems: [
         { label: "", link: "/" },
-        { label: "Policies", link: "/admin/policies" },
+        { label: "Policies", link: "/policy/list" },
       ],
       middleContent: "",
       rightItems: rightContent,
