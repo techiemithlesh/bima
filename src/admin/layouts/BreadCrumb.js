@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { TabsIcon } from "../../shared/Assets";
 
 const BreadCrumb = ({ leftItems, middleContent, rightItems }) => {
   return (
@@ -8,11 +9,11 @@ const BreadCrumb = ({ leftItems, middleContent, rightItems }) => {
         {leftItems &&
           leftItems.map((item, index) => (
             <React.Fragment key={index}>
-              {index !== 0 && <span className="mr-2">&nbsp;{"<"}</span>}
+              {index !== 0 && <span className="mr-2">&nbsp;<img className="arrow" src={TabsIcon.arrow} alt=""/></span>}
               {item.link ? (
                 <Link
                   to={item.link}
-                  className=" text-xl cursor-pointer"
+                  className=" text-xl cursor-pointer page"
                 >
                   {item.label}
                 </Link>

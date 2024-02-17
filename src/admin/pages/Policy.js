@@ -6,10 +6,12 @@ import { TabsIcon } from "../../shared/Assets";
 import axios, { formToJSON } from "axios";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
-
+import * as PropTypes from "prop-types";
+import { useNavigate } from 'react-router-dom';
 const Policy = () => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [kycdocument, setKycDocument] = useState("");
+  const navigate = useNavigate();
 
   const [insurance, setInsurance] = useState(null);
   const [formData, setFormData] = useState({
@@ -21,6 +23,11 @@ const Policy = () => {
     fuel_type: "",
     agecapacity: [],
   });
+  // const errors = [];
+  // const setErrors = (message)=>{
+  //   console.log(4,message);
+  //   // errors=0;
+  // }
 
   const [errors, setErrors] = useState({
     vehicle_manufacture: "",
@@ -87,19 +94,23 @@ const Policy = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    setErrors((prevData) => ({
+      ...prevData,
+     [name]:"",
+    }));
 
     let checkclass = document.querySelectorAll(".policytabone #form");
-    console.log(checkclass);
     if (checkclass.length > 0) {
       const Data = new FormData(document.getElementById("form"));
       const updatedFormData = formToJSON(Data);
-      console.log(updatedFormData.agecapacity);
+      console.log(updatedFormData);
       setFormData((prevData) => ({
         ...prevData,
         ["agecapacity"]: updatedFormData.agecapacity,
+        ["engines"]: updatedFormData.engines,
+        ["ages"]: updatedFormData.ages
       }));
     }
-
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -123,10 +134,11 @@ const Policy = () => {
         break;
       case 3:
         middleContent = "Documents";
+        isSaveDisabled = false;
         break;
       case 4:
         middleContent = "Comments";
-        
+        isSaveDisabled = false;
         break;
       default:
         middleContent = "";
@@ -159,9 +171,12 @@ const Policy = () => {
     }
     setErrors({});
     const csrfToken = Cookies.get("XSRF-TOKEN");
-    console.log("CSRF Token:", csrfToken);
+    // console.log("CSRF Token:", csrfToken);
+    console.log(formData);
     axios
       .post(
+          // "http://phpstorm.local:9000/api/admin/policies/store",
+
         "https://premium.treatweb.com/public/api/admin/policies/store",
         formData,
         {
@@ -172,13 +187,26 @@ const Policy = () => {
         }
       )
       .then((response) => {
-        const { success, message } = response.data;
-        if (!success) {
+        const { success, message,code } = response.data;
+        // console.log(response);
+        if (success==false) {
+          // console.log(message);
           setErrors(message);
+          // setErrors((prevData) => ({
+          //   ...prevData,
+          //   message,
+          // }));
+        alert('one or more filed is blank or invalid.')
+         // console.log(errors);
+         // console.log((errors.own_damage));
         } else {
+          alert(message);
           toast.success(message, {
             position: "top-right",
           });
+         navigate('/policy/list');
+        //ocation.href='/policy/list';
+        //   <Redirect to="/policy/list" />
         }
       })
       .catch((error) => {
@@ -427,17 +455,16 @@ const Policy = () => {
                           .map((engine, index) => (
                             <tr
                               className="shade"
-                              data-index={engine}
-                              data-index_={index == "0"}
                             >
                               {index === "0" ? (
                                 <th className="border-b shade p-2">
                                   {insurance.business_options.engines[0].text}
+                                  <input type="hidden" name="engines[]" value={insurance.business_options.engines[0].text}/>
                                 </th>
                               ) : (
                                 <th className="">
                                   {" "}
-                                  <input
+                                  <input name={"engines["+engine.value+"]"}
                                     className="text-x text-center shade"
                                     value={engine.text}
                                   />
@@ -452,6 +479,11 @@ const Policy = () => {
                                         key={sn}
                                       >
                                         {ages.text}
+                                        <input
+                                            className="text-x text-center shade" type="hidden"
+                                            name={"ages["+ages.value+"]"}
+                                            value={ages.text}
+                                        />
                                       </th>
                                     ) : (
                                       <td
@@ -625,6 +657,9 @@ const Policy = () => {
                             </option>
                           ))}
                       </select>
+                      {(errors.insurer!="undefined")?
+                          <span className="error text-red-400">{errors.insurer}</span>
+                          :""}
                     </div>
 
                     <div className="flex-1 mr-2">
@@ -635,6 +670,9 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Enter Policy Number"
                       />
+                      {(errors.policy_number!="undefined")?
+                          <span className="error text-red-400">{errors.policy_number}</span>
+                          :""}
                     </div>
 
                     <div className="flex-1 mr-2">
@@ -646,6 +684,9 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Risk Start Date"
                       />
+                      {(errors.risk_start_date!="undefined")?
+                          <span className="error text-red-400">{errors.risk_start_date}</span>
+                          :""}
                     </div>
 
                     <div className="flex-1 mr-2">
@@ -656,6 +697,9 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Enter OD Amount"
                       />
+                      {(errors.own_damage!="undefined")?
+                          <span className="error text-red-400">{errors.own_damage}</span>
+                      :""}
                     </div>
 
                     <div className="flex-1 mr-2">
@@ -666,6 +710,9 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Enter TP Amount"
                       />
+                      {(errors.third_party!="undefined")?
+                          <span className="error text-red-400">{errors.third_party}</span>
+                          :""}
                     </div>
 
                     <div className="flex-1 mr-2">
@@ -676,6 +723,9 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Enter NET Amount"
                       />
+                      {(errors.net_amount!="undefined")?
+                          <span className="error text-red-400">{errors.net_amount}</span>
+                          :""}
                     </div>
 
                     {/* Form Element 3 */}
@@ -693,6 +743,9 @@ const Policy = () => {
                             </option>
                           ))}
                       </select>
+                      {(errors.partner_code!="undefined")?
+                          <span className="error text-red-400">{errors.partner_code}</span>
+                          :""}
                     </div>
 
                     {/* Form Element 4 */}
@@ -712,6 +765,9 @@ const Policy = () => {
                             )
                           )}
                       </select>
+                      {(errors.payment_type!="undefined")?
+                          <span className="error text-red-400">{errors.payment_type}</span>
+                          :""}
                     </div>
                   </div>
                 </div>
@@ -736,6 +792,9 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Customer Name"
                       />
+                      {(errors.customer_name!="undefined")?
+                          <span className="error text-red-400">{errors.customer_name}</span>
+                          :""}
                     </div>
 
                     <div className="flex-1 mr-2">
@@ -746,6 +805,9 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Customer Mobile"
                       />
+                      {(errors.customer_mobile!="undefined")?
+                          <span className="error text-red-400">{errors.customer_mobile}</span>
+                          :""}
                     </div>
 
                     <div className="flex-1 mr-2">
@@ -756,6 +818,9 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Customer Email"
                       />
+                      {(errors.customer_email!="undefined")?
+                          <span className="error text-red-400">{errors.customer_email}</span>
+                          :""}
                     </div>
 
                     <div className="flex-1 mr-2">
@@ -766,6 +831,9 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Customer Address"
                       />
+                      {(errors.customer_address!="undefined")?
+                          <span className="error text-red-400">{errors.customer_address}</span>
+                          :""}
                     </div>
                   </div>
                 </div>

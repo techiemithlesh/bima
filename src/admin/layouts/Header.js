@@ -24,7 +24,7 @@ const Header = () => {
       </div>
 
       {/* Middle */}
-      <span className="text-3xl font-bold">Admin Panel</span>
+      <span className="text-3xl font-bold header">Admin Panel</span>
 
       {/* Right side */}
       <div className="relative">

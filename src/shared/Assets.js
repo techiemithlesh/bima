@@ -15,6 +15,8 @@ import partnertab2 from "../assets/images/email-address.png";
 import partnertab3 from "../assets/images/upload-file.png";
 import partnertab4 from "../assets/images/credit-card-payment.png";
 import partnertab5 from "../assets/images/speech-bubble.png";
+import arrow from "../assets/images/caret-down.svg";
+import eye from "../assets/icons/view.svg";
 import { tab } from '@testing-library/user-event/dist/tab';
 
 export const Icons = {
@@ -43,4 +45,6 @@ export const TabsIcon = {
     Partner3: partnertab3,
     Partner4: partnertab4,
     Partner5: partnertab5,
+    arrow: arrow,
+    eye: eye,
 }

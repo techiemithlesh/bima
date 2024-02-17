@@ -50,7 +50,7 @@
     font-size: 23.5px;
     font-weight: 350;
 }
-    .policytabtwo select{
+.policytabone select,.policytabtwo select{
       font-size: 23.5px;
       font-weight: 350;
       border: 0;
@@ -131,4 +131,26 @@
     font-size: 14px;
     padding-left: 8px;
     font-weight: 400;
+}
+.arrow{
+    width: 30px;
+    display: inline;
+    height: 25px;
+    margin: 0 0px 8px;
+    transform: rotate(93deg);
+}
+.breadcumb .page{
+    font-size: 30px;
+    font-weight: bold;
+}
+.header
+{
+    font-size: 48px;
+}
+.tablez td{
+    font-size: 19px;
+    font-weight: 600;
+}
+.react-tabs__tab--selected .tabicon{
+    border: 3px solid #00acef;
 }
