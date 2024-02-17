@@ -49,4 +49,29 @@ export const validateName = (name) => {
   };
   
 
+  export const validateAdhar = (aadhaar_no) => {
+    
+    const adharRegex = /^\d{12}$/;
+  
+    if (adharRegex.test(aadhaar_no)) {
+      
+      return ''; 
+    } else {
+      
+      return 'Please enter a valid Aadhaar number.';
+    }
+  };
+
+  export const validatePan = (pan_no) => {
+  
+    const panRegex = /[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+  
+    if (panRegex.test(pan_no)) {
+    
+      return ''; 
+    } else {
+      
+      return 'Please enter a valid PAN number.';
+    }
+  };
   

@@ -4,7 +4,7 @@ import "react-tabs/style/react-tabs.css";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import { TabsIcon } from "../../shared/Assets";
-import { validateEmail, validateMobile, validateName } from "../../utils/Validation";
+import { validateAdhar, validateEmail, validateMobile, validateName, validatePan } from "../../utils/Validation";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -99,6 +99,17 @@ const PartnerDetailsAdd = () => {
       case 'mobile':
         errorMessage = validateMobile(value);
         break;
+      case 'aadhaar_no':
+      errorMessage = validateAdhar(value);
+
+      case 'pan_no':
+        errorMessage = validatePan(value);
+
+      case 'alt_email':
+        errorMessage = validateEmail(value);
+
+      case 'alt_mobile':
+         errorMessage = validateMobile(value);
       default:
         break;
     }
@@ -136,10 +147,12 @@ const PartnerDetailsAdd = () => {
 
   const requiredFieldsByTab = [
     ['name', 'email', 'mobile'],
-    ['alt_mobile', 'alt_email'],
+    ['address'],
+    ['bank_account_no', 'bank_account_name', 'branch_name', 'bank_ifsc']
   ];
 
   const handleSaveAndNext = () => {
+    console.log("Form Data", formData);
     const isFormValid = validateForm();
     const isLastTab = selectedTabIndex === 4;
 
@@ -233,18 +246,14 @@ const PartnerDetailsAdd = () => {
                     </div>
 
                     <div className="flex-1 mr-2">
-                      <label htmlFor="branch_name">Branch Name</label>
-                      <input name="branch_name" value={formData.branch_name} onChange={handleInputChange} id="branch_name" className="w-full p-2" placeholder="" />
-                      {errors.branch_name && <span className="text-red-500">{errors.branch_name}</span>}
-                    </div>
-
-                    <div className="flex-1 mr-2">
                       <label htmlFor="pan_no">PAN No</label>
                       <input name="pan_no" value={formData.pan_no} onChange={handleInputChange} id="pan_no" className="w-full p-2" placeholder="" />
+                      {errors.pan_no && <span className="text-red-500">{errors.pan_no}</span>}
                     </div>
                     <div className="flex-1 mr-2">
                       <label htmlFor="aadhaar_no">Aadhaar No</label>
                       <input name="aadhaar_no" value={formData.aadhaar_no} onChange={handleInputChange} id="aadhaar_no" className="w-full p-2" placeholder="" />
+                      {errors.aadhaar_no && <span className="text-red-500">{errors.aadhaar_no}</span>}
                     </div>
                     <div className="flex-1 mr-2">
                       <label htmlFor="licence_no">License No</label>
@@ -259,12 +268,15 @@ const PartnerDetailsAdd = () => {
                       <select name="partner_status" value={formData.partner_status} onChange={handleInputChange} id="" className="w-full p-2" >
                         <option value="">Select Status</option>
                         <option value="active">Active</option>
+                        <option value="in_active">In Active</option>
                       </select>
                     </div>
                     <div className="flex-1 mr-2">
                       <label htmlFor="">Partner Type</label>
                       <select name="" id="" className="w-full p-2" >
                         <option value="">Select Partner Type</option>
+                        <option value="sales_person">Sales Person</option>
+                        <option value="self">Self Person</option>
                       </select>
                     </div>
 
@@ -312,6 +324,8 @@ const PartnerDetailsAdd = () => {
                       <label htmlFor="">Address Type</label>
                       <select name="address" value={formData.address} onChange={handleInputChange} id="address" className="w-full p-2 border-2" >
                         <option value="">Select Address Type</option>
+                        <option>Option 1</option>
+                        <option>Option 2</option>
                       </select>
                     </div>
 
