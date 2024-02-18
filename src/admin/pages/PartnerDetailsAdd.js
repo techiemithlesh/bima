@@ -4,7 +4,7 @@ import "react-tabs/style/react-tabs.css";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import { TabsIcon } from "../../shared/Assets";
-import { validateAdhar, validateEmail, validateMobile, validateName, validatePan } from "../../utils/Validation";
+import { validateAdhar, validateDocument, validateEmail, validateMobile, validateName, validatePan } from "../../utils/Validation";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -75,16 +75,17 @@ const PartnerDetailsAdd = () => {
 
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
+    const { name, value, files } = event.target;
+    const selectedFile = files && files.length > 0 ? files[0].name : '';
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: selectedFile || value,
     }));
 
-    validateField(name, value);
+    validateField(name, selectedFile);
+  };
 
-  }
 
   const validateField = (name, value) => {
     let errorMessage = '';
@@ -109,6 +110,13 @@ const PartnerDetailsAdd = () => {
 
       case 'alt_mobile':
         errorMessage = validateMobile(value);
+        break;
+      case 'pan_file':
+      case 'aadhaar_file':
+      case 'licence_file':
+      case 'bank_passbook_file':
+        errorMessage = validateDocument(value);
+        break;
       default:
         break;
     }
@@ -140,32 +148,49 @@ const PartnerDetailsAdd = () => {
     }
     return valid;
   };
-  
+
 
   const requiredFieldsByTab = [
     ['name', 'email', 'mobile'],
     ['address'],
-    ['bank_account_no', 'bank_account_name', 'branch_name', 'bank_ifsc']
+    [],
+    []
   ];
 
   const handleSaveAndNext = () => {
     console.log("Validate Form", validateForm());
     if (validateForm()) {
-      
+
       setSelectedTabIndex((prev) => prev + 1);
     } else {
       alert('Fill Required Input then Move to next Page');
     }
   };
-  
+
 
 
   const submitFormData = (e) => {
     e.preventDefault();
     const csrfToken = Cookies.get('XSRF-TOKEN');
     const apiUrl = 'https://premium.treatweb.com/public/api/admin/partner/add'
-    console.log("FormData", formData);
 
+
+    const updatedFormData = { ...formData };
+
+    const formDataToSend = new FormData();
+
+    // Append existing form data to formDataToSend
+    for (const key in updatedFormData) {
+      formDataToSend.append(key, updatedFormData[key]);
+    }
+
+    // Append files to formData
+    formDataToSend.append('pan_file', formData.pan_file);
+    formDataToSend.append('aadhaar_file', formData.aadhaar_file);
+    formDataToSend.append('licence_file', formData.licence_file);
+    formDataToSend.append('bank_passbook_file', formData.bank_passbook_file);
+
+    console.log("FormData", formData);
     axios.post(apiUrl, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -330,7 +355,7 @@ const PartnerDetailsAdd = () => {
                       {errors.state && <span className="text-red-500">{errors.state}</span>}
                     </div>
                     <div className="flex-1 mr-2">
-                      <label htmlFor="">City/District</label>   
+                      <label htmlFor="">City/District</label>
                       <input name="city" value={formData.city} onChange={handleInputChange} id="city" className="w-full p-2 border-2" placeholder="" />
                       {errors.city && <span className="text-red-500">{errors.city}</span>}
                     </div>
@@ -344,9 +369,9 @@ const PartnerDetailsAdd = () => {
                       {errors.address_type && <span className="text-red-500">{errors.address_type}</span>}
                     </div>
 
-                    <div className="flex-1 mr-2">
+                    <div className="flex-1">
                       <label htmlFor="">Full Address</label>
-                      <textarea name="address" value={formData.address} onChange={handleInputChange} className="w-full p-2 border-2" id="" cols="30" rows="10"></textarea>
+                      <textarea name="address" value={formData.address} onChange={handleInputChange} className="w-full p-2 border-2"></textarea>
                       {errors.address && <span className="text-red-500">{errors.address}</span>}
                     </div>
 
@@ -400,20 +425,28 @@ const PartnerDetailsAdd = () => {
 
                     <div className="flex-1 mr-2">
                       {/*<label for="currentpolicy">Current Policy</label>*/}
-                      <input type="file" name="pan_file" value={formData.pan_file} onChange={handleInputChange} id="currentpolicy" className="w-full p-2 custom-file-input" title="s e " />
+                      <input type="file" name="pan_file" onChange={handleInputChange} id="currentpolicy" className="w-full p-2 custom-file-input" title="s e "
+                        accept=".pdf, .jpg, .png, .jpeg" />
+                      {errors.pan_file && <span className="text-red-500">{errors.pan_file}</span>}
                     </div>
 
 
                     <div className="flex-1 mr-2">
-                      <input type="file" name="aadhaar_file" value={formData.aadhaar_file} onChange={handleInputChange} id="inscopy" className="w-full p-2 custom-file-input" title="s e " />
+                      <input type="file" name="aadhaar_file" onChange={handleInputChange} id="inscopy" className="w-full p-2 custom-file-input" title="s e "
+                        accept=".pdf, .jpg, .png, .jpeg" />
+                      {errors.aadhaar_file && <span className="text-red-500">{errors.aadhaar_file}</span>}
                     </div>
 
                     <div className="flex-1 mr-2">
-                      <input type="file" name="licence_file" value={formData.licence_file} onChange={handleInputChange} id="rccopy" className="w-full p-2 custom-file-input" title="s e " />
+                      <input type="file" name="licence_file" onChange={handleInputChange} id="rccopy" className="w-full p-2 custom-file-input" title="s e "
+                        accept=".pdf, .jpg, .png, .jpeg" />
+                      {errors.licence_file && <span className="text-red-500">{errors.licence_file}</span>}
                     </div>
 
                     <div className="flex-1 mr-2">
-                      <input type="file" name="bank_passbook_file" value={formData.bank_passbook_file} onChange={handleInputChange} id="vehiclephoto" className="w-full p-2 custom-file-input" title="s e " />
+                      <input type="file" name="bank_passbook_file" onChange={handleInputChange} id="vehiclephoto" className="w-full p-2 custom-file-input"
+                        title="s e " accept=".pdf, .jpg, .png, .jpeg" />
+                      {errors.bank_passbook_file && <span className="text-red-500">{errors.bank_passbook_file}</span>}
                     </div>
                   </div>
                 </div>
