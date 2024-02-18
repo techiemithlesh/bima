@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faWallet, faUser, faCircleRight, faCircleArrowRight, faCircleChevronRight, faCircleChevronLeft, } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faWallet, faUser, faCircleRight, faCircleArrowRight, faCircleChevronRight, faCircleChevronLeft, faMoneyBill, faMoneyCheck, } from "@fortawesome/free-solid-svg-icons";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { data } from "autoprefixer";
 import Loading from "react-loading";
+import { TabsIcon } from "../../shared/Assets";
 
 const Partners = () => {
 
@@ -172,9 +173,9 @@ const Partners = () => {
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">
                                     <button
                                         onClick={() => console.log("View clicked")}
-                                        className="bg-blue-500 text-white px-2 py-1 rounded mr-2"
+                                        className="text-white rounded mr-2"
                                     >
-                                        <FontAwesomeIcon icon={faEye} />
+                                        <img src={TabsIcon.eye} alt=""/>
                                     </button>
                                     <Link
                                         to={`/partner/addcommision/${partner.id}`}
@@ -189,6 +190,10 @@ const Partners = () => {
                                     >
                                         <FontAwesomeIcon icon={faUser} />
                                     </Link>
+
+                                    <Link to={`/partner/comissions/list/${partner.id}`}
+                                    className="text-white px-2 py-2 rounded"/>
+                                    <FontAwesomeIcon icon={faMoneyCheck} />
                                 </td>
                             </tr>
                         ))}

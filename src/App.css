@@ -3,7 +3,7 @@
     width: 80%;
 }
 .shade{
-    background: #e0dfdc;
+    background: #e4e4e4;
 }
 .comission tr{
     border-bottom: 15px solid #fff;
@@ -141,16 +141,49 @@
 }
 .breadcumb .page{
     font-size: 30px;
-    font-weight: bold;
+    font-weight: 500;
 }
 .header
 {
     font-size: 48px;
 }
 .tablez td{
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 600;
 }
 .react-tabs__tab--selected .tabicon{
     border: 3px solid #00acef;
+}
+/* #e5e5e5*/
+.tablez tr{
+    border-bottom: 2px solid #c0c0c0;
+}
+.tablez th{
+    font-size: 18px;
+    font-weight: 500;
+}
+.activetext
+{
+    color:#03500b;
+}
+.w-44 {
+    width: 12.5rem !important;
+}
+.cards{
+    padding: 0 0 0 30px;
+}
+.searchbox{
+    border-radius: 12px;
+    border: none;
+    font-size: 0.8em;
+    font-weight: 400;
+    padding: 8px 12px;
+    width: 500px;
+    margin-right: 25px;
+    background-image: url("assets/icons/usersearch.svg");
+    background-repeat: no-repeat;
+    background-position: 97.5%
+}
+.tablecommission td,.tablecommission th{
+    border: 1px solid #000;
 }

@@ -43,10 +43,10 @@ function Layout({
 }
 
 Layout.defaultProps = {
-  title: "Bima insurance",
-  description: "A Full-stack web developer",
-  keywords: "Freelancer, Web-developer, Full-Stack developer",
-  author: "Mithlesh Patel",
+  title: "Bima Insurance",
+  description: "",
+  keywords: "",
+  author: "",
   dynamicBreadcrumbData: {}
 }
 

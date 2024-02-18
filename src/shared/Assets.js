@@ -17,6 +17,9 @@ import partnertab4 from "../assets/images/credit-card-payment.png";
 import partnertab5 from "../assets/images/speech-bubble.png";
 import arrow from "../assets/images/caret-down.svg";
 import eye from "../assets/icons/view.svg";
+import addpartner from "../assets/icons/user-add 1.svg";
+import partnercommision from "../assets/icons/wallet-money 1.svg";
+import editpartner from "../assets/icons/useredit.svg";
 import { tab } from '@testing-library/user-event/dist/tab';
 
 export const Icons = {
@@ -47,4 +50,7 @@ export const TabsIcon = {
     Partner5: partnertab5,
     arrow: arrow,
     eye: eye,
+    addpartner: addpartner,
+    partnercommision: partnercommision,
+    editpartner: editpartner,
 }

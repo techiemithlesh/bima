@@ -2,17 +2,13 @@ import React, { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import axios from "axios";
-import {
-  faEye,
-  faPlus,
-  faUser,
-  faWallet,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {json, Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { TabsIcon } from "../../shared/Assets";
 
-import PolicyViewModal from "./components/PolicyViewModal";
+
+import ViewDetailsModal from "./components/ViewDetailsModal";
 
 const PolicyList = () => {
   const [policies, setPolicies] = useState([]);
@@ -20,27 +16,25 @@ const PolicyList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    const apiUrl =
-      "https://premium.treatweb.com/public/api/admin/policies/list";
-    // "http://phpstorm.local:9000/api/admin/policies/list";
+    const apiUrl = "https://premium.treatweb.com/public/api/admin/policies/list";
 
     axios
-      .get(apiUrl)
-      .then((res) => {
-        const data = res.data;
-        console.log(data);
-        setPolicies(data.policies);
-      })
-      .catch((error) => {
-        console.log("Error Fetching Data", error);
-      });
+        .get(apiUrl)
+        .then((res) => {
+          const data = res.data;
+          console.log(data);
+          setPolicies(data.policies);
+        })
+        .catch((error) => {
+          console.log("Error Fetching Data", error);
+        });
   }, []);
 
   function generateBreadcrumbData(rightContent = null) {
     return {
       leftItems: [
         { label: "", link: "/" },
-        { label: "Policies", link: "/admin/policies" },
+        { label: "Policies", link: "/policy/list" },
       ],
       middleContent: "",
       rightItems: rightContent,
@@ -48,13 +42,19 @@ const PolicyList = () => {
   }
 
   const searchRightContent = (
-    <input
-      type="text"
-      placeholder="Search with name"
-      onChange={(e) => console.log("Search:", e.target.value)}
-      className="border border-gray-300 px-8 py-2 rounded focus:outline-none focus:border-blue-500"
-    />
+      <>
+        <input
+            type="text"
+            placeholder="Search with name"
+            onChange={(e) => console.log("Search:", e.target.value)}
+            className="border border-gray-300 px-8 py-2 rounded focus:outline-none focus:border-blue-500"
+        />
+        <Link to={'/policy/add/'}>
+          <img src={TabsIcon.addpartner} alt="Add Partner" />
+        </Link>
+      </>
   );
+
   function handleViewDetails(policy) {
     setSelectedPolicy(policy);
     setIsModalVisible(true);
@@ -66,204 +66,243 @@ const PolicyList = () => {
   }
 
   return (
-    <Layout
-      title="Policy List"
-      breadcrumbData={generateBreadcrumbData(searchRightContent)}
-    >
-      <Card>
-        <div className="text-right flex-justify-end mb-4">
-          <Link
-            to={`/policy/add`}
-            className="bg-indigo-500 text-white px-2 py-1 rounded"
-          >
-            <FontAwesomeIcon icon={faPlus} />
-          </Link>
-        </div>
-        <table className="min-w-full table-auto border border-gray-300 tablez">
-          <thead className="shade">
+      <Layout
+          title="Policy List"
+          breadcrumbData={generateBreadcrumbData(searchRightContent)}
+      >
+        <Card>
+          <table className="min-w-full table-auto border border-gray-300 tablez">
+            <thead className="shade">
             <tr>
               <th className="px-4 py-2">SI</th>
-              <th className="px-4 py-2">PLAN TYPE</th>
-              <th className="px-4 py-2">POLICY TYPE</th>
-              <th className="px-4 py-2">PARTNER</th>
-              <th className="px-4 py-2">CUSTOMER NAME</th>
-              <th className="px-4 py-2">CUSTOMER MOBILE</th>
-              <th className="px-4 py-2">INSURER</th>
-              <th className="px-4 py-2">OD PREMIUM</th>
-              <th className="px-4 py-2">TP PREMIUM</th>
-              <th className="px-4 py-2">NET PREMIUM</th>
-              <th className="px-4 py-2">RISK START DATE</th>
+              <th className="px-4 py-2">Plan Type</th>
+              <th className="px-4 py-2">Policy Type</th>
+              <th className="px-4 py-2">Partner</th>
+              <th className="px-4 py-2">Customer Name</th>
+              <th className="px-4 py-2">Customer Mobile</th>
+              <th className="px-4 py-2">Insurer</th>
+              <th className="px-4 py-2">OD Premium</th>
+              <th className="px-4 py-2">TP Premium</th>
+              <th className="px-4 py-2">NET Premium</th>
+              <th className="px-4 py-2">Risk Start Date</th>
               <th className="px-4 py-2">Action</th>
             </tr>
-          </thead>
-          <tbody>
+            </thead>
+            <tbody>
             {policies.map((policy, index) => (
-              <tr key={policy.id}>
-                <td className="px-4 py-2">{index + 1}</td>
-                <td className="px-4 py-2">{policy.policyable.policy_type.business_type.name}</td>
-                <td className="px-4 py-2">{policy.policyable.policy_type.name}</td>
-                <td className="px-4 py-2">{policy.partner.name}</td>
-                <td className="px-4 py-2">{policy.customer.name}</td>
-                <td className="px-4 py-2">{policy.customer.mobile}</td>
-                <td className="px-4 py-2">{policy.insurer.name}</td>
-                <td className="px-4 py-2">{policy.policyable.own_damage}</td>
-                <td className="px-4 py-2">{policy.policyable.third_party}</td>
-                <td className="px-4 py-2">{policy.net_amount}</td>
-                <td className="px-4 py-2">{policy.policy_date}</td>
-                <td className="px-4 py-2 flex justify-between">
-                  <button
-                    onClick={() => handleViewDetails(policy)}
-                    className=" text-white rounded mr-2" >
-                    <img src={TabsIcon.eye} alt=""/>
-                  </button>
-                </td>
-              </tr>
+                <tr key={policy.id}>
+                  <td className="px-4 py-2">{index + 1}</td>
+                  <td className="px-4 py-2">
+                    {policy.policyable.policy_type.business_type.name}
+                  </td>
+                  <td className="px-4 py-2">
+                    {policy.policyable.policy_type.name}
+                  </td>
+                  <td className="px-4 py-2">{policy.partner.name}</td>
+                  <td className="px-4 py-2">{policy.customer.name}</td>
+                  <td className="px-4 py-2">{policy.customer.mobile}</td>
+                  <td className="px-4 py-2">{policy.insurer.name}</td>
+                  <td className="px-4 py-2">{policy.policyable.own_damage}</td>
+                  <td className="px-4 py-2">{policy.policyable.third_party}</td>
+                  <td className="px-4 py-2">{policy.net_amount}</td>
+                  <td className="px-4 py-2">{policy.policy_date}</td>
+                  <td className="px-4 py-2 flex justify-between">
+                    <button
+                        onClick={() => handleViewDetails(policy)}
+                        className="text-white rounded mr-2"
+                    >
+                      <img src={TabsIcon.eye} alt="View Details" />
+                    </button>
+                  </td>
+                </tr>
             ))}
-          </tbody>
-        </table>
-      </Card>
+            </tbody>
+          </table>
+        </Card>
 
-      {isModalVisible && (
-        <PolicyViewModal onClose={closeModal} policy={policies}>
-          {selectedPolicy && (
-            <div className="mt-1">
-              <h2 className="text-xl font-semibold subtitle">Business Details</h2>
-              <div className="grid grid-cols-3 gap-1 mb-2">
-                <div className="col-span-1">
-                  <p className="font-semibold label">Business Type:
-                  <span className="labelvalue">{selectedPolicy.policyable.policy_type.business_type.name}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold label">Policy Type:
-                  <span className="labelvalue">{selectedPolicy.policyable.policy_type.name}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold label">TP Amount:
-                  <span className="labelvalue">{selectedPolicy.tp_amount}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold label">OD Amount:
-                  <span className="labelvalue">{selectedPolicy.od_amount}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold label">Net Amount:
-                  <span className="labelvalue">{selectedPolicy.net_amount}</span>
-                </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold label">Risk Start Date:
-                  <span className="labelvalue">{selectedPolicy.risk_start_date}</span>
-                </p>
-                </div>
-              </div>
+        {isModalVisible && (
+            <ViewDetailsModal onClose={closeModal} policy={policies}>
+              {selectedPolicy && (
+                  <div className="mt-1">
+                    {/* Business Details */}
+                    <h2 className="text-xl font-semibold subtitle">
+                      Business Details
+                    </h2>
+                    <div className="grid grid-cols-3 gap-1 mb-2">
+                      <div className="col-span-1">
+                        <p className="font-semibold label">Business Type:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.policyable.policy_type.business_type.name}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold label">Policy Type:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.policyable.policy_type.name}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold label">TP Amount:</p>
+                        <span className="labelvalue">{selectedPolicy.tp_amount}</span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold label">OD Amount:</p>
+                        <span className="labelvalue">{selectedPolicy.od_amount}</span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold label">Net Amount:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.net_amount}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold label">Risk Start Date:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.risk_start_date}
+                  </span>
+                      </div>
+                    </div>
 
-              <h2 className="text-xl font-semibold subtitle">Insurer Details</h2>
-              <div className="grid grid-cols-3 gap-1 mb-2">
-                <div className="col-span-1">
-                  <p className="font-semibold label">Company Name:
-                  <span className="labelvalue">{selectedPolicy.insurer.company_name??"NA"}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold">Policy Number:
-                  <span className="labelvalue">{selectedPolicy.insurer.policy_number??"NA"}</span>
-                  </p>
-                </div>
-              </div>
+                    {/* Insurer Details */}
+                    <h2 className="text-xl font-semibold subtitle">
+                      Insurer Details
+                    </h2>
+                    <div className="grid grid-cols-3 gap-1 mb-2">
+                      <div className="col-span-1">
+                        <p className="font-semibold label">Company Name:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.insurer.company_name ?? "NA"}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold">Policy Number:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.insurer.policy_number ?? "NA"}
+                  </span>
+                      </div>
+                    </div>
 
-              <h2 className="text-xl font-semibold subtitle">Partner Details</h2>
-              <div className="grid grid-cols-3 gap-1 mb-2">
-                <div className="col-span-1">
-                  <p className="font-semibold label">Partner Code:
-                  <span className="labelvalue">{selectedPolicy.partner.partner_code}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold label">Partner Name:
-                  <span className="labelvalue">{selectedPolicy.partner.name}</span>
-                  </p>
-                </div>
-              </div>
+                    {/* Partner Details */}
+                    <h2 className="text-xl font-semibold subtitle">
+                      Partner Details
+                    </h2>
+                    <div className="grid grid-cols-3 gap-1 mb-2">
+                      <div className="col-span-1">
+                        <p className="font-semibold label">Partner Code:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.partner.partner_code}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold label">Partner Name:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.partner.name}
+                  </span>
+                      </div>
+                    </div>
 
-              <h2 className="text-xl font-semibold subtitle">Customer Details</h2>
-              <div className="grid grid-cols-3 gap-1 mb-2">
-                <div className="col-span-1">
-                  <p className="font-semibold label">Name:
-                  <span className="labelvalue">{selectedPolicy.customer.name}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold label">Mobile:
-                  <span className="labelvalue">{selectedPolicy.customer.mobile}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold label">Email:
-                  <span className="labelvalue">{selectedPolicy.customer.email}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold label">Address:
-                  <span className="labelvalue">{selectedPolicy.customer.address}</span>
-                  </p>
-                </div>
-              </div>
+                    {/* Customer Details */}
+                    <h2 className="text-xl font-semibold subtitle">
+                      Customer Details
+                    </h2>
+                    <div className="grid grid-cols-3 gap-1 mb-2">
+                      <div className="col-span-1">
+                        <p className="font-semibold label">Name:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.customer.name}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold label">Mobile:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.customer.mobile}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold label">Email:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.customer.email}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold label">Address:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.customer.address}
+                  </span>
+                      </div>
+                    </div>
 
-              <h2 className="text-xl font-semibold subtitle">Vehicle Details</h2>
+                    {/* Vehicle Details */}
+                    <h2 className="text-xl font-semibold subtitle">Vehicle Details</h2>
 
-              <div className="grid grid-cols-3 gap-1 mb-2">
-                <div className="col-span-1">
-                  <p className="font-semibold">Registration Number:
-                  <span className="labelvalue">{selectedPolicy.policyable.registration_number}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold">Type:
-                  <span className="labelvalue">{selectedPolicy.policyable.type}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold">Make:
-                  <span className="labelvalue">{selectedPolicy.policyable.make}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold">Model:
-                  <span className="labelvalue">{selectedPolicy.policyable.model}</span>
-                  </p>
-                </div>
-                <div className="col-span-1">
-                  <p className="font-semibold">Fuel:
-                  <span>{selectedPolicy.policyable.fuel}</span>
-                  </p>
-                </div>
-                <div className="col-span-1"></div>
-                  <div className="col-span-1">
-                    {/*{JSON.stringify((selectedPolicy.policyable.capacities).length)}*/}
-                  <table>
-                    <tr>
-                      {/*{(() => {*/}
-                      {/*if((selectedPolicy.policyable.agecapacity).length>0){*/}
-                      {/*  {JSON.parse(selectedPolicy.policyable.agecapacity)}*/}
-                      {/*   //  selectedPolicy.policyable.ages.forEach( (val,k)=>{*/}
-                      {/*   //    <td>{JSON.parse(val)}</td>*/}
-                      {/*   // })*/}
-                      {/*}*/}
-                      {/*})()}*/}
-                    </tr>
-                  </table>
-                </div>
-
-                </div>
-            </div>
-          )}
-        </PolicyViewModal>
-      )}
-    </Layout>
+                    <div className="grid grid-cols-3 gap-1 mb-2">
+                      <div className="col-span-1">
+                        <p className="font-semibold">Registration Number:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.policyable.registration_number}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold">Type:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.policyable.type}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold">Make:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.policyable.make}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold">Model:</p>
+                        <span className="labelvalue">
+                    {selectedPolicy.policyable.model}
+                  </span>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="font-semibold">Fuel:</p>
+                        <span>{selectedPolicy.policyable.fuel}</span>
+                      </div>
+                      <div className="col-span-1"></div>
+                    </div>
+                    <div className="grid gap-1 mb-2">
+                        <table className="min-w-full table-auto border tablecommission">
+                        <tbody>
+                            {
+                              Object.values(selectedPolicy.policyable.capacities) ? (
+                                      Object.entries(selectedPolicy.policyable.capacities).map((capacity, c_index) => (
+                                          <tr>
+                                            <th key={c_index}>{capacity[1]}</th>
+                                            {
+                                              Object.entries(selectedPolicy.policyable.ages).map((age, index) => (
+                                                  c_index === 0 ? (
+                                                     <th key={index}>{age[1]}</th>
+                                                  ):(
+                                                      <td>{Object.values(selectedPolicy.policyable.agecapacity[capacity[0]][age[0]]).value}</td>
+                                                  )
+                                              ))
+                                            }
+                                              {c_index === 0 ? (
+                                                  <th className="border-2 shade text-center">
+                                                    DEAL
+                                                  </th>
+                                              ) : (
+                                                <td>{Object.values(selectedPolicy.policyable.agecapacity[capacity[0]]).deal}</td>
+                                              )}
+                                     </tr>
+                                      ))
+                            ) : (
+                                <tr><td>zxc</td></tr>
+                            )}
+                          </tbody>
+                        </table>
+                    </div>
+                    </div>
+              )}
+            </ViewDetailsModal>
+        )}
+      </Layout>
   );
 };
 

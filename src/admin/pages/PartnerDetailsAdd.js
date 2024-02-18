@@ -151,31 +151,35 @@ const PartnerDetailsAdd = () => {
     ['bank_account_no', 'bank_account_name', 'branch_name', 'bank_ifsc']
   ];
 
+  // const handleSaveAndNext = () => {
+  //   console.log("Form Data", formData);
+  //   const isFormValid = validateForm();
+  //   const isLastTab = selectedTabIndex === 4;
+
+  //   if (!isFormValid) {
+  //     console.error("Form validation failed. Please fill in all required fields correctly.");
+  //     return;
+  //   }
+
+  //   if (!isLastTab) {
+  //     const requiredFields = requiredFieldsByTab[selectedTabIndex];
+  //     const areRequiredFieldsFilled = requiredFields.every(
+  //       (key) => !!formData[key]
+  //     );
+
+  //     if (!areRequiredFieldsFilled) {
+  //       console.error("Please fill in all required fields in the current tab.");
+  //       return;
+  //     }
+
+  //     setSelectedTabIndex((prev) => prev + 1);
+  //   }
+  // };
+
+
   const handleSaveAndNext = () => {
-    console.log("Form Data", formData);
-    const isFormValid = validateForm();
-    const isLastTab = selectedTabIndex === 4;
-
-    if (!isFormValid) {
-      console.error("Form validation failed. Please fill in all required fields correctly.");
-      return;
-    }
-
-    if (!isLastTab) {
-      const requiredFields = requiredFieldsByTab[selectedTabIndex];
-      const areRequiredFieldsFilled = requiredFields.every(
-        (key) => !!formData[key]
-      );
-
-      if (!areRequiredFieldsFilled) {
-        console.error("Please fill in all required fields in the current tab.");
-        return;
-      }
-
-      setSelectedTabIndex((prev) => prev + 1);
-    }
-  };
-
+    setSelectedTabIndex((prev) => prev+1);
+  }
 
 
   const submitFormData = (e) => {
@@ -191,6 +195,7 @@ const PartnerDetailsAdd = () => {
       },
 
     }).then((res) => {
+      console.log(res);
       const{sucess, message} = res.data;
     }).catch((error) => {
       console.error("Error submitting form:", error);
@@ -198,19 +203,46 @@ const PartnerDetailsAdd = () => {
     })
   }
 
-  function generateBreadcrumbData(rightContent = null) {
+  function generateBreadcrumbData(selectedTabIndex, rightContent = null) {
+    let middleContent;
+    let isSaveDisabled = true;
+
+    switch (selectedTabIndex) {
+      case 0:
+        middleContent = "Personal Details";
+        break;
+      case 1:
+        middleContent = "Address";
+        break;
+      case 2:
+        middleContent = "Bank Details";
+        isSaveDisabled = false;
+        break;
+      case 3:
+        middleContent = "Documents";
+        isSaveDisabled = false;
+        break;
+      case 4:
+        middleContent = "Comments";
+        isSaveDisabled = false;
+        break;
+      default:
+        middleContent = "";
+        break;
+    }
+
     return {
       leftItems: [
         { label: "", link: "/" },
-        { label: "Partners", link: "/admin/partners" },
+        { label: "Policies", link: "/policy/list" },
       ],
-      middleContent: "Add Personal Details",
-      rightItems: rightContent,
+      middleContent: middleContent,
+      rightItems: ""
     };
   }
 
   return (
-    <Layout title="Partner Details" breadcrumbData={generateBreadcrumbData()}>
+    <Layout title="Partner Details" breadcrumbData={generateBreadcrumbData(selectedTabIndex)}>
       <Card bgColor="gray-100">
         <Tabs selectedIndex={selectedTabIndex} onSelect={(index) => setSelectedTabIndex(index)}>
           <TabList style={{ display: "flex", margin: 0, padding: 0 }}>
