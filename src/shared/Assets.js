@@ -20,6 +20,7 @@ import eye from "../assets/icons/view.svg";
 import addpartner from "../assets/icons/user-add 1.svg";
 import partnercommision from "../assets/icons/wallet-money 1.svg";
 import editpartner from "../assets/icons/useredit.svg";
+import UserProfile from "../assets/images/user-profile.png";
 import { tab } from '@testing-library/user-event/dist/tab';
 
 export const Icons = {
@@ -34,7 +35,8 @@ export const Icons = {
 
 
 export const Images = {
-    Logo:Logo 
+    Logo:Logo,
+    UserProfile: UserProfile, 
 }
 
 export const TabsIcon = {

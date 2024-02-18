@@ -34,9 +34,9 @@ const PartnerComissionList = () => {
         return {
             leftItems: [
                 { label: "Partners", link: "/admin/partners" },
-                { label: "Comission", link: "#" },
+                { label: "Commission", link: "#" },
             ],
-            middleContent: "",
+            middleContent: "Test / 2345",
             rightItems: rightContent
         };
     }
@@ -67,25 +67,25 @@ const PartnerComissionList = () => {
     }, [id]);
 
     return (
-        <Layout title="Partner Comission List " breadcrumbData={generateBreadcrumbData(searchRightContent)}>
+        <Layout title="Partner Comission List " breadcrumbData={generateBreadcrumbData()}>
             <Card>
                 <table className="min-w-full table-auto border border-gray-300">
                     <thead>
                         <tr className="bg-gray-300 ">
-                            <th className="px-4 py-2">Commission Type</th>
-                            <th className="px-4 py-2">Insurance Company</th>
-                            <th className="px-4 py-2">Vehicle Type</th>
-                            <th className="px-4 py-2">Vehicle SubType</th>
-                            <th className="px-4 py-2">Fuel Type</th>
-                            <th className="px-4 py-2">Vehicle Age</th>
-                            <th className="px-4 py-2">Engine</th>
-                            <th className="px-4 py-2">Make</th>
-                            <th className="px-4 py-2">Seat</th>
-                            <th className="px-4 py-2">OD Commission %</th>
-                            <th className="px-4 py-2">TP Commission %</th>
-                            <th className="px-4 py-2">NET Commission %</th>
-                            <th className="px-4 py-2">Flat Commission Amount</th>
-                            <th className="px-4 py-2">Action</th>
+                            <th className="px-2 py-2">Commission Type</th>
+                            <th className="px-2 py-2">Insurance Company</th>
+                            <th className="px-2 py-2">Vehicle Type</th>
+                            <th className="px-2 py-2">Vehicle SubType</th>
+                            <th className="px-2 py-2">Fuel Type</th>
+                            <th className="px-2 py-2">Vehicle Age</th>
+                            <th className="px-2 py-2">Engine</th>
+                            <th className="px-2 py-2">Make</th>
+                            <th className="px-2 py-2">Seat</th>
+                            <th className="px-2 py-2">OD Commission %</th>
+                            <th className="px-2 py-2">TP Commission %</th>
+                            <th className="px-2 py-2">NET Commission %</th>
+                            <th className="px-2 py-2">Flat Commission Amount</th>
+                            <th className="px-2 py-2">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,7 +129,7 @@ const PartnerComissionList = () => {
             </Card>
 
             {isModalVisible && (
-                <ViewDetailsModal onClose={closeModal} data={selectedComission}>
+                <ViewDetailsModal onClose={closeModal} data={selectedComission} title="Commission Details">
                   <h1>ID : {selectedComission.id}</h1>
                 </ViewDetailsModal>
             )}

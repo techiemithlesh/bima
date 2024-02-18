@@ -121,7 +121,7 @@ const PolicyList = () => {
         </Card>
 
         {isModalVisible && (
-            <ViewDetailsModal onClose={closeModal} policy={policies}>
+            <ViewDetailsModal onClose={closeModal} policy={policies} title="Policy Details">
               {selectedPolicy && (
                   <div className="mt-1">
                     {/* Business Details */}

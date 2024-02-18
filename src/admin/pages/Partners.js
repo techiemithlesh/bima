@@ -7,13 +7,25 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { data } from "autoprefixer";
 import Loading from "react-loading";
-import { TabsIcon } from "../../shared/Assets";
+import { Images, TabsIcon } from "../../shared/Assets";
+import ViewDetailsModal from "./components/ViewDetailsModal";
 
 const Partners = () => {
-
-
     const [PartnerList, SetPartnerList] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedPartner, setSelectedPartner] = useState(null);
+
+    function handleViewDetails(partner) {
+        setSelectedPartner(partner);
+        setIsModalVisible(true);
+    }
+
+    function closeModal() {
+        setIsModalVisible(false);
+        setSelectedPartner(null);
+    }
 
     useEffect(() => {
         const apiUrl = 'https://premium.treatweb.com/public/api/admin/partner/list';
@@ -172,10 +184,10 @@ const Partners = () => {
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.partner_status.toUpperCase()}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">
                                     <button
-                                        onClick={() => console.log("View clicked")}
+                                        onClick={() => handleViewDetails(partner)}
                                         className="text-white rounded mr-2"
                                     >
-                                        <img src={TabsIcon.eye} alt=""/>
+                                        <img src={TabsIcon.eye} alt="" />
                                     </button>
                                     <Link
                                         to={`/partner/addcommision/${partner.id}`}
@@ -192,7 +204,7 @@ const Partners = () => {
                                     </Link>
 
                                     <Link to={`/partner/comissions/list/${partner.id}`}
-                                    className="text-white px-2 py-2 rounded"/>
+                                        className="text-white px-2 py-2 rounded" />
                                     <FontAwesomeIcon icon={faMoneyCheck} />
                                 </td>
                             </tr>
@@ -207,17 +219,99 @@ const Partners = () => {
                     <div className="loading">
                         <Loading type="ball-triangle" color="#4fa94d" height={100} width={100} />
                     </div>
-                </div> :<div className="flex justify-between mt-4">
+                </div> : <div className="flex justify-between mt-4">
                     <div className="flex justify-around items-center">
                         {renderLeftPaginationButtons("left")}
                     </div>
                     <div className="flex justify-around items-center">
                         {renderPaginationButtons("right")}
                     </div>
-                </div> }
-                
-
+                </div>}
             </Card>
+
+            {/* MODAL START HERE*/}
+            {isModalVisible && (
+                <ViewDetailsModal onClose={closeModal} title="Partner Details" data={selectedPartner}>
+                    <div className="grid grid-cols-3 gap-4">
+                        <div className="col-span-3">
+
+                        </div>
+                        <div>
+                            <p className="font-semibold">Partner Code:</p>
+                            <p>{selectedPartner.partner_code}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold">Name:</p>
+                            <p>{selectedPartner.name}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold">Email:</p>
+                            <p>{selectedPartner.email}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold">Mobile:</p>
+                            <p>{selectedPartner.mobile}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold">Partner Code:</p>
+                            <p>{selectedPartner.partner_code}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold">Partner Branch:</p>
+                            <p>{selectedPartner.partner_branch}</p>
+                        </div>
+
+                        <div>
+                            <p className="font-semibold">Partner Status:</p>
+                            <p>{selectedPartner.partner_status}</p>
+                        </div>
+
+                        <div>
+                            <p className="font-semibold">Partner Type:</p>
+                            <p>{selectedPartner.partner_type}</p>
+                        </div>
+
+                        <div className="col-span-3">
+                            <h3 className="text-center">Partner Geographical Details</h3>
+                        </div>
+
+                        <div>
+                            <p className="font-semibold">Address</p>
+                            <p>{selectedPartner.partner_info.address}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold">City</p>
+                            <p>{selectedPartner.partner_info.city}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold">State</p>
+                            <p>{selectedPartner.partner_info.state}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold">Country</p>
+                            <p>{selectedPartner.partner_info.country}</p>
+                        </div>
+                        <div>
+                            <p className="font-semibold">Pin Code</p>
+                            <p>{selectedPartner.partner_info.pin_code}</p>
+                        </div>
+
+                        <div>
+                            <p className="font-semibold">Profile Image</p>
+                            {selectedPartner.partner_info.profile_image ? (
+                                <img src={selectedPartner.partner_info.profile_image} className="w-44 h-44" alt="Partner Profile" />
+                            ) : (
+                                <img src={Images.UserProfile} alt="Default Profile" />
+                            )}
+                        </div>
+
+
+
+                    </div>
+                </ViewDetailsModal>
+            )}
+
+            {/* MODAL END HERE */}
         </Layout>
     );
 };
