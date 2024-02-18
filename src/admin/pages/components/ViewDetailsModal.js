@@ -7,7 +7,7 @@ const ViewDetailsModal = ({ onClose, children, title }) => {
     
     return (
         <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white rounded-lg w-2/4 p-8 policymodal">
+            <div className="bg-white rounded-lg w-3/4 p-8 policymodal">
                 <div className="flex justify-between">
                     <h2 className="text-xl font-semibold title">{title}</h2>
 
@@ -15,7 +15,7 @@ const ViewDetailsModal = ({ onClose, children, title }) => {
                         <FontAwesomeIcon icon={faTimes} className="w-6 h-6" />
                     </button>
                 </div>
-                <div className="mt-4">
+                <div className="mt-4" style={{ maxHeight: "70vh", overflowY: "auto" }}>
                     {children}
                 </div>
             </div>

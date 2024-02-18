@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import { TabsIcon } from "../../shared/Assets";
 
-
 import ViewDetailsModal from "./components/ViewDetailsModal";
 
 const PolicyList = () => {
@@ -17,12 +16,11 @@ const PolicyList = () => {
 
   useEffect(() => {
     const apiUrl = "https://premium.treatweb.com/public/api/admin/policies/list";
-
+        // const apiUrl = "http://phpstorm.local:9000/api/admin/policies/list";
     axios
         .get(apiUrl)
         .then((res) => {
           const data = res.data;
-          console.log(data);
           setPolicies(data.policies);
         })
         .catch((error) => {
@@ -43,14 +41,8 @@ const PolicyList = () => {
 
   const searchRightContent = (
       <>
-        <input
-            type="text"
-            placeholder="Search with name"
-            onChange={(e) => console.log("Search:", e.target.value)}
-            className="border border-gray-300 px-8 py-2 rounded focus:outline-none focus:border-blue-500"
-        />
         <Link to={'/policy/add/'}>
-          <img src={TabsIcon.addpartner} alt="Add Partner" />
+          <img src={TabsIcon.addpartner} alt="Add Policy" />
         </Link>
       </>
   );
@@ -107,10 +99,7 @@ const PolicyList = () => {
                   <td className="px-4 py-2">{policy.net_amount}</td>
                   <td className="px-4 py-2">{policy.policy_date}</td>
                   <td className="px-4 py-2 flex justify-between">
-                    <button
-                        onClick={() => handleViewDetails(policy)}
-                        className="text-white rounded mr-2"
-                    >
+                    <button onClick={() => handleViewDetails(policy)} className="text-white rounded mr-2">
                       <img src={TabsIcon.eye} alt="View Details" />
                     </button>
                   </td>
@@ -269,17 +258,24 @@ const PolicyList = () => {
                     <div className="grid gap-1 mb-2">
                         <table className="min-w-full table-auto border tablecommission">
                         <tbody>
+                            {console.log(selectedPolicy.policyable.capacities.v0)}
                             {
-                              Object.values(selectedPolicy.policyable.capacities) ? (
+                              (selectedPolicy.policyable.capacities!=null) &&
+                              Object.keys(selectedPolicy.policyable.capacities).length>0 ? (
                                       Object.entries(selectedPolicy.policyable.capacities).map((capacity, c_index) => (
                                           <tr>
+                                            {c_index === 0 ?
                                             <th key={c_index}>{capacity[1]}</th>
+                                                :
+                                                <th key={c_index}>{capacity[1]}</th>
+                                            }
                                             {
                                               Object.entries(selectedPolicy.policyable.ages).map((age, index) => (
                                                   c_index === 0 ? (
                                                      <th key={index}>{age[1]}</th>
                                                   ):(
-                                                      <td>{Object.values(selectedPolicy.policyable.agecapacity[capacity[0]][age[0]]).value}</td>
+
+                                                      <td>{selectedPolicy.policyable.agecapacity[capacity[0]][age[0]].value}</td>
                                                   )
                                               ))
                                             }
@@ -288,12 +284,12 @@ const PolicyList = () => {
                                                     DEAL
                                                   </th>
                                               ) : (
-                                                <td>{Object.values(selectedPolicy.policyable.agecapacity[capacity[0]]).deal}</td>
+                                                <td>{selectedPolicy.policyable.agecapacity[capacity[0]].deal}</td>
                                               )}
                                      </tr>
                                       ))
                             ) : (
-                                <tr><td>zxc</td></tr>
+                                <tr><td style={{display:'none'}}>No Age Capacity found.</td></tr>
                             )}
                           </tbody>
                         </table>

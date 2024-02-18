@@ -63,12 +63,15 @@ const Partners = () => {
 
 
     const searchRightContent = (
-        <input
-            type="text"
-            placeholder="Search with name"
-            onChange={(e) => console.log("Search:", e.target.value)}
-            className="border border-gray-300 px-8 py-2 rounded focus:outline-none focus:border-blue-500"
-        />
+        <>
+            <input
+                type="text"
+                placeholder="Search with name"
+                onChange={(e) => console.log("Search:", e.target.value)}
+                className="border border-gray-300 px-8 py-2 searchbox focus:outline-none focus:border-blue-500"
+            />
+            <Link to={`/partner/details/add`}><img src={TabsIcon.addpartner} alt=""/></Link>
+        </>
     );
 
 
@@ -192,15 +195,9 @@ const Partners = () => {
                                         </button>
 
                                         <Link
-                                            to={`/partner/details/add/${partner.id}`}
-                                            className="bg-indigo-500 text-white rounded mx-1"
-                                        >
-                                            <FontAwesomeIcon icon={faUser} />
-                                        </Link>
-
-                                        <Link
                                             to={`/partner/comissions/list/${partner.id}`}
-                                            className="text-white rounded mx-1">
+                                            className="text-white rounded mx-1"
+                                            >
                                             <img src={Icons.PartnerIcon} />
                                         </Link>
                                     </div>

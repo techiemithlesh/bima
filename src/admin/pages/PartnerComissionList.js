@@ -53,10 +53,9 @@ const PartnerComissionList = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const apiUrl = `https://premium.treatweb.com/public/api/admin/partner/commissionoptions/${id}`;
+                const apiUrl = `https://premium.treatweb.com/public/api/admin/partner/commission/${id}`;
                 const res = await axios.get(apiUrl);
-                console.log(res.data.commissions)
-                const comissionData = res.data.commissions;
+                const comissionData = res.data;
                 SetComissionList(comissionData);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -91,7 +90,7 @@ const PartnerComissionList = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {commissionsList.map((commission) => (
+                        {commissionsList && commissionsList.map((commission) => (
                             <tr key={commission.id}>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.business_types_name}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.insurers_name}</td>
@@ -118,7 +117,7 @@ const PartnerComissionList = () => {
                                             <FontAwesomeIcon icon={faAdd} />
                                         </Link>
 
-                                        <Link to='/partner/comission/edit' className="px-1">
+                                        <Link to={`/partner/editcommision/${commission.id}`} className="px-1">
                                             <FontAwesomeIcon icon={faEdit} />
                                         </Link>
                                     </div>

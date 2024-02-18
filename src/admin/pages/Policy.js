@@ -6,7 +6,6 @@ import { TabsIcon } from "../../shared/Assets";
 import axios, { formToJSON } from "axios";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
-import * as PropTypes from "prop-types";
 import { useNavigate } from 'react-router-dom';
 const Policy = () => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -103,13 +102,16 @@ const Policy = () => {
     if (checkclass.length > 0) {
       const Data = new FormData(document.getElementById("form"));
       const updatedFormData = formToJSON(Data);
-      console.log(updatedFormData);
-      setFormData((prevData) => ({
-        ...prevData,
-        ["agecapacity"]: updatedFormData.agecapacity,
-        ["engines"]: updatedFormData.engines,
-        ["ages"]: updatedFormData.ages
-      }));
+      if (Object.keys(updatedFormData).length > 0) {
+        setFormData((prevData) => ({
+          ...prevData,
+          "agecapacity": updatedFormData.agecapacity,
+          "engines": Object.assign({},updatedFormData.engines),
+          "ages": Object.assign({},updatedFormData.ages)
+        }));
+     }
+      console.log(Object.assign({},updatedFormData.engines));
+
     }
     setFormData((prevData) => ({
       ...prevData,
@@ -171,7 +173,6 @@ const Policy = () => {
     }
     setErrors({});
     const csrfToken = Cookies.get("XSRF-TOKEN");
-    // console.log("CSRF Token:", csrfToken);
     console.log(formData);
     axios
       .post(
@@ -187,26 +188,17 @@ const Policy = () => {
         }
       )
       .then((response) => {
-        const { success, message,code } = response.data;
+        const { success, message } = response.data;
         // console.log(response);
-        if (success==false) {
-          // console.log(message);
+        if (success===false) {
           setErrors(message);
-          // setErrors((prevData) => ({
-          //   ...prevData,
-          //   message,
-          // }));
-        alert('one or more filed is blank or invalid.')
-         // console.log(errors);
-         // console.log((errors.own_damage));
+          alert('one or more filed is blank or invalid.')
         } else {
           alert(message);
           toast.success(message, {
             position: "top-right",
           });
-         navigate('/policy/list');
-        //ocation.href='/policy/list';
-        //   <Redirect to="/policy/list" />
+          navigate('/policy/list');
         }
       })
       .catch((error) => {
@@ -453,13 +445,14 @@ const Policy = () => {
                               engine.text.toLowerCase().includes("age")
                           )
                           .map((engine, index) => (
-                            <tr
-                              className="shade"
-                            >
-                              {index === "0" ? (
+                            <tr className="shade">
+                              {index === 0 ? (
                                 <th className="border-b shade p-2">
                                   {insurance.business_options.engines[0].text}
-                                  <input type="hidden" name="engines[]" value={insurance.business_options.engines[0].text}/>
+                                  <input type="hidden" name={"engines[0]"}
+                                         className="text-x text-center shade"
+                                         value={engine.text}
+                                  />
                                 </th>
                               ) : (
                                 <th className="">
@@ -657,7 +650,7 @@ const Policy = () => {
                             </option>
                           ))}
                       </select>
-                      {(errors.insurer!="undefined")?
+                      {(errors.insurer!=="undefined")?
                           <span className="error text-red-400">{errors.insurer}</span>
                           :""}
                     </div>
@@ -670,7 +663,7 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Enter Policy Number"
                       />
-                      {(errors.policy_number!="undefined")?
+                      {(errors.policy_number!=="undefined")?
                           <span className="error text-red-400">{errors.policy_number}</span>
                           :""}
                     </div>
@@ -684,7 +677,7 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Risk Start Date"
                       />
-                      {(errors.risk_start_date!="undefined")?
+                      {(errors.risk_start_date!=="undefined")?
                           <span className="error text-red-400">{errors.risk_start_date}</span>
                           :""}
                     </div>
@@ -697,7 +690,7 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Enter OD Amount"
                       />
-                      {(errors.own_damage!="undefined")?
+                      {(errors.own_damage!=="undefined")?
                           <span className="error text-red-400">{errors.own_damage}</span>
                       :""}
                     </div>
@@ -710,7 +703,7 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Enter TP Amount"
                       />
-                      {(errors.third_party!="undefined")?
+                      {(errors.third_party!=="undefined")?
                           <span className="error text-red-400">{errors.third_party}</span>
                           :""}
                     </div>
@@ -723,7 +716,7 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Enter NET Amount"
                       />
-                      {(errors.net_amount!="undefined")?
+                      {(errors.net_amount!=="undefined")?
                           <span className="error text-red-400">{errors.net_amount}</span>
                           :""}
                     </div>
@@ -743,7 +736,7 @@ const Policy = () => {
                             </option>
                           ))}
                       </select>
-                      {(errors.partner_code!="undefined")?
+                      {(errors.partner_code!=="undefined")?
                           <span className="error text-red-400">{errors.partner_code}</span>
                           :""}
                     </div>
@@ -765,7 +758,7 @@ const Policy = () => {
                             )
                           )}
                       </select>
-                      {(errors.payment_type!="undefined")?
+                      {(errors.payment_type!=="undefined")?
                           <span className="error text-red-400">{errors.payment_type}</span>
                           :""}
                     </div>
@@ -792,7 +785,7 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Customer Name"
                       />
-                      {(errors.customer_name!="undefined")?
+                      {(errors.customer_name!=="undefined")?
                           <span className="error text-red-400">{errors.customer_name}</span>
                           :""}
                     </div>
@@ -805,7 +798,7 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Customer Mobile"
                       />
-                      {(errors.customer_mobile!="undefined")?
+                      {(errors.customer_mobile!=="undefined")?
                           <span className="error text-red-400">{errors.customer_mobile}</span>
                           :""}
                     </div>
@@ -818,7 +811,7 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Customer Email"
                       />
-                      {(errors.customer_email!="undefined")?
+                      {(errors.customer_email!=="undefined")?
                           <span className="error text-red-400">{errors.customer_email}</span>
                           :""}
                     </div>
@@ -831,7 +824,7 @@ const Policy = () => {
                         onChange={handleInputChange}
                         placeholder="Customer Address"
                       />
-                      {(errors.customer_address!="undefined")?
+                      {(errors.customer_address!=="undefined")?
                           <span className="error text-red-400">{errors.customer_address}</span>
                           :""}
                     </div>

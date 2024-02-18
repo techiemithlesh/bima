@@ -9,6 +9,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const PartnerDetailsAdd = () => {
+
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [formData, setFormData] = useState({
     name: '',
@@ -47,10 +48,12 @@ const PartnerDetailsAdd = () => {
     branch_name: '',
     image: '',
     partner_status: '',
+    partner_type: '',
     pan_no: '',
     aadhaar_no: '',
     licence_no: '',
     license_expiry_date: '',
+    address_type: '',
     address: '',
     country: '',
     state: '',
@@ -71,9 +74,6 @@ const PartnerDetailsAdd = () => {
   })
 
 
-
-
-
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
@@ -85,7 +85,6 @@ const PartnerDetailsAdd = () => {
     validateField(name, value);
 
   }
-
 
   const validateField = (name, value) => {
     let errorMessage = '';
@@ -100,7 +99,7 @@ const PartnerDetailsAdd = () => {
         errorMessage = validateMobile(value);
         break;
       case 'aadhaar_no':
-      errorMessage = validateAdhar(value);
+        errorMessage = validateAdhar(value);
 
       case 'pan_no':
         errorMessage = validatePan(value);
@@ -109,7 +108,7 @@ const PartnerDetailsAdd = () => {
         errorMessage = validateEmail(value);
 
       case 'alt_mobile':
-         errorMessage = validateMobile(value);
+        errorMessage = validateMobile(value);
       default:
         break;
     }
@@ -122,28 +121,26 @@ const PartnerDetailsAdd = () => {
 
   const validateForm = () => {
     let valid = true;
-    for (const fields of requiredFieldsByTab) {
-      for (const key of fields) {
-        const errorMessage = validateField(key, formData[key]);
-        if (errorMessage) {
-          valid = false;
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            [key]: errorMessage,
-          }));
-        } else if (!formData[key]) {
-          valid = false;
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            [key]: 'This field is required.',
-          }));
-        }
+    const requiredFields = requiredFieldsByTab[selectedTabIndex];
+    for (const key of requiredFields) {
+      const errorMessage = validateField(key, formData[key]);
+      if (errorMessage) {
+        valid = false;
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [key]: errorMessage,
+        }));
+      } else if (!formData[key]) {
+        valid = false;
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [key]: 'This field is required.',
+        }));
       }
     }
     return valid;
   };
-
-
+  
 
   const requiredFieldsByTab = [
     ['name', 'email', 'mobile'],
@@ -151,35 +148,16 @@ const PartnerDetailsAdd = () => {
     ['bank_account_no', 'bank_account_name', 'branch_name', 'bank_ifsc']
   ];
 
-  // const handleSaveAndNext = () => {
-  //   console.log("Form Data", formData);
-  //   const isFormValid = validateForm();
-  //   const isLastTab = selectedTabIndex === 4;
-
-  //   if (!isFormValid) {
-  //     console.error("Form validation failed. Please fill in all required fields correctly.");
-  //     return;
-  //   }
-
-  //   if (!isLastTab) {
-  //     const requiredFields = requiredFieldsByTab[selectedTabIndex];
-  //     const areRequiredFieldsFilled = requiredFields.every(
-  //       (key) => !!formData[key]
-  //     );
-
-  //     if (!areRequiredFieldsFilled) {
-  //       console.error("Please fill in all required fields in the current tab.");
-  //       return;
-  //     }
-
-  //     setSelectedTabIndex((prev) => prev + 1);
-  //   }
-  // };
-
-
   const handleSaveAndNext = () => {
-    setSelectedTabIndex((prev) => prev+1);
-  }
+    console.log("Validate Form", validateForm());
+    if (validateForm()) {
+      
+      setSelectedTabIndex((prev) => prev + 1);
+    } else {
+      alert('Fill Required Input then Move to next Page');
+    }
+  };
+  
 
 
   const submitFormData = (e) => {
@@ -196,7 +174,7 @@ const PartnerDetailsAdd = () => {
 
     }).then((res) => {
       console.log(res);
-      const{sucess, message} = res.data;
+      const { sucess, message } = res.data;
     }).catch((error) => {
       console.error("Error submitting form:", error);
       setErrors(error);
@@ -267,13 +245,13 @@ const PartnerDetailsAdd = () => {
 
                     <div className="flex-1 mr-2">
                       <label htmlFor="email">Email*</label>
-                      <input name="email" value={formData.email} onChange={handleInputChange} id="email" className="w-full p-2" placeholder="Email*" required />
+                      <input name="email" value={formData.email} onChange={handleInputChange} id="email" className="w-full p-2" required placeholder="Email*" />
                       {errors.email && <span className="text-red-500">{errors.email}</span>}
                     </div>
 
                     <div className="flex-1 mr-2">
                       <label htmlFor="mobile">Mobile*</label>
-                      <input name="mobile" value={formData.mobile} onChange={handleInputChange} id="mobile" className="w-full p-2" placeholder="Mobile*" required />
+                      <input name="mobile" value={formData.mobile} onChange={handleInputChange} id="mobile" className="w-full p-2" required placeholder="Mobile*" />
                       {errors.mobile && <span className="text-red-500">{errors.mobile}</span>}
                     </div>
 
@@ -290,30 +268,33 @@ const PartnerDetailsAdd = () => {
                     <div className="flex-1 mr-2">
                       <label htmlFor="licence_no">License No</label>
                       <input name="licence_no" value={formData.licence_no} onChange={handleInputChange} id="licence_no" className="w-full p-2" placeholder="" />
+                      {errors.licence_no && <span className="text-red-500">{errors.licence_no}</span>}
                     </div>
                     <div className="flex-1 mr-2">
                       <label htmlFor="">Licence Expiry Date</label>
-                      <input type="date" className="w-full p-2" placeholder="" />
+                      <input type="date" name="license_expiry_date" onChange={handleInputChange} className="w-full p-2" placeholder="" />
+                      {errors.license_expiry_date && <span className="text-red-500">{errors.license_expiry_date}</span>}
                     </div>
                     <div className="flex-1 mr-2">
                       <label htmlFor="">Status</label>
-                      <select name="partner_status" value={formData.partner_status} onChange={handleInputChange} id="" className="w-full p-2" >
+                      <select name="partner_status" value={formData.partner_status} onChange={handleInputChange} id="" required className="w-full p-2" >
                         <option value="">Select Status</option>
                         <option value="active">Active</option>
                         <option value="in_active">In Active</option>
                       </select>
+                      {errors.partner_status && <span className="text-red-500">{errors.partner_status}</span>}
                     </div>
                     <div className="flex-1 mr-2">
                       <label htmlFor="">Partner Type</label>
-                      <select name="" id="" className="w-full p-2" >
+                      <select name="partner_type" onChange={handleInputChange} value={formData.partner_type} id="" className="w-full p-2" >
                         <option value="">Select Partner Type</option>
                         <option value="sales_person">Sales Person</option>
                         <option value="self">Self Person</option>
                       </select>
+                      {errors.partner_type && <span className="text-red-500">{errors.partner_type}</span>}
                     </div>
 
                   </div>
-
 
                 </div>
               </div>
@@ -328,46 +309,48 @@ const PartnerDetailsAdd = () => {
                     <div className="flex-1 mr-2">
                       <label htmlFor="alt_mobile">Alternate Number</label>
                       <input name="alt_mobile" value={formData.alt_mobile} onChange={handleInputChange} id="alt_mobile" className="w-full p-2 border-2" placeholder="" />
+                      {errors.alt_mobile && <span className="text-red-500">{errors.alt_mobile}</span>}
                     </div>
 
                     <div className="flex-1 mr-2">
                       <label htmlFor="alt_email">Alternate Email</label>
                       <input name="alt_email" value={formData.alt_email} onChange={handleInputChange} id="alt_email" className="w-full p-2 border-2" placeholder="" />
+                      {errors.alt_email && <span className="text-red-500">{errors.alt_email}</span>}
                     </div>
 
                     <div className="flex-1 mr-2">
                       <label htmlFor="postal_code">Area/Pin Code</label>
                       <input name="postal_code" value={formData.postal_code} onChange={handleInputChange} id="postal_code" className="w-full p-2 border-2" placeholder="" />
+                      {errors.postal_code && <span className="text-red-500">{errors.postal_code}</span>}
                     </div>
 
                     <div className="flex-1 mr-2">
                       <label htmlFor="state">State</label>
-                      <select name="state" value={formData.state} onChange={handleInputChange} id="state" className="w-full p-2 border-2" >
-                        <option value="">Select State</option>
-                      </select>
+                      <input name="state" value={formData.state} onChange={handleInputChange} id="state" className="w-full p-2 border-2" placeholder="" />
+                      {errors.state && <span className="text-red-500">{errors.state}</span>}
                     </div>
                     <div className="flex-1 mr-2">
-                      <label htmlFor="">City/District</label>
-                      <select name="city" value={formData.city} onChange={handleInputChange} id="city" className="w-full p-2 border-2" >
-                        <option value="">Select City/District</option>
-                      </select>
+                      <label htmlFor="">City/District</label>   
+                      <input name="city" value={formData.city} onChange={handleInputChange} id="city" className="w-full p-2 border-2" placeholder="" />
+                      {errors.city && <span className="text-red-500">{errors.city}</span>}
                     </div>
                     <div className="flex-1 mr-2">
                       <label htmlFor="">Address Type</label>
-                      <select name="address" value={formData.address} onChange={handleInputChange} id="address" className="w-full p-2 border-2" >
+                      <select name="address_type" value={formData.address_type} onChange={handleInputChange} id="address_type" className="w-full p-2 border-2" >
                         <option value="">Select Address Type</option>
-                        <option>Option 1</option>
-                        <option>Option 2</option>
+                        <option value="Residential">Residential</option>
+                        <option value="Correspondence">Permanent</option>
                       </select>
+                      {errors.address_type && <span className="text-red-500">{errors.address_type}</span>}
                     </div>
 
                     <div className="flex-1 mr-2">
                       <label htmlFor="">Full Address</label>
-                      <textarea name="" className="w-full p-2 border-2" id="" cols="30" rows="10"></textarea>
+                      <textarea name="address" value={formData.address} onChange={handleInputChange} className="w-full p-2 border-2" id="" cols="30" rows="10"></textarea>
+                      {errors.address && <span className="text-red-500">{errors.address}</span>}
                     </div>
 
                   </div>
-
 
                 </div>
               </div>
@@ -381,22 +364,24 @@ const PartnerDetailsAdd = () => {
                     <div className="flex-1 mr-2">
                       <label htmlFor="bank_account_no">Account No</label>
                       <input name="bank_account_no" value={formData.bank_account_no} onChange={handleInputChange} id="bank_account_no" className="w-full p-2 border-2" placeholder="" />
+                      {errors.bank_account_no && <span className="text-red-500">{errors.bank_account_no}</span>}
                     </div>
 
                     <div className="flex-1 mr-2">
                       <label htmlFor="">Bank Name</label>
-                      <select name="bank_account_name" value={formData.bank_account_name} onChange={handleInputChange} className="w-full p-2 border-2" >
-                        <option value="">Select</option>
-                      </select>
+                      <input name="bank_account_name" value={formData.bank_account_name} onChange={handleInputChange} id="bank_account_name" className="w-full p-2 border-2" placeholder="" />
+                      {errors.bank_account_name && <span className="text-red-500">{errors.bank_account_name}</span>}
                     </div>
 
                     <div className="flex-1 mr-2">
                       <label htmlFor="">Branch Name</label>
                       <input name="branch_name" value={formData.branch_name} onChange={handleInputChange} className="w-full p-2 border-2" placeholder="" />
+                      {errors.branch_name && <span className="text-red-500">{errors.branch_name}</span>}
                     </div>
                     <div className="flex-1 mr-2">
                       <label htmlFor="bank_ifsc">IFSC Code</label>
                       <input name="bank_ifsc" value={formData.bank_ifsc} onChange={handleInputChange} className="w-full p-2 border-2" placeholder="" />
+                      {errors.bank_ifsc && <span className="text-red-500">{errors.bank_ifsc}</span>}
                     </div>
                   </div>
 
