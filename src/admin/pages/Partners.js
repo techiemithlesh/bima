@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { data } from "autoprefixer";
 import Loading from "react-loading";
-import { Images, TabsIcon } from "../../shared/Assets";
+import { Icons, Images, TabsIcon } from "../../shared/Assets";
 import ViewDetailsModal from "./components/ViewDetailsModal";
 
 const Partners = () => {
@@ -182,30 +182,28 @@ const Partners = () => {
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.mobile}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.partner_type}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.partner_status.toUpperCase()}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">
-                                    <button
-                                        onClick={() => handleViewDetails(partner)}
-                                        className="text-white rounded mr-2"
-                                    >
-                                        <img src={TabsIcon.eye} alt="" />
-                                    </button>
-                                    <Link
-                                        to={`/partner/addcommision/${partner.id}`}
-                                        className="bg-green-500 text-white px-2 py-1 rounded mr-2"
-                                    >
+                                <td className="px-2 py-4 border-b border-gray-300 text-center">
+                                    <div className="flex justify-center items-center">
+                                        <button
+                                            onClick={() => handleViewDetails(partner)}
+                                            className="text-white rounded mx-1"
+                                        >
+                                            <img src={TabsIcon.eye} alt="" />
+                                        </button>
 
-                                        <FontAwesomeIcon icon={faWallet} />
-                                    </Link>
-                                    <Link
-                                        to={`/partner/details/add/${partner.id}`}
-                                        className="bg-indigo-500 text-white px-2 py-1 rounded"
-                                    >
-                                        <FontAwesomeIcon icon={faUser} />
-                                    </Link>
+                                        <Link
+                                            to={`/partner/details/add/${partner.id}`}
+                                            className="bg-indigo-500 text-white rounded mx-1"
+                                        >
+                                            <FontAwesomeIcon icon={faUser} />
+                                        </Link>
 
-                                    <Link to={`/partner/comissions/list/${partner.id}`}
-                                        className="text-white px-2 py-2 rounded" />
-                                    <FontAwesomeIcon icon={faMoneyCheck} />
+                                        <Link
+                                            to={`/partner/comissions/list/${partner.id}`}
+                                            className="text-white rounded mx-1">
+                                            <img src={Icons.PartnerIcon} />
+                                        </Link>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -304,8 +302,6 @@ const Partners = () => {
                                 <img src={Images.UserProfile} alt="Default Profile" />
                             )}
                         </div>
-
-
 
                     </div>
                 </ViewDetailsModal>

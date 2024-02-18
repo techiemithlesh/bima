@@ -69,7 +69,9 @@ const PartnerComissionList = () => {
     return (
         <Layout title="Partner Comission List " breadcrumbData={generateBreadcrumbData()}>
             <Card>
+               
                 <table className="min-w-full table-auto border border-gray-300">
+                
                     <thead>
                         <tr className="bg-gray-300 ">
                             <th className="px-2 py-2">Commission Type</th>
