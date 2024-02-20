@@ -214,7 +214,7 @@ const PartnerDetailsAdd = () => {
       const { success, message } = res.data;
       console.log(res.data);
       if (res.data.success) {
-        alert(res.data.messages || 'Partner added successfully Alert!');
+        // alert(res.data.messages || 'Partner added successfully Alert!');
         toast.success(res.data.messages || 'Partner added successfully kfkj!', {
           position: 'top-right',
           autoClose: 5000,

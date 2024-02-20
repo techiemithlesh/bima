@@ -13,6 +13,7 @@ import PolicyList from './admin/pages/PolicyList';
 import PartnerDetailsAdd from './admin/pages/PartnerDetailsAdd';
 import PartnerComissionList from './admin/pages/PartnerComissionList';
 import PartnerComissionEdit from './admin/pages/PartnerCommissionEdit';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
       <Route path='/policy/list' element={<PrivateRoute><PolicyList/></PrivateRoute>}/>
       <Route path='/policy/add' element={<Policy/>}/>
     </Routes>
+    <Toaster/>
    </Router>
    </>
   );
