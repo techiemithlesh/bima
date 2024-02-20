@@ -21,6 +21,7 @@ import addpartner from "../assets/icons/user-add 1.svg";
 import partnercommision from "../assets/icons/wallet-money 1.svg";
 import editpartner from "../assets/icons/useredit.svg";
 import UserProfile from "../assets/images/user-profile.png";
+import UserAdd from "../assets/icons/add-friend 1.svg";
 import { tab } from '@testing-library/user-event/dist/tab';
 
 export const Icons = {
@@ -29,7 +30,8 @@ export const Icons = {
     PolicyIcon : Policy,
     PayoutIcon : Payout,
     About: About,
-    UserIcon: User
+    UserIcon: User,
+    UserAdd: UserAdd,
 
 }
 

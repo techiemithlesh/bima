@@ -75,6 +75,12 @@ export const validatePan = (pan_no) => {
   }
 };
 
+export const validatePartnerStatus = (partner_status) => {
+  if(!partner_status.trim()){
+    return "Partner Status is Required"
+  }
+  return '';
+}
 
 export const validateDocument = (fileName) => {
   if (!fileName || typeof fileName !== 'string') {

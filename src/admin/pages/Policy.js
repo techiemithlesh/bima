@@ -5,7 +5,7 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { TabsIcon } from "../../shared/Assets";
 import axios, { formToJSON } from "axios";
 import Cookies from "js-cookie";
-import toast from "react-hot-toast";
+
 import { useNavigate } from 'react-router-dom';
 const Policy = () => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -195,9 +195,9 @@ const Policy = () => {
           alert('one or more filed is blank or invalid.')
         } else {
           alert(message);
-          toast.success(message, {
-            position: "top-right",
-          });
+          // toast.success(message, {
+          //   position: "top-right",
+          // });
           navigate('/policy/list');
         }
       })

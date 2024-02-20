@@ -3,10 +3,12 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
-import { TabsIcon } from "../../shared/Assets";
-import { validateAdhar, validateDocument, validateEmail, validateMobile, validateName, validatePan } from "../../utils/Validation";
+import { Icons, TabsIcon } from "../../shared/Assets";
+import { validateAdhar, validateDocument, validateEmail, validateMobile, validateName, validatePan, validatePartnerStatus } from "../../utils/Validation";
 import axios from "axios";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
+
 
 const PartnerDetailsAdd = () => {
 
@@ -74,21 +76,13 @@ const PartnerDetailsAdd = () => {
   })
 
 
-  const handleInputChange = (event) => {
-    const { name, value, files } = event.target;
-    const selectedFile = files && files.length > 0 ? files[0].name : '';
-
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: selectedFile || value,
-    }));
-
-    validateField(name, selectedFile);
-  };
-
-
   const validateField = (name, value) => {
     let errorMessage = '';
+
+    if (!value) {
+      return null;
+    }
+
     switch (name) {
       case 'name':
         errorMessage = validateName(value);
@@ -101,13 +95,16 @@ const PartnerDetailsAdd = () => {
         break;
       case 'aadhaar_no':
         errorMessage = validateAdhar(value);
-
+        break;
       case 'pan_no':
         errorMessage = validatePan(value);
-
+        break;
+      case 'partner_status':
+        errorMessage = validatePartnerStatus(value);
+        break;
       case 'alt_email':
         errorMessage = validateEmail(value);
-
+        break;
       case 'alt_mobile':
         errorMessage = validateMobile(value);
         break;
@@ -115,7 +112,7 @@ const PartnerDetailsAdd = () => {
       case 'aadhaar_file':
       case 'licence_file':
       case 'bank_passbook_file':
-        errorMessage = validateDocument(value);
+        errorMessage = validateDocument(value.name);
         break;
       default:
         break;
@@ -126,6 +123,25 @@ const PartnerDetailsAdd = () => {
     }));
   };
 
+  const handleInputChange = (event) => {
+    const { name, value, files } = event.target;
+
+    if (files && files.length > 0) {
+
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: files[0],
+      }));
+    } else {
+
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+
+    validateField(name, files && files.length > 0 ? files[0] : value);
+  };
 
   const validateForm = () => {
     let valid = true;
@@ -151,7 +167,7 @@ const PartnerDetailsAdd = () => {
 
 
   const requiredFieldsByTab = [
-    ['name', 'email', 'mobile'],
+    ['name', 'email', 'mobile', 'partner_status'],
     ['address'],
     [],
     []
@@ -160,10 +176,9 @@ const PartnerDetailsAdd = () => {
   const handleSaveAndNext = () => {
     console.log("Validate Form", validateForm());
     if (validateForm()) {
-
       setSelectedTabIndex((prev) => prev + 1);
     } else {
-      alert('Fill Required Input then Move to next Page');
+      // alert('Fill Required Input then Move to next Page');
     }
   };
 
@@ -172,39 +187,73 @@ const PartnerDetailsAdd = () => {
   const submitFormData = (e) => {
     e.preventDefault();
     const csrfToken = Cookies.get('XSRF-TOKEN');
-    const apiUrl = 'https://premium.treatweb.com/public/api/admin/partner/add'
-
-
-    const updatedFormData = { ...formData };
-
+    const apiUrl = 'https://premium.treatweb.com/public/api/admin/partner/add';
+  
     const formDataToSend = new FormData();
-
+  
     // Append existing form data to formDataToSend
-    for (const key in updatedFormData) {
-      formDataToSend.append(key, updatedFormData[key]);
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
     }
-
+  
     // Append files to formData
+    formDataToSend.append('image', formData.image);
     formDataToSend.append('pan_file', formData.pan_file);
     formDataToSend.append('aadhaar_file', formData.aadhaar_file);
     formDataToSend.append('licence_file', formData.licence_file);
     formDataToSend.append('bank_passbook_file', formData.bank_passbook_file);
-
+  
     console.log("FormData", formData);
-    axios.post(apiUrl, formData, {
+    axios.post(apiUrl, formDataToSend, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'X-CSRF-TOKEN': csrfToken,
       },
-
     }).then((res) => {
       console.log(res);
-      const { sucess, message } = res.data;
+      const { success, message } = res.data;
+      console.log(res.data);
+      if (res.data.success) {
+        alert(res.data.messages || 'Partner added successfully Alert!');
+        toast.success(res.data.messages || 'Partner added successfully kfkj!', {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        
+      } else {
+        
+        toast.error(res.data.messages || 'An error occurred while adding the partner. Please try again later.', {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        
+        setErrors(res.data.errors || {});
+      }
     }).catch((error) => {
       console.error("Error submitting form:", error);
+      toast.error('An error occurred while submitting the form. Please try again later.', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       setErrors(error);
-    })
-  }
+    });
+  };
+  
 
   function generateBreadcrumbData(selectedTabIndex, rightContent = null) {
     let middleContent;
@@ -261,7 +310,7 @@ const PartnerDetailsAdd = () => {
               <div className="flex justify-between">
                 {/* DROPDOWN CONTAINER START HERE */}
                 <div className="input_container w-full">
-                  <div className="w-full grid grid-cols-1 md:grid-cols-4 gap-8">
+                  <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="flex-1 mr-2">
                       <label htmlFor="name">Partner Name*</label>
                       <input name="name" value={formData.name} onChange={handleInputChange} id="name" className="w-full p-2 border-2" placeholder="" required />
@@ -273,6 +322,16 @@ const PartnerDetailsAdd = () => {
                       <input name="email" value={formData.email} onChange={handleInputChange} id="email" className="w-full p-2" required placeholder="Email*" />
                       {errors.email && <span className="text-red-500">{errors.email}</span>}
                     </div>
+
+                    <div className="flex-1 mr-2 ">
+                      <label htmlFor="image" className="file-input-container">
+                        <img src={Icons.UserAdd} width="80" height="280" alt="Profile Icon" className="file-input-icon hover:cursor-pointer" />
+                        <input name="image" type="file" onChange={handleInputChange} id="image" className="hidden" accept=".jpg, .png, .jpeg" />
+                      </label>
+                      {errors.image && <span className="text-red-500">{errors.image}</span>}
+                    </div>
+
+
 
                     <div className="flex-1 mr-2">
                       <label htmlFor="mobile">Mobile*</label>

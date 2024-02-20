@@ -5,7 +5,7 @@ import { useLocation, useParams } from "react-router-dom";
 import axios, { formToJSON } from "axios";
 import Loading from "react-loading";
 import Cookies from "js-cookie";
-import toast from "react-hot-toast";
+
 
 
 const AddComission = () => {
@@ -76,14 +76,14 @@ const AddComission = () => {
           tp_percent: '',
           agecapacity: []
         });
-        toast.success(message);
+        // toast.success(message);
       } else {
-        toast.error("Oops! Something Went Wrong");
+        // toast.error("Oops! Something Went Wrong");
       }
 
     })
       .catch((error) => {
-        console.error("Error submitting form:", error);
+        // console.error("Error submitting form:", error);
 
       });
   };
