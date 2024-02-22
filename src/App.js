@@ -14,6 +14,7 @@ import PartnerDetailsAdd from './admin/pages/PartnerDetailsAdd';
 import PartnerComissionList from './admin/pages/PartnerComissionList';
 import PartnerComissionEdit from './admin/pages/PartnerCommissionEdit';
 import { Toaster } from 'react-hot-toast';
+import GlobalCommissionAdd from './admin/pages/GlobalCommissionAdd';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
       
       <Route path='/admin/partners' element={<PrivateRoute><Partners/></PrivateRoute>} />
       <Route path='/partner/addcommision/:id' element={<PrivateRoute><AddComission/></PrivateRoute>} />
+      <Route path='/partner/global/commision/add' element={<PrivateRoute><GlobalCommissionAdd/></PrivateRoute>} />
       <Route path='/partner/editcommision/:id' element={<PrivateRoute><PartnerComissionEdit/></PrivateRoute>} />
       <Route path='/partner/details/add/' element={<PrivateRoute><PartnerDetailsAdd/></PrivateRoute>} />
       <Route path='/partner/comissions/list/:id' element={<PrivateRoute><PartnerComissionList/></PrivateRoute>} />
