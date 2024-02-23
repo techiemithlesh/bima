@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import Loading from "react-loading";
+import { formToJSON } from "axios";
 
 
 const GlobalCommissionAdd = () => {
@@ -19,10 +20,16 @@ const GlobalCommissionAdd = () => {
         fuel_types: '',
         od_percent: '',
         flat_amount: '',
+        net_percent_checkbox: '',
         net_percent: '',
         tp_percent: '',
         agecapacity: []
     });
+
+    const [error, setError] = useState({
+
+    });
+
 
     useEffect(() => {
 
@@ -54,7 +61,9 @@ const GlobalCommissionAdd = () => {
 
 
     const handleSave = () => {
-        console.log("working");
+       
+        console.log('Form Data:', formData);
+
     }
 
     const RightContent = (
@@ -174,8 +183,8 @@ const GlobalCommissionAdd = () => {
                                     <label className="block text-sm font-medium text-gray-600">Two Wheeler Type</label>
                                     <select
                                         className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                                        name="vehicle_subtype"
-                                        id="vehicle_sub_types"
+                                        name="two_wheeler_types"
+                                        id="two_wheeler_types"
                                         // value={formData.vehicle_subtype}
                                         onChange={handleInputChange}
                                     >
@@ -212,8 +221,48 @@ const GlobalCommissionAdd = () => {
                                 </div>
                             )}
 
+                            {/* Form Element 5 */}
+                            {formData.vehicle_types === '1' && (
+                                <div className="mb-2">
+                                    <label className="block text-sm font-medium text-gray-600">Makes</label>
+                                    <select
+                                        className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                                        name="makes"
+                                        id="makes"
+                                        value={formData.makes}
+                                        onChange={handleInputChange}
+                                    >
+                                        {partnerData &&
+                                            partnerData.global_commission_options.makes.map((item, index) => (
+                                                <option key={index} value={item}>
+                                                    {item}
+                                                </option>
+                                            ))}
+                                    </select>
+                                </div>
+                            )}
 
 
+                            {/* Form Element 5 */}
+                            {formData.vehicle_types === '1' && (
+                                <div className="mb-2">
+                                    <label className="block text-sm font-medium text-gray-600">Model</label>
+                                    <select
+                                        className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                                        name="models"
+                                        id="models"
+                                        value={formData.models}
+                                        onChange={handleInputChange}
+                                    >
+                                        {partnerData &&
+                                            partnerData.global_commission_options.models.map((item, index) => (
+                                                <option key={index} value={item}>
+                                                    {item}
+                                                </option>
+                                            ))}
+                                    </select>
+                                </div>
+                            )}
 
                             {/* Form Element 6 */}
 
@@ -226,6 +275,7 @@ const GlobalCommissionAdd = () => {
 
                     {formData.vehicle_types === '1' && (
                         <div className="table_container">
+
                             <table className="min-w-full table-auto border-2 border-gray-300 comission">
 
                                 <tbody>
@@ -270,7 +320,7 @@ const GlobalCommissionAdd = () => {
                                     <div className="flex-1 mr-2">
                                         <input className="w-full p-2"
                                             name="od_percent" id="od_percent"
-                                            value={formData.od_precent}
+                                            value={formData.od_percent}
                                             onChange={handleInputChange} placeholder="OD Commission %" />
                                     </div>
 
@@ -298,8 +348,7 @@ const GlobalCommissionAdd = () => {
                                             type="checkbox"
                                             name="net_percent_checkbox"
                                             className="ml-2"
-
-
+                                            onChange={handleInputChange}
                                         />
                                     </div>
 
