@@ -184,6 +184,19 @@
     background-repeat: no-repeat;
     background-position: 97.5%
 }
+
+
 .tablecommission td,.tablecommission th{
     border: 1px solid #000;
+}
+
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+  
 }

@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import Loading from "react-loading";
-import { formToJSON } from "axios";
+import axios, { formToJSON } from "axios";
+import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 
 const GlobalCommissionAdd = () => {
@@ -10,10 +12,10 @@ const GlobalCommissionAdd = () => {
     const [partnerData, setPartnerData] = useState(null);
 
     const [formData, setFormData] = useState({
-        insurers: '',
-        commission_types: '',
+        insurer: '',
+        business_type: '',
         makes: '',
-        coverage_types: '',
+        policy_type: '',
         models: '',
         vehicle_types: '',
         two_wheeler_types: '',
@@ -26,8 +28,20 @@ const GlobalCommissionAdd = () => {
         agecapacity: []
     });
 
-    const [error, setError] = useState({
-
+    const [errors, setErrors] = useState({
+        insurer: '',
+        business_type: '',
+        makes: '',
+        policy_type: '',
+        models: '',
+        vehicle_types: '',
+        two_wheeler_types: '',
+        fuel_types: '',
+        od_percent: '',
+        flat_amount: '',
+        net_percent_checkbox: '',
+        net_percent: '',
+        tp_percent: '',
     });
 
 
@@ -47,23 +61,50 @@ const GlobalCommissionAdd = () => {
     }, []);
 
 
-    function generateBreadcrumbData(RightContent = null) {
-
-        return {
-            leftItems: [
-                { label: "Global", link: "/admin/partners" },
-                { label: "Commision", link: "/admin/dashboard" },
-            ],
-            middleContent: "",
-            rightItems: RightContent,
-        };
-    }
-
-
     const handleSave = () => {
-       
-        console.log('Form Data:', formData);
 
+
+        const formDataFromForm = new FormData(document.getElementById('form'));
+        const formDataJSON = formToJSON(formDataFromForm);
+
+
+        const csrfToken = Cookies.get('XSRF-TOKEN');
+
+        axios.post('https://premium.treatweb.com/public/api/admin/global-commissions/store', formDataJSON, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+        }).then((res) => {
+            console.log("Response", res);
+            const {message, success} = res.data;
+            
+            if (res.data.success) {
+                toast.success("Commission saved successfully!", {
+                    position: 'top-right'
+                });
+            } else {
+                setErrors(message);
+                toast.error("Failed to save commission. Please try again.", {
+                    position: 'top-right'
+                });
+            }
+
+        }).catch((error) => {
+            if (error.response && error.response.data && error.response.data.data) {
+                console.log("error",error);
+                const { message } = error.response.data;
+              
+                const serverErrors = Object.values(message).flat().join(", ");
+                setErrors(serverErrors);
+                setErrors(serverErrors);
+                toast.error(serverErrors, {
+                    position: 'top-right'
+                })
+            }
+        });
+
+      
     }
 
     const RightContent = (
@@ -73,12 +114,16 @@ const GlobalCommissionAdd = () => {
     );
 
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
+        const { name, value, type, checked } = event.target;
+
+        // console.log(`${name} changed:`, checked ? 'checked' : 'unchecked');
 
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: type === 'checkbox' ? checked : value,
+
         }));
+        setErrors({});
     };
 
     return (
@@ -96,9 +141,10 @@ const GlobalCommissionAdd = () => {
                             <div className="mb-2">
                                 <label className="block text-sm font-medium text-gray-600" htmlFor="insurerList">Insurer</label>
                                 <select
-                                    name="insurers"
+                                    required
+                                    name="insurer"
                                     id="insurerList"
-                                    value={formData.insurers}
+                                    value={formData.insurer}
                                     onChange={handleInputChange}
                                     className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                                 >
@@ -109,18 +155,22 @@ const GlobalCommissionAdd = () => {
                                         </option>
                                     ))}
                                 </select>
+                                {errors.insurer && (
+                                    <span className="error">{errors.insurer}</span>
+                                )}
                             </div>
 
 
                             {/* Form Element 2 */}
-                            {formData.insurers && (
+                            {formData.insurer && (
                                 <div className="mb-2">
                                     <label className="block text-sm font-medium text-gray-600">Lines Of Business</label>
                                     <select
+                                        required
                                         className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                                        name="commission_types"
-                                        id="commission_types"
-                                        value={formData.commission_types}
+                                        name="business_type"
+                                        id="business_type"
+                                        value={formData.business_type}
                                         onChange={handleInputChange}
                                     >
                                         {partnerData &&
@@ -130,13 +180,15 @@ const GlobalCommissionAdd = () => {
                                                 </option>
                                             ))}
                                     </select>
+                                    {errors.business_type && (
+                                    <span className="error">{errors.business_type}</span>)}
 
                                 </div>
                             )}
 
 
                             {/* Form Element 3 (Vehicle Type) */}
-                            {formData.commission_types == '1' && (
+                            {formData.business_type == '1' && (
                                 <div className="mb-2">
                                     <label className="block text-sm font-medium text-gray-600">Vehicle Type</label>
                                     <select
@@ -153,6 +205,8 @@ const GlobalCommissionAdd = () => {
                                                 </option>
                                             ))}
                                     </select>
+                                    {errors.vehicle_types && (
+                                    <span className="error">{errors.vehicle_types}</span>)}
                                 </div>
                             )}
 
@@ -162,9 +216,9 @@ const GlobalCommissionAdd = () => {
                                     <label className="block text-sm font-medium text-gray-600">Coverage Type</label>
                                     <select
                                         className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                                        name="coverage_types"
-                                        id="coverage_types"
-                                        value={formData.coverage_types}
+                                        name="policy_type"
+                                        id="policy_type"
+                                        value={formData.policy_type}
                                         onChange={handleInputChange}
                                     >
                                         {partnerData &&
@@ -174,6 +228,8 @@ const GlobalCommissionAdd = () => {
                                                 </option>
                                             ))}
                                     </select>
+                                    {errors.policy_type && (
+                                    <span className="error">{errors.policy_type}</span>)}
                                 </div>
                             )}
 
@@ -195,6 +251,8 @@ const GlobalCommissionAdd = () => {
                                                 </option>
                                             ))}
                                     </select>
+                                    {errors.two_wheeler_types && (
+                                    <span className="error">{errors.two_wheeler_types}</span>)}
                                 </div>
                             )}
 
@@ -218,6 +276,8 @@ const GlobalCommissionAdd = () => {
                                                 </option>
                                             ))}
                                     </select>
+                                    {errors.fuel_types && (
+                                    <span className="error">{errors.fuel_types}</span>)}
                                 </div>
                             )}
 
@@ -239,6 +299,8 @@ const GlobalCommissionAdd = () => {
                                                 </option>
                                             ))}
                                     </select>
+                                    {errors.makes && (
+                                    <span className="error">{errors.makes}</span>)}
                                 </div>
                             )}
 
@@ -261,6 +323,8 @@ const GlobalCommissionAdd = () => {
                                                 </option>
                                             ))}
                                     </select>
+                                    {errors.models && (
+                                    <span className="error">{errors.models}</span>)}
                                 </div>
                             )}
 
@@ -296,7 +360,7 @@ const GlobalCommissionAdd = () => {
                                                             index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}</th> : <td className="border-2 text-center" key={sn}>
                                                                 <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
                                                                 <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
-                                                                <input type="number" className={" text-x p-2 bordersm"} name={"agecapacity[" + engine.value + "][" + ages.value + "][value]"} />
+                                                                <input type="number" className={" text-x p-2 bordersm"} name={"agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
 
                                                             </td>
 
@@ -314,42 +378,65 @@ const GlobalCommissionAdd = () => {
 
                             </table>
                             {/* FOOTER INPUT BOX CONTAINER START HERE */}
+
+
                             <div className="footer_input_box_container mt-4 mb-24">
                                 <div className="flex">
                                     {/* First Input Box */}
-                                    <div className="flex-1 mr-2">
-                                        <input className="w-full p-2"
-                                            name="od_percent" id="od_percent"
-                                            value={formData.od_percent}
-                                            onChange={handleInputChange} placeholder="OD Commission %" />
-                                    </div>
 
-                                    {/* Second Input Box */}
-                                    <div className="flex-1 mr-2">
-                                        <input className="w-full p-2"
-                                            name="tp_percent"
-                                            value={formData.tp_percent}
-                                            onChange={handleInputChange}
-                                            placeholder="TP Comission %" />
-                                    </div>
+                                    {!formData.net_percent_checkbox && (
+                                        <div className="flex-1 mr-2">
+                                            <input className="w-full p-2"
+                                                type="number"
+                                                name="od_percent" id="od_percent"
+                                                value={formData.od_percent}
+                                                onChange={handleInputChange} placeholder="OD Commission %" />
+                                        </div>
+                                    )}
+
+                                    {!formData.net_percent_checkbox && (
+                                        <div className="flex-1 mr-2">
+                                            <input
+                                                className="w-full p-2"
+                                                name="tp_percent"
+                                                type="number"
+                                                min="0"
+                                                value={formData.tp_percent}
+                                                onChange={handleInputChange}
+                                                placeholder="TP Comission %"
+                                            />
+                                             {errors.tp_percent && (
+                                            <span className="error">{errors.tp_percent}</span>)}
+                                        </div>
+                                       
+                                    )}
+
 
                                     {/* Third Input Box with Checkbox */}
                                     <div className="flex-1 flex items-center mr-2">
                                         <input
+                                            type="checkbox"
+                                            name="net_percent_checkbox"
+                                            className="mr-2"
+                                            value={formData.net_percent_checkbox}
+                                            checked={formData.net_percent_checkbox}
+                                            onChange={handleInputChange}
+                                        />
+
+                                        <input
                                             name="net_percent"
                                             className="w-full p-2 border"
                                             id="net_percent"
+                                            type="number"
+                                            min="0"
                                             value={formData.net_percent}
                                             onChange={handleInputChange}
                                             placeholder="Net Commission %"
 
                                         />
-                                        <input
-                                            type="checkbox"
-                                            name="net_percent_checkbox"
-                                            className="ml-2"
-                                            onChange={handleInputChange}
-                                        />
+                                         {errors.net_percent && (
+                                            <span className="error">{errors.net_percent}</span>)}
+
                                     </div>
 
                                     {/* Fourth Input Box */}
@@ -358,7 +445,11 @@ const GlobalCommissionAdd = () => {
                                             id="flat_amount"
                                             value={formData.flat_amount}
                                             onChange={handleInputChange}
+                                            type="number"
+                                            min="0"
                                             className="w-full p-2" placeholder="Flat Amount" />
+                                            {errors.flat_amount && (
+                                            <span className="error">{errors.flat_amount}</span>)}
                                     </div>
 
 
@@ -376,5 +467,17 @@ const GlobalCommissionAdd = () => {
     )
 }
 
+
+function generateBreadcrumbData(RightContent = null) {
+
+    return {
+        leftItems: [
+            { label: "Global", link: "/admin/partners" },
+            { label: "Commision", link: "/admin/dashboard" },
+        ],
+        middleContent: "",
+        rightItems: RightContent,
+    };
+}
 
 export default GlobalCommissionAdd;
