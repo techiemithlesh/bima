@@ -17,6 +17,7 @@ import { Toaster } from 'react-hot-toast';
 import GlobalCommissionAdd from './admin/pages/GlobalCommissionAdd';
 import GlobalCommissionList from './admin/pages/GlobalCommissionList';
 import GlobalCommissionEdit from './admin/pages/GlobalCommissionEdit';
+import PolicyEdit from './admin/pages/PolicyEdit';
 
 function App() {
   return (
@@ -36,7 +37,9 @@ function App() {
       <Route path='/partner/comissions/list/:id' element={<PrivateRoute><PartnerComissionList/></PrivateRoute>} />
       
       <Route path='/policy/list' element={<PrivateRoute><PolicyList/></PrivateRoute>}/>
-      <Route path='/policy/add' element={<Policy/>}/>
+      <Route path='/policy/add' element={<PrivateRoute><Policy/></PrivateRoute>}/>
+      <Route path='/policy/edit/:id' element={<PrivateRoute><PolicyEdit/></PrivateRoute>}/>
+
     </Routes>
     <Toaster/>
    </Router>
