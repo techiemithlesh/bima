@@ -67,7 +67,7 @@ const GlobalCommissionAdd = () => {
         const formDataFromForm = new FormData(document.getElementById('form'));
         const formDataJSON = formToJSON(formDataFromForm);
 
-
+        console.log("formdata",  formDataJSON);
         const csrfToken = Cookies.get('XSRF-TOKEN');
 
         axios.post('https://premium.treatweb.com/public/api/admin/global-commissions/store', formDataJSON, {
@@ -134,7 +134,8 @@ const GlobalCommissionAdd = () => {
                     <div className="loading">
                         <Loading type="ball-triangle" color="#4fa94d" height={100} width={100} />
                     </div>
-                </div> : <form id="form">
+                </div> : 
+                <form id="form">
                     <div className="input_container">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                             {/* Form Element 1 */}
@@ -472,7 +473,7 @@ function generateBreadcrumbData(RightContent = null) {
 
     return {
         leftItems: [
-            { label: "Global", link: "/admin/partners" },
+            { label: "Global", link: "/partner/global/commision/list" },
             { label: "Commision", link: "/admin/dashboard" },
         ],
         middleContent: "",
