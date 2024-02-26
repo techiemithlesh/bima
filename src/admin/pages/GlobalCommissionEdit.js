@@ -126,16 +126,26 @@ const GlobalCommissionEdit = () => {
 
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
-        console.log(name, value);
-        console.log("Previous state:", commissionData);
-        setCommissionData(prevData => ({
-            
-            ...prevData,
+    
+        // Update the formData state
+        console.log("Form Data Before", formData);
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            [name]: type === 'checkbox' ? checked : value,
+        }));
+    
+        console.log("Form Data After", formData);
+        // Update the commissionData state
+
+        console.log("Commission Data Before", commissionData);
+        setCommissionData(prevCommissionData => ({
+            ...prevCommissionData,
             [name]: type === 'checkbox' ? checked : value,
         }));
 
-        console.log("Updated state:", commissionData);
+        console.log("Commission Data After", commissionData);
     };
+    
    
     return (
         <Layout title="Edit Global commission" breadcrumbData={generateBreadcrumbData(RightContent)}>
@@ -161,9 +171,8 @@ const GlobalCommissionEdit = () => {
                                         onChange={handleInputChange}
                                         className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                                     >
-                                        <option value="">Select Insurer</option>
                                         {globalOptions && globalOptions.insurers.map((item) => (
-                                            <option key={item.value} value={item.value}>
+                                            <option key={item.value} value={item.value} selected={item.value === commissionData.insurer}>
                                                 {item.text}
                                             </option>
                                         ))}
@@ -177,7 +186,7 @@ const GlobalCommissionEdit = () => {
                                 {/* Form Element 2 */}
                                 {commissionData && commissionData.business_type && (
                                     <div className="mb-2">
-                                        <label className="block text-sm font-medium text-gray-600" htmlFor="businessList">Lines Of Business</label>
+                                        <label className="block text-sm font-medium text-gray-600" htmlFor="businessList">Lines of Business</label>
                                         <select
                                             required
                                             name="business_type"
@@ -186,7 +195,6 @@ const GlobalCommissionEdit = () => {
                                             onChange={handleInputChange}
                                             className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                                         >
-                                            <option value="">Select Line of Business</option>
                                             {globalOptions && globalOptions.commission_types.map((item) => (
                                                 <option key={item.value} value={item.value}>
                                                     {item.text}
@@ -204,8 +212,8 @@ const GlobalCommissionEdit = () => {
                                         <label className="block text-sm font-medium text-gray-600">Vehicle Type</label>
                                         <select
                                             className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                                            name="vehicle_types"
-                                            id="vehicle_types"
+                                            name="vehicle_type"
+                                            id="vehicle_type"
                                             value={commissionData.vehicle_types}
                                             onChange={handleInputChange}
                                         >
@@ -269,7 +277,6 @@ const GlobalCommissionEdit = () => {
                                     </div>
                                 )}
 
-
                                 {globalOptions && globalOptions.fuel_types && (
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium text-gray-600">Fuel Type</label>
@@ -281,10 +288,18 @@ const GlobalCommissionEdit = () => {
                                             onChange={handleInputChange}
                                         >
                                             {globalOptions.fuel_types.map((item) => (
-                                                <option key={item.value} value={item.value} selected={item.value === commissionData.fuel_types}>
-                                                    {item.text}
-                                                </option>
-                                            ))}
+                                                (globalOptions.vehicle_types === "1") ? (
+                                                        (item.text=="Petrol" || item.text=="EV") && (
+                                                            <option key={item.value} value={item.value} selected={item.value === commissionData.fuel_types}>
+                                                                {item.text}
+                                                            </option>
+                                                        )
+                                                    ) :
+                                                    <option key={item.value} value={item.value}>
+                                                        {item.text}
+                                                    </option>
+
+                                                 ))}
                                         </select>
                                         {errors.fuel_types && (
                                             <span className="error">{errors.fuel_types}</span>)}
@@ -293,7 +308,7 @@ const GlobalCommissionEdit = () => {
 
                                 {globalOptions && globalOptions.makes && (
                                     <div className="mb-2">
-                                        <label className="block text-sm font-medium text-gray-600">Makes</label>
+                                        <label className="block text-sm font-medium text-gray-600">Make</label>
                                         <select
                                             className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                                             name="makes"
@@ -346,44 +361,45 @@ const GlobalCommissionEdit = () => {
 
                         {commissionData.vehicle_types === '1' && (
                             <div className="table_container">
-
                                 <table className="min-w-full table-auto border-2 border-gray-300 comission">
-
                                     <tbody>
-                                        {
-                                            commissionData &&
-                                            commissionData.global_commission_options.engines
-                                                .filter((engine) => engine.text.toLowerCase().includes('cc') | engine.text.toLowerCase().includes('age'))
-                                                .map((engine, index) => (
+                                    {
+                                        globalOptions &&
+                                        globalOptions.engines
+                                            .filter((engine) => engine.text.toLowerCase().includes('cc') | engine.text.toLowerCase().includes('age'))
+                                            .map((engine, index) => (
+                                                <tr className="shade" data-index={engine} data-index_={index === 0}>
+                                                    {index === 0 ? <th className="border-b shade p-2">{globalOptions.engines[0].text}
+                                                            <input type="hidden" name={"engines[0]"} className="text-x text-center shade" value={engine.text}/>
+                                                        </th> :
+                                                        <th className=""> <input className="text-x text-center shade" name={"engines["+engine.value+"]"} value={engine.text} />
+                                                        </th>
+                                                    }
+                                                    {globalOptions &&
+                                                        globalOptions.vehicle_ages.map((ages, sn) => (
 
-                                                    <tr className="shade" data-index={engine} data-index_={index == '0'}>
-                                                        {index === '0' ? <th className="border-b shade p-2">{commissionData.global_commission_options.engines[0].text}</th> :
-                                                            <th className=""> <input className="text-x text-center shade" value={engine.text} />
-                                                            </th>
-                                                        }
-                                                        {commissionData &&
-                                                            commissionData.global_commission_options.vehicle_ages.map((ages, sn) => (
-
-                                                                index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}</th> : <td className="border-2 text-center" key={sn}>
-                                                                    <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
-                                                                    <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
-                                                                    <input type="number" className={" text-x p-2 bordersm"} name={"agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
-
-                                                                </td>
-
-                                                            ))}
-                                                        {index === 0 ? <th className="border-2 shade text-center">DEAL</th> :
-                                                            <td className="text-center">
-                                                                <input type="text" className="text-x p-2 bordersm" name={"agecapacity[" + engine.value + "][deal]"} />
+                                                            index === 0 ? <th className="border-2 shade text-center">{ages.text}  <input
+                                                                className="text-x text-center shade" type="hidden"
+                                                                name={"ages["+ages.value+"]"}
+                                                                value={ages.text}/>
+                                                            </th> : <td className="border-2 text-center">
+                                                                <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
+                                                                <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
+                                                                <input type="number" className={" text-x p-2 bordersm"} name={"agecapacity[" + engine.value + "][" + ages.value + "][value]"} />
                                                             </td>
-                                                        }
-                                                    </tr>
+                                                        ))}
+                                                    {index === 0 ? <th className="border-2 shade text-center">DEAL</th> :
+                                                        <td className="text-center">
+                                                            <input type="text" className="text-x p-2 bordersm" name={"agecapacity[" + engine.value + "][deal]"} />
+                                                        </td>
+                                                    }
+                                                </tr>
 
-                                                ))}
+                                            ))}
                                     </tbody>
 
-
                                 </table>
+
                                 {/* FOOTER INPUT BOX CONTAINER START HERE */}
 
 
@@ -415,9 +431,7 @@ const GlobalCommissionEdit = () => {
                                                 {errors.tp_percent && (
                                                     <span className="error">{errors.tp_percent}</span>)}
                                             </div>
-
                                         )}
-
 
                                         {/* Third Input Box with Checkbox */}
                                         <div className="flex-1 flex items-center mr-2">
