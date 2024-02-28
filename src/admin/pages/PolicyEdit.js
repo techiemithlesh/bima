@@ -3,8 +3,11 @@ import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import { useParams } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import { formToJSON } from "axios";
+import axios, { formToJSON } from "axios";
 import { TabsIcon } from "../../shared/Assets";
+import { useEffect } from "react";
+import { data } from "autoprefixer";
+import { validateRegistrationNo, validateVehicleManufacture, validateVehicleModel, validateVehicleRegistrationDate } from "../../utils/Validation";
 
 
 const PolicyEdit = () => {
@@ -13,9 +16,49 @@ const PolicyEdit = () => {
     const [insurance, setInsurance] = useState(null);
     const [kycdocument, setKycDocument] = useState("");
 
-    const [formData, setFormData] = useState({});
+    const [formData,  setFormData] = useState({
+        business_type: '',
 
+    });
 
+    useEffect(() => {
+        // Fetching insurance options
+        fetch(`https://premium.treatweb.com/public/api/admin/policies/options`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return res.json();
+          })
+          .then((data) => {
+            console.log(data);
+            setInsurance(data);
+          })
+          .catch((error) => {
+            console.error("Error fetching insurance data:", error);
+          });
+    
+        
+        fetch(`https://premium.treatweb.com/public/api/admin/policies/${id}`)
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return res.json();
+          })
+          .then((data) => {
+            console.log(data);
+            setFormData(data);
+          })
+          .catch((error) => {
+            console.error("Error fetching policy data:", error);
+          });
+      }, []);
     
   const handleKYCDocumentChange = (e) => {
     setKycDocument(e.target.value);
@@ -59,32 +102,40 @@ const PolicyEdit = () => {
     const validateForm = () => {
         let valid = true;
         let newErrors = {};
-
-        if (!formData.vehicle_manufacture) {
-            newErrors.vehicle_manufacture = "Vehicle Make is required.";
-            valid = false;
+      
+        // Validate vehicle manufacture
+        const manufactureError = validateVehicleManufacture(formData.vehicle_manufacture);
+        if (manufactureError) {
+          newErrors.vehicle_manufacture = manufactureError;
+          valid = false;
         }
-
-        if (!formData.vehicle_model) {
-            newErrors.vehicle_model = "Vehicle Model is required.";
-            valid = false;
+      
+        // Validate vehicle model
+        const modelError = validateVehicleModel(formData.vehicle_model);
+        if (modelError) {
+          newErrors.vehicle_model = modelError;
+          valid = false;
         }
-
-        if (!formData.registration_number) {
-            newErrors.registration_number = "Vehicle Registration No. is required.";
-            valid = false;
+      
+        // Validate registration number
+        const regNoError = validateRegistrationNo(formData.registration_number);
+        if (regNoError) {
+          newErrors.registration_number = regNoError;
+          valid = false;
         }
-
-        if (!formData.vehicle_registration_date) {
-            newErrors.vehicle_registration_date =
-                "Vehicle Registration Date is required.";
-            valid = false;
+      
+        // Validate vehicle registration date
+        const regDateError = validateVehicleRegistrationDate(formData.vehicle_registration_date);
+        if (regDateError) {
+          newErrors.vehicle_registration_date = regDateError;
+          valid = false;
         }
-
+      
+        // Update the errors state with the new errors
         setErrors({ ...errors, ...newErrors });
-
+      
         return valid;
-    };
+      };
 
     function generateBreadcrumbData(selectedTabIndex, rightContent = null) {
         let middleContent;

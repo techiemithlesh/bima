@@ -6,7 +6,7 @@ import axios, { formToJSON } from "axios";
 import Loading from "react-loading";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
-import { validateAgeCapacity, validateInsurer } from "../../utils/Validation";
+import { validateAgeCapacity, validateCommission, validateFuelType, validateInsurer, validateVehicleSubType, validateVehicleType } from "../../utils/Validation";
 
 
 
@@ -56,6 +56,12 @@ const AddComission = () => {
       ...prevData,
       [name]: value,
     }));
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: '',
+    }));
+
   };
 
 
@@ -63,8 +69,16 @@ const AddComission = () => {
     const newErrors = {};
 
     newErrors.insurer = validateInsurer(formData.insurer);
-    
+    newErrors.commission_type = validateCommission(formData.commission_type);
+
+    if(formData.vehicle_type === 'two-wheeler'){
+      newErrors.vehicle_type = validateVehicleType(formData.vehicle_type);
+      newErrors.vehicle_subtype =validateVehicleSubType(formData.vehicle_subtype);
+      newErrors.fuel_type = validateFuelType(formData.fuel_type);
+    }
+
     setErrors(newErrors);
+    
     const isValid = Object.values(newErrors).every((error) => !error);
     return isValid;
 
