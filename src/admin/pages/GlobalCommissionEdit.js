@@ -10,24 +10,19 @@ import Cookies from "js-cookie";
 const GlobalCommissionEdit = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [commissionData, setCommissionData] = useState(null);
+
   const [globalOptions, setGlobalOptions] = useState(null);
 
-  const [formData, setFormData] = useState({
-    insurer: "",
-    business_type: "",
-    makes: "",
-    coverage_type: "",
-    models: "",
-    vehicle_types: "",
-    two_wheeler_types: "",
-    fuel_types: "",
-    od_percent: "",
-    flat_amount: "",
-    net_percent_checkbox: "",
-    net_percent: "",
-    tp_percent: "",
-    agecapacity: [],
+  const [commissionData, setCommissionData] = useState({
+    insurer: '',
+    business_type: '',
+    vehicle_type: '',
+    coverage_type: '',
+    two_wheeler_type: '',
+    fuel_type: '',
+    make: '',
+    model: '',
+    agecapacity: '',
   });
 
   const [errors, setErrors] = useState({
@@ -74,9 +69,7 @@ const GlobalCommissionEdit = () => {
   }, [id]);
 
   const handleSave = () => {
-    // const formDataFromForm = new FormData(document.getElementById("form"));
-    // const formDataJSON = formToJSON(formDataFromForm);
-    // console.log(formDataJSON);
+
     const csrfToken = Cookies.get("XSRF-TOKEN");
 
     axios
@@ -85,7 +78,6 @@ const GlobalCommissionEdit = () => {
         commissionData,
         {
           headers: {
-            // "Content-Type": "multipart/form-data",
             "Content-Type": "application/json",
             "X-CSRF-TOKEN": csrfToken,
           },
@@ -130,33 +122,25 @@ const GlobalCommissionEdit = () => {
     </button>
   );
 
-  // old
-  //   const handleInputChange = (event) => {
-  //     const { name, value, type, checked } = event.target;
-  //     console.log(name, value);
-  //     console.log("Previous state:", commissionData);
-  //     setCommissionData((prevData) => ({
-  //       ...prevData,
-  //       [name]: type === "checkbox" ? checked : value * 1,
-  //     }));
 
-  //     console.log("Updated state:", commissionData);
-  //   };
-
-  // test Wish's
   const handleInputChange = (event) => {
     let val =
       event.target.value * 1 !== NaN
         ? event.target.value * 1
         : event.target.value;
+
+    if (event.target.name === "net_percent_checkbox") {
+      val = event.target.checked;
+    }
     setCommissionData({
       ...commissionData,
       [event.target.name]: val,
     });
+
   };
 
   console.log(commissionData, ">>>>commissionData in globalCommissionEdit");
-  console.log(globalOptions, ">>>>globalOptions in globalCommissionEdi");
+  console.log(globalOptions, ">>>>globalOptions in globalCommissionEdit");
   return (
     <Layout
       title="Edit Global commission"
@@ -190,10 +174,9 @@ const GlobalCommissionEdit = () => {
                     required
                     name="insurer"
                     id="insurerList"
-                    // value={commissionData ? commissionData.insurer : ""}
                     value={
                       commissionData.insurer == null ||
-                      commissionData.insurer == 0
+                        commissionData.insurer == 0
                         ? 0
                         : commissionData.insurer * 1
                     }
@@ -228,14 +211,14 @@ const GlobalCommissionEdit = () => {
                       id="businessList"
                       value={
                         commissionData.business_type == null ||
-                        commissionData.business_type == 0
+                          commissionData.business_type == 0
                           ? 0
                           : commissionData.business_type * 1
                       }
                       onChange={handleInputChange}
                       className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                     >
-                      {/* <option value="">Select Line of Business</option> */}
+
                       {globalOptions &&
                         globalOptions.commission_types.map((item) => (
                           <option key={item.value} value={item.value}>
@@ -258,10 +241,9 @@ const GlobalCommissionEdit = () => {
                       className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                       name="vehicle_type"
                       id="vehicle_types"
-                      //   value={commissionData.vehicle_type}
                       value={
                         commissionData.vehicle_type == null ||
-                        commissionData.vehicle_type == 0
+                          commissionData.vehicle_type == 0
                           ? 0
                           : commissionData.vehicle_type * 1
                       }
@@ -273,9 +255,7 @@ const GlobalCommissionEdit = () => {
                             <option
                               key={item.value}
                               value={item.value}
-                              //   selected={
-                              //     item.value === commissionData.vehicle_type
-                              //   }
+
                             >
                               {item.text}
                             </option>
@@ -288,7 +268,7 @@ const GlobalCommissionEdit = () => {
                   </div>
                 )}
 
-                {globalOptions && globalOptions.coverage_types && (
+                {globalOptions && commissionData.vehicle_type == '1' && (
                   <div className="mb-2">
                     <label className="block text-sm font-medium text-gray-600">
                       Coverage Type
@@ -300,7 +280,7 @@ const GlobalCommissionEdit = () => {
                       //   value={commissionData.coverage_type}
                       value={
                         commissionData.coverage_type == null ||
-                        commissionData.coverage_type == 0
+                          commissionData.coverage_type == 0
                           ? 0
                           : commissionData.coverage_type * 1
                       }
@@ -310,19 +290,19 @@ const GlobalCommissionEdit = () => {
                         <option
                           key={item.value}
                           value={item.value}
-                          //   selected={item.value === commissionData.coverage_type}
+                        //   selected={item.value === commissionData.coverage_type}
                         >
                           {item.text}
                         </option>
                       ))}
                     </select>
-                    {errors.policy_type && (
-                      <span className="error">{errors.policy_type}</span>
+                    {errors.coverage_type && (
+                      <span className="error">{errors.coverage_type}</span>
                     )}
                   </div>
                 )}
 
-                {globalOptions && globalOptions.coverage_types && (
+                {globalOptions && commissionData.vehicle_type == '1' && (
                   <div className="mb-2">
                     <label className="block text-sm font-medium text-gray-600">
                       Two Wheeler Type
@@ -330,11 +310,11 @@ const GlobalCommissionEdit = () => {
                     <select
                       className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                       name="two_wheeler_type"
-                      id="two_wheeler_types"
-                      //   value={commissionData.two_wheeler_types}
+                      id="two_wheeler_type"
+
                       value={
                         commissionData.two_wheeler_type == null ||
-                        commissionData.two_wheeler_type == 0
+                          commissionData.two_wheeler_type == 0
                           ? 0
                           : commissionData.two_wheeler_type * 1
                       }
@@ -344,9 +324,7 @@ const GlobalCommissionEdit = () => {
                         <option
                           key={item.value}
                           value={item.value}
-                          //   selected={
-                          //     item.value === commissionData.two_wheeler_types
-                          //   }
+
                         >
                           {item.text}
                         </option>
@@ -358,7 +336,7 @@ const GlobalCommissionEdit = () => {
                   </div>
                 )}
 
-                {globalOptions && globalOptions.fuel_types && (
+                {globalOptions && commissionData.vehicle_type == '1' && (
                   <div className="mb-2">
                     <label className="block text-sm font-medium text-gray-600">
                       Fuel Type
@@ -370,7 +348,7 @@ const GlobalCommissionEdit = () => {
                       //   value={commissionData.fuel_types}
                       value={
                         commissionData.fuel_type == null ||
-                        commissionData.fuel_type == 0
+                          commissionData.fuel_type == 0
                           ? 0
                           : commissionData.fuel_type * 1
                       }
@@ -380,7 +358,7 @@ const GlobalCommissionEdit = () => {
                         <option
                           key={item.value}
                           value={item.value}
-                          //   selected={item.value === commissionData.fuel_types}
+                        //   selected={item.value === commissionData.fuel_types}
                         >
                           {item.text}
                         </option>
@@ -392,7 +370,7 @@ const GlobalCommissionEdit = () => {
                   </div>
                 )}
 
-                {globalOptions && globalOptions.makes && (
+                {globalOptions && commissionData.vehicle_type == '1' && (
                   <div className="mb-2">
                     <label className="block text-sm font-medium text-gray-600">
                       Makes
@@ -400,7 +378,7 @@ const GlobalCommissionEdit = () => {
                     <select
                       className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                       name="make"
-                      id="makes"
+                      id="make"
                       value={
                         commissionData.make == "" || commissionData.make == null
                           ? globalOptions.makes[0]
@@ -412,7 +390,7 @@ const GlobalCommissionEdit = () => {
                         <option
                           key={item.value}
                           value={item}
-                          //   selected={item.value === commissionData.makes}
+                        //   selected={item.value === commissionData.makes}
                         >
                           {item}
                         </option>
@@ -424,7 +402,7 @@ const GlobalCommissionEdit = () => {
                   </div>
                 )}
 
-                {globalOptions && globalOptions.makes && (
+                {globalOptions && commissionData.vehicle_type == '1' && (
                   <div className="mb-2">
                     <label className="block text-sm font-medium text-gray-600">
                       Model
@@ -432,11 +410,11 @@ const GlobalCommissionEdit = () => {
                     <select
                       className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                       name="model"
-                      id="models"
+                      id="model"
                       //   value={commissionData.models}
                       value={
                         commissionData.model == "" ||
-                        commissionData.model == null
+                          commissionData.model == null
                           ? globalOptions.models[0]
                           : commissionData.model
                       }
@@ -446,7 +424,7 @@ const GlobalCommissionEdit = () => {
                         <option
                           key={item.value}
                           value={item.value}
-                          //   selected={item.value === commissionData.model}
+                        //   selected={item.value === commissionData.model}
                         >
                           {item}
                         </option>
@@ -464,12 +442,12 @@ const GlobalCommissionEdit = () => {
 
             {/* TABLE CONTAINER START HERE */}
 
-            {commissionData.vehicle_types === "1" && (
+            {globalOptions && commissionData.vehicle_type == '1' && (
               <div className="table_container">
                 <table className="min-w-full table-auto border-2 border-gray-300 comission">
                   <tbody>
-                    {commissionData &&
-                      commissionData.global_commission_options.engines
+                    {globalOptions &&
+                      globalOptions.engines
                         .filter(
                           (engine) =>
                             engine.text.toLowerCase().includes("cc") |
@@ -484,7 +462,7 @@ const GlobalCommissionEdit = () => {
                             {index === "0" ? (
                               <th className="border-b shade p-2">
                                 {
-                                  commissionData.global_commission_options
+                                  globalOptions
                                     .engines[0].text
                                 }
                               </th>
@@ -497,8 +475,8 @@ const GlobalCommissionEdit = () => {
                                 />
                               </th>
                             )}
-                            {commissionData &&
-                              commissionData.global_commission_options.vehicle_ages.map(
+                            {globalOptions &&
+                              globalOptions.vehicle_ages.map(
                                 (ages, sn) =>
                                   index === 0 ? (
                                     <th
@@ -577,28 +555,28 @@ const GlobalCommissionEdit = () => {
                   <div className="flex">
                     {/* First Input Box */}
 
-                    {!formData.net_percent_checkbox && (
+                    {!commissionData.net_percent_checkbox && (
                       <div className="flex-1 mr-2">
                         <input
                           className="w-full p-2"
                           type="number"
                           name="od_percent"
                           id="od_percent"
-                          value={formData.od_percent}
+                          value={commissionData.od_percent}
                           onChange={handleInputChange}
                           placeholder="OD Commission %"
                         />
                       </div>
                     )}
 
-                    {!formData.net_percent_checkbox && (
+                    {!commissionData.net_percent_checkbox && (
                       <div className="flex-1 mr-2">
                         <input
                           className="w-full p-2"
                           name="tp_percent"
                           type="number"
                           min="0"
-                          value={formData.tp_percent}
+                          value={commissionData.tp_percent}
                           onChange={handleInputChange}
                           placeholder="TP Comission %"
                         />
@@ -614,8 +592,8 @@ const GlobalCommissionEdit = () => {
                         type="checkbox"
                         name="net_percent_checkbox"
                         className="mr-2"
-                        value={formData.net_percent_checkbox}
-                        checked={formData.net_percent_checkbox}
+                        value={commissionData.net_percent_checkbox}
+                        checked={commissionData.net_percent_checkbox}
                         onChange={handleInputChange}
                       />
 
@@ -639,7 +617,7 @@ const GlobalCommissionEdit = () => {
                       <input
                         name="flat_amount"
                         id="flat_amount"
-                        value={formData.flat_amount}
+                        value={commissionData.flat_amount}
                         onChange={handleInputChange}
                         type="number"
                         min="0"

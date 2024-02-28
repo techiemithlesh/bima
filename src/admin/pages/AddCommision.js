@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios, { formToJSON } from "axios";
 import Loading from "react-loading";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 
 
@@ -12,6 +13,7 @@ const AddComission = () => {
   const { id } = useParams();
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [partnerData, setPartnerData] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
@@ -29,6 +31,19 @@ const AddComission = () => {
     agecapacity: []
   })
 
+  const [errors, setErrors] = useState({
+    insurer: '',
+    commission_type: '',
+    vehicle_type: '',
+    vehicle_subtype: '',
+    fuel_type: '',
+    seat: '',
+    od_percent: '',
+    flat_amount: '',
+    net_percent: '',
+    tp_percent: '',
+    agecapacity: []
+  })
   const [loading, setLoading] = useState(true);
 
   const handleInputChange = (event) => {
@@ -47,7 +62,6 @@ const AddComission = () => {
     const Data = new FormData(document.getElementById('form'));
     formData = formToJSON(Data);
 
-    console.log('Form Data:', formData);
 
     const csrfToken = Cookies.get('XSRF-TOKEN');
     console.log('CSRF Token:', csrfToken);
@@ -60,30 +74,22 @@ const AddComission = () => {
       console.log("Form Submitted", response.data.message);
       const { success, message } = response.data;
 
-
       if (success) {
-        alert(message);
+        toast.success(message, {
+          position: 'top-right'
+        })
         setFormData({
-          insurer: '',
-          commission_type: '',
-          vehicle_type: '',
-          vehicle_subtype: '',
-          fuel_type: '',
-          seat: '',
-          od_percent: '',
-          flat_amount: '',
-          net_percent: '',
-          tp_percent: '',
-          agecapacity: []
         });
-        // toast.success(message);
+        navigate(`/partner/comissions/list/${id}`)
+
       } else {
-        // toast.error("Oops! Something Went Wrong");
+        toast.error("Oops! Something Went Wrong");
       }
 
     })
       .catch((error) => {
-        // console.error("Error submitting form:", error);
+        console.error("Error submitting form:", error);
+        setErrors(error);
 
       });
   };
@@ -105,20 +111,20 @@ const AddComission = () => {
 
 
   function generateBreadcrumbData(data, RightContent = null) {
-    
+
     const { partner } = data || {};
 
     const isActive = location.pathname.includes('/admin/partners') && location.pathname.includes('/addcommision');
 
     return {
-        leftItems: [
-            { label: "Partners", link: "/admin/partners", className: isActive ? "active" : "" },
-            { label: "Commision", link: "/admin/dashboard" },
-        ],
-        middleContent: partner && partner.name ? ` ${partner.name}` : "User Name",
-        rightItems: RightContent,
+      leftItems: [
+        { label: "Partners", link: "/admin/partners", className: isActive ? "active" : "" },
+        { label: "Commision", link: "/admin/dashboard" },
+      ],
+      middleContent: partner && partner.name ? ` ${partner.name}` : "User Name",
+      rightItems: RightContent,
     };
-}
+  }
 
   const RightContent = (
     <button onClick={handleSave} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full">
@@ -154,6 +160,9 @@ const AddComission = () => {
                     </option>
                   ))}
                 </select>
+                {errors.insurer && (
+                  <span className="error">{errors.insurer}</span>
+                )}
               </div>
 
 
@@ -175,6 +184,8 @@ const AddComission = () => {
                       </option>
                     ))}
                 </select>
+                {errors.commission_type && (
+                  <span className="error">{errors.commission_type}</span>)}
 
               </div>
 
@@ -196,6 +207,8 @@ const AddComission = () => {
                         </option>
                       ))}
                   </select>
+                  {errors.vehicle_type && (
+                  <span className="error">{errors.vehicle_type}</span>)}
                 </div>
               )}
 
@@ -217,6 +230,8 @@ const AddComission = () => {
                         </option>
                       ))}
                   </select>
+                  {errors.vehicle_subtype && (
+                  <span className="error">{errors.vehicle_subtype}</span>)}
                 </div>
               )}
 
@@ -240,6 +255,8 @@ const AddComission = () => {
                         </option>
                       ))}
                   </select>
+                  {errors.fuel_type && (
+                  <span className="error">{errors.fuel_type}</span>)}
                 </div>
               )}
 
@@ -262,6 +279,8 @@ const AddComission = () => {
                         </option>
                       ))}
                   </select>
+                  {errors.seat && (
+                  <span className="error">{errors.seat}</span>)}
                 </div>
               )}
 
@@ -316,10 +335,12 @@ const AddComission = () => {
                 <div className="flex">
                   {/* First Input Box */}
                   <div className="flex-1 mr-2">
-                    <input className="w-full p-2" 
-                    name="od_percent" id="od_percent" 
-                    value={formData.od_precent} 
-                    onChange={handleInputChange} placeholder="OD Commission %" />
+                    <input className="w-full p-2"
+                      name="od_percent" id="od_percent"
+                      value={formData.od_percent}
+                      onChange={handleInputChange} placeholder="OD Commission %" />
+                      {errors.od_percent && (
+                  <span className="error">{errors.od_percent}</span>)}
                   </div>
 
                   {/* Second Input Box */}
@@ -329,6 +350,8 @@ const AddComission = () => {
                       value={formData.tp_percent}
                       onChange={handleInputChange}
                       placeholder="TP Comission %" />
+                      {errors.tp_percent && (
+                  <span className="error">{errors.tp_percent}</span>)}
                   </div>
 
                   {/* Third Input Box with Checkbox */}
@@ -342,6 +365,8 @@ const AddComission = () => {
                       placeholder="Net Commission %"
                       disabled={!isChecked}
                     />
+                    {errors.net_percent && (
+                  <span className="error">{errors.net_percent}</span>)}
                     <input
                       type="checkbox"
                       name="net_percent_checkbox"
@@ -349,6 +374,8 @@ const AddComission = () => {
                       checked={isChecked}
                       onChange={() => setIsChecked(!isChecked)}
                     />
+                    {errors.net_percent_checkbox && (
+                  <span className="error">{errors.net_percent_checkbox}</span>)}
                   </div>
 
                   {/* Fourth Input Box */}
@@ -358,6 +385,8 @@ const AddComission = () => {
                       value={formData.flat_amount}
                       onChange={handleInputChange}
                       className="w-full p-2" placeholder="Flat Amount" />
+                      {errors.flat_amount && (
+                  <span className="error">{errors.flat_amount}</span>)}
                   </div>
 
                   <div className="flex-1">

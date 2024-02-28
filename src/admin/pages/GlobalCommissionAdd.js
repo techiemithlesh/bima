@@ -63,7 +63,6 @@ const GlobalCommissionAdd = () => {
 
     const handleSave = () => {
 
-
         const formDataFromForm = new FormData(document.getElementById('form'));
         const formDataJSON = formToJSON(formDataFromForm);
 
@@ -116,13 +115,13 @@ const GlobalCommissionAdd = () => {
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
 
-        // console.log(`${name} changed:`, checked ? 'checked' : 'unchecked');
-
         setFormData((prevData) => ({
             ...prevData,
             [name]: type === 'checkbox' ? checked : value,
 
         }));
+
+        
         setErrors({});
     };
 
