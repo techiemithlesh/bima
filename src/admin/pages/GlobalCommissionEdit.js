@@ -67,6 +67,7 @@ const GlobalCommissionEdit = () => {
         console.error("Error fetching global commissions:", error);
       });
   }, [id]);
+  
 
   const handleSave = () => {
 
@@ -104,7 +105,7 @@ const GlobalCommissionEdit = () => {
           const { message } = error.response.data;
 
           const serverErrors = Object.values(message).flat().join(", ");
-          setErrors(serverErrors);
+          
           setErrors(serverErrors);
           toast.error(serverErrors, {
             position: "top-right",
@@ -139,8 +140,8 @@ const GlobalCommissionEdit = () => {
 
   };
 
-  console.log(commissionData, ">>>>commissionData in globalCommissionEdit");
-  console.log(globalOptions, ">>>>globalOptions in globalCommissionEdit");
+  console.log(commissionData.agecapacity, ">>>>commissionData in globalCommissionEdit");
+  console.log(globalOptions, ">>>>globalOptions in globalCommissionEdit", );
   return (
     <Layout
       title="Edit Global commission"
@@ -277,7 +278,6 @@ const GlobalCommissionEdit = () => {
                       className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                       name="coverage_type"
                       id="coverage_type"
-                      //   value={commissionData.coverage_type}
                       value={
                         commissionData.coverage_type == null ||
                           commissionData.coverage_type == 0

@@ -6,6 +6,7 @@ import axios, { formToJSON } from "axios";
 import Loading from "react-loading";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import { validateAgeCapacity, validateInsurer } from "../../utils/Validation";
 
 
 
@@ -17,6 +18,7 @@ const AddComission = () => {
 
   const [partnerData, setPartnerData] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
+
   let [formData, setFormData] = useState({
     insurer: '',
     commission_type: '',
@@ -44,6 +46,7 @@ const AddComission = () => {
     tp_percent: '',
     agecapacity: []
   })
+
   const [loading, setLoading] = useState(true);
 
   const handleInputChange = (event) => {
@@ -56,42 +59,55 @@ const AddComission = () => {
   };
 
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    newErrors.insurer = validateInsurer(formData.insurer);
+    
+    setErrors(newErrors);
+    const isValid = Object.values(newErrors).every((error) => !error);
+    return isValid;
+
+  }
 
   const handleSave = () => {
 
-    const Data = new FormData(document.getElementById('form'));
-    formData = formToJSON(Data);
-
-
-    const csrfToken = Cookies.get('XSRF-TOKEN');
-    console.log('CSRF Token:', csrfToken);
-    axios.post('https://premium.treatweb.com/public/api/admin/partner/commission/save', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'X-CSRF-TOKEN': csrfToken,
-      },
-    }).then((response) => {
-      console.log("Form Submitted", response.data.message);
-      const { success, message } = response.data;
-
-      if (success) {
-        toast.success(message, {
-          position: 'top-right'
-        })
-        setFormData({
+    if (validateForm()){
+      const Data = new FormData(document.getElementById('form'));
+      formData = formToJSON(Data);
+  
+      const csrfToken = Cookies.get('XSRF-TOKEN');
+      // console.log('CSRF Token:', csrfToken);
+  
+      axios.post('https://premium.treatweb.com/public/api/admin/partner/commission/save', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'X-CSRF-TOKEN': csrfToken,
+        },
+      }).then((response) => {
+        console.log("Form Submitted", response.data.message);
+        const { success, message } = response.data;
+  
+        if (success) {
+          toast.success(message, {
+            position: 'top-right'
+          })
+          setFormData({
+          });
+          navigate(`/partner/comissions/list/${id}`)
+  
+        } else {
+          toast.error("Oops! Something Went Wrong");
+        }
+  
+      })
+        .catch((error) => {
+          console.error("Error submitting form:", error);
+          setErrors(error);
+  
         });
-        navigate(`/partner/comissions/list/${id}`)
+    }
 
-      } else {
-        toast.error("Oops! Something Went Wrong");
-      }
-
-    })
-      .catch((error) => {
-        console.error("Error submitting form:", error);
-        setErrors(error);
-
-      });
   };
 
   useEffect(() => {
@@ -234,7 +250,6 @@ const AddComission = () => {
                   <span className="error">{errors.vehicle_subtype}</span>)}
                 </div>
               )}
-
 
 
               {/* Form Element 5 */}

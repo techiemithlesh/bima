@@ -43,9 +43,6 @@ const PartnerComissionEdit = () => {
     );
 
 
-    
-
-
 
     return (
         <Layout title="Edit Commission" breadcrumbData={generateBreadcrumbData({}, RightContent)}>

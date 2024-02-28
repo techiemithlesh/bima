@@ -100,3 +100,29 @@ export const validateDocument = (fileName) => {
 
 
 
+export const validateInsurer = (insurer) => {
+  if (!insurer.trim()) {
+    return 'Insurer is required';
+  }
+  return '';
+};
+
+export const validateAgeCapacity = (ageCapacity) => {
+ 
+  const ageCapacityNumber = parseFloat(ageCapacity);
+
+  if (isNaN(ageCapacityNumber) || ageCapacityNumber <= 0) {
+    return 'Age capacity should be a positive number';
+  }
+
+  return '';
+};
+
+
+export const validateTpPrecent = (tp_percent) => {
+  if (isNaN(tp_percent) || tp_percent <= 0) {
+    return 'TP Precent should be a positive number';
+  }
+}
+
+
