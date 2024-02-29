@@ -35,6 +35,7 @@ const GlobalCommissionEdit = () => {
     two_wheeler_types: "",
     fuel_types: "",
     od_percent: "",
+    flat_checkbox: "",
     flat_amount: "",
     net_percent_checkbox: "",
     net_percent: "",
@@ -130,12 +131,21 @@ const GlobalCommissionEdit = () => {
         ? event.target.value * 1
         : event.target.value;
 
-    if (event.target.name === "net_percent_checkbox") {
+    if (event.target.name === "net_percent_checkbox" || event.target.name === "flat_checkbox") {
       val = event.target.checked;
     }
-    setCommissionData({
-      ...commissionData,
-      [event.target.name]: val,
+
+    console.log("Vehicle Type Value BEFORE:", commissionData.vehicle_type);
+    setCommissionData((prevCommissionData) => {
+      const updatedCommissionData = {
+        ...prevCommissionData,
+        [event.target.name]: val,
+      };
+  
+      console.log("Vehicle Type Value AFTER:", updatedCommissionData.vehicle_type);
+  
+      return updatedCommissionData;
+
     });
 
   };
@@ -269,7 +279,7 @@ const GlobalCommissionEdit = () => {
                   </div>
                 )}
 
-                {globalOptions && commissionData.vehicle_type == '1' && (
+                {globalOptions && (commissionData.vehicle_type === 1 || commissionData.vehicle_type === 0) && (
                   <div className="mb-2">
                     <label className="block text-sm font-medium text-gray-600">
                       Coverage Type
@@ -279,6 +289,7 @@ const GlobalCommissionEdit = () => {
                       name="coverage_type"
                       id="coverage_type"
                       value={
+                        commissionData.vehicle_type === 0 ? '0' :
                         commissionData.coverage_type == null ||
                           commissionData.coverage_type == 0
                           ? 0
@@ -302,7 +313,7 @@ const GlobalCommissionEdit = () => {
                   </div>
                 )}
 
-                {globalOptions && commissionData.vehicle_type == '1' && (
+                {globalOptions && (commissionData.vehicle_type === 1 || commissionData.vehicle_type === 0) && (
                   <div className="mb-2">
                     <label className="block text-sm font-medium text-gray-600">
                       Two Wheeler Type
@@ -313,6 +324,7 @@ const GlobalCommissionEdit = () => {
                       id="two_wheeler_type"
 
                       value={
+                        commissionData.vehicle_type === 0 ? '0' :
                         commissionData.two_wheeler_type == null ||
                           commissionData.two_wheeler_type == 0
                           ? 0
@@ -336,7 +348,7 @@ const GlobalCommissionEdit = () => {
                   </div>
                 )}
 
-                {globalOptions && commissionData.vehicle_type == '1' && (
+                {globalOptions && (commissionData.vehicle_type === 1 || commissionData.vehicle_type === 0) && (
                   <div className="mb-2">
                     <label className="block text-sm font-medium text-gray-600">
                       Fuel Type
@@ -345,12 +357,12 @@ const GlobalCommissionEdit = () => {
                       className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                       name="fuel_type"
                       id="fuel_types"
-                      //   value={commissionData.fuel_types}
                       value={
-                        commissionData.fuel_type == null ||
-                          commissionData.fuel_type == 0
-                          ? 0
-                          : commissionData.fuel_type * 1
+                        commissionData.vehicle_type === 0
+                          ? '0'
+                          : commissionData.fuel_type == null || commissionData.fuel_type === 0
+                          ? '0'
+                          : commissionData.fuel_type
                       }
                       onChange={handleInputChange}
                     >
@@ -442,7 +454,7 @@ const GlobalCommissionEdit = () => {
 
             {/* TABLE CONTAINER START HERE */}
 
-            {globalOptions && commissionData.vehicle_type == '1' && (
+            {globalOptions && (commissionData.vehicle_type === 1 || commissionData.vehicle_type === 0) && (
               <div className="table_container">
                 <table className="min-w-full table-auto border-2 border-gray-300 comission">
                   <tbody>
@@ -555,30 +567,32 @@ const GlobalCommissionEdit = () => {
                   <div className="flex">
                     {/* First Input Box */}
 
-                    {!commissionData.net_percent_checkbox && (
+                    {!(commissionData.net_percent_checkbox || commissionData.flat_checkbox) && (
                       <div className="flex-1 mr-2">
                         <input
-                          className="w-full p-2"
+                          className={`w-full p-2 ${commissionData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
                           type="number"
                           name="od_percent"
                           id="od_percent"
                           value={commissionData.od_percent}
                           onChange={handleInputChange}
                           placeholder="OD Commission %"
+                          disabled={!commissionData.net_percent_checkbox}
                         />
                       </div>
                     )}
 
-                    {!commissionData.net_percent_checkbox && (
+                    {!(commissionData.net_percent_checkbox || commissionData.flat_checkbox) && (
                       <div className="flex-1 mr-2">
                         <input
-                          className="w-full p-2"
+                          className={`w-full p-2 ${commissionData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
                           name="tp_percent"
                           type="number"
                           min="0"
                           value={commissionData.tp_percent}
                           onChange={handleInputChange}
                           placeholder="TP Comission %"
+                          disabled={!commissionData.net_percent_checkbox}
                         />
                         {errors.tp_percent && (
                           <span className="error">{errors.tp_percent}</span>
@@ -587,47 +601,67 @@ const GlobalCommissionEdit = () => {
                     )}
 
                     {/* Third Input Box with Checkbox */}
-                    <div className="flex-1 flex items-center mr-2">
+
+                    {!commissionData.flat_checkbox && (
+                      <div className="flex-1 flex items-center mr-2">
                       <input
                         type="checkbox"
                         name="net_percent_checkbox"
                         className="mr-2"
                         value={commissionData.net_percent_checkbox}
+                        
                         checked={commissionData.net_percent_checkbox}
                         onChange={handleInputChange}
                       />
 
                       <input
                         name="net_percent"
-                        className="w-full p-2 border"
+                        className={`w-full p-2 ${commissionData.net_percent_checkbox ? 'editable-input' : 'disabled-input'}`}
                         id="net_percent"
                         type="number"
-                        min="0"
+                        
                         value={commissionData.net_percent}
                         onChange={handleInputChange}
                         placeholder="Net Commission %"
+                        disabled={!commissionData.net_percent_checkbox}
                       />
                       {errors.net_percent && (
                         <span className="error">{errors.net_percent}</span>
                       )}
                     </div>
+                    )}
+                    
 
                     {/* Fourth Input Box */}
-                    <div className="flex-1">
-                      <input
-                        name="flat_amount"
-                        id="flat_amount"
-                        value={commissionData.flat_amount}
-                        onChange={handleInputChange}
-                        type="number"
-                        min="0"
-                        className="w-full p-2"
-                        placeholder="Flat Amount"
-                      />
-                      {errors.flat_amount && (
-                        <span className="error">{errors.flat_amount}</span>
-                      )}
-                    </div>
+                    {!commissionData.net_percent_checkbox && (
+                       <div className="flex-1 flex items-center mr-2">
+                       <input
+                       type="checkbox"
+                       name="flat_checkbox"
+                       className="mr-2"
+                       value={commissionData.flat_checkbox}
+                       checked={commissionData.flat_checkbox}
+                       onChange={handleInputChange}
+                     />
+                    
+                   
+                     <input
+                       name="flat_amount"
+                       id="flat_amount"
+                       value={commissionData.flat_amount}
+                       onChange={handleInputChange}
+                       type="number"
+                       min="0"
+                       className={`w-full p-2 ${commissionData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
+                       placeholder="Flat Amount"
+                       disabled={!commissionData.flat_checkbox}
+                     />
+                     {errors.flat_amount && (
+                       <span className="error">{errors.flat_amount}</span>
+                     )}
+                   </div>
+                    )}
+                   
                   </div>
                 </div>
 
