@@ -125,24 +125,46 @@ const PartnerDetailsAdd = () => {
 
   const handleInputChange = (event) => {
     const { name, value, files } = event.target;
-
+  
+    // If files are selected
     if (files && files.length > 0) {
-
+      const file = files[0];
+  
+      // Update state to store the file object
       setFormData((prevData) => ({
         ...prevData,
-        [name]: files[0],
+        [name]: file,
       }));
+  
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+       
+        setFormData((prevData) => ({
+          ...prevData,
+          imagePreviewUrl: e.target.result,
+        }));
+      };
+      reader.readAsDataURL(file);
     } else {
-
+      
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
     }
-
+  
     validateField(name, files && files.length > 0 ? files[0] : value);
+
+    const errorMessage = validateField(name, files && files.length > 0 ? files[0] : value);
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: errorMessage,
+    }));
   };
 
+  
   const validateForm = () => {
     let valid = true;
     const requiredFields = requiredFieldsByTab[selectedTabIndex];
@@ -188,21 +210,21 @@ const PartnerDetailsAdd = () => {
     e.preventDefault();
     const csrfToken = Cookies.get('XSRF-TOKEN');
     const apiUrl = 'https://premium.treatweb.com/public/api/admin/partner/add';
-  
+
     const formDataToSend = new FormData();
-  
+
     // Append existing form data to formDataToSend
     for (const key in formData) {
       formDataToSend.append(key, formData[key]);
     }
-  
+
     // Append files to formData
     formDataToSend.append('image', formData.image);
     formDataToSend.append('pan_file', formData.pan_file);
     formDataToSend.append('aadhaar_file', formData.aadhaar_file);
     formDataToSend.append('licence_file', formData.licence_file);
     formDataToSend.append('bank_passbook_file', formData.bank_passbook_file);
-  
+
     console.log("FormData", formData);
     axios.post(apiUrl, formDataToSend, {
       headers: {
@@ -224,9 +246,9 @@ const PartnerDetailsAdd = () => {
           draggable: true,
           progress: undefined,
         });
-        
+
       } else {
-        
+
         toast.error(res.data.messages || 'An error occurred while adding the partner. Please try again later.', {
           position: 'top-right',
           autoClose: 5000,
@@ -236,7 +258,7 @@ const PartnerDetailsAdd = () => {
           draggable: true,
           progress: undefined,
         });
-        
+
         setErrors(res.data.errors || {});
       }
     }).catch((error) => {
@@ -253,7 +275,7 @@ const PartnerDetailsAdd = () => {
       setErrors(error);
     });
   };
-  
+
 
   function generateBreadcrumbData(selectedTabIndex, rightContent = null) {
     let middleContent;
@@ -323,13 +345,18 @@ const PartnerDetailsAdd = () => {
                       {errors.email && <span className="text-red-500">{errors.email}</span>}
                     </div>
 
-                    <div className="flex-1 mr-2 ">
+                    <div className="flex-1 mr-2">
                       <label htmlFor="image" className="file-input-container">
-                        <img src={Icons.UserAdd} width="80" height="280" alt="Profile Icon" className="file-input-icon hover:cursor-pointer" />
+                        {formData.imagePreviewUrl ? (
+                          <img src={formData.imagePreviewUrl} width="80" height="80" alt="Uploaded" className="file-input-icon hover:cursor-pointer" />
+                        ) : (
+                          <img src={Icons.UserAdd} width="80" height="80" alt="Profile Icon" className="file-input-icon hover:cursor-pointer" />
+                        )}
                         <input name="image" type="file" onChange={handleInputChange} id="image" className="hidden" accept=".jpg, .png, .jpeg" />
                       </label>
                       {errors.image && <span className="text-red-500">{errors.image}</span>}
                     </div>
+
 
 
 
