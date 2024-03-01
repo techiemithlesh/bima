@@ -115,12 +115,15 @@ const GlobalCommissionAdd = () => {
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
 
+        console.log("before", formData.vehicle_types);
+
         setFormData((prevData) => ({
             ...prevData,
             [name]: type === 'checkbox' ? checked : value,
-
+            
         }));
 
+        console.log("After", formData.vehicle_types);
 
         setErrors({});
     };
@@ -211,7 +214,7 @@ const GlobalCommissionAdd = () => {
                                 )}
 
                                 {/* Form Element 4 (Coverage Type) */}
-                                {formData.vehicle_types === '1' && (
+                                { (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium text-gray-600">Coverage Type</label>
                                         <select
@@ -234,7 +237,7 @@ const GlobalCommissionAdd = () => {
                                 )}
 
                                 {/* Form Element 4 (Vehicle Sub Type) */}
-                                {formData.vehicle_types === '1' && (
+                                {(formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium text-gray-600">Two Wheeler Type</label>
                                         <select
@@ -259,7 +262,7 @@ const GlobalCommissionAdd = () => {
 
 
                                 {/* Form Element 5 */}
-                                {formData.vehicle_types === '1' && (
+                                {(formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium text-gray-600">Fuel Type</label>
                                         <select
@@ -337,7 +340,7 @@ const GlobalCommissionAdd = () => {
 
                         {/* TABLE CONTAINER START HERE */}
 
-                        {formData.vehicle_types === '1' && (
+                        {(formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
                             <div className="table_container">
 
                                 <table className="min-w-full table-auto border-2 border-gray-300 comission">
