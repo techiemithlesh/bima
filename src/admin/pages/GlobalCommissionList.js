@@ -10,6 +10,7 @@ import ViewDetailsModal from "./components/ViewDetailsModal";
 
 const GlobalCommissionList = () => {
     const [commissionData, setCommissionData] = useState([]);
+    
 
 
     const [commissionsList, SetComissionList] = useState([]);

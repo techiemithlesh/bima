@@ -8,10 +8,11 @@ import { validateAdhar, validateDocument, validateEmail, validateMobile, validat
 import axios from "axios";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import OptionModel from "./components/OptionModel";
 
 
 const PartnerDetailsAdd = () => {
-
+  const [showModal, setShowModal] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [formData, setFormData] = useState({
     name: '',
@@ -76,6 +77,25 @@ const PartnerDetailsAdd = () => {
   })
 
 
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleYesClick = () => {
+    setShowModal(true);
+    console.log("Working yes");
+  };
+
+  const handleCreateNewClick = () => {
+    setShowModal(false);
+  };
+
+  const handleNoClick = () => {
+    setShowModal(false);
+    
+  };
+
+
   const validateField = (name, value) => {
     let errorMessage = '';
 
@@ -125,21 +145,19 @@ const PartnerDetailsAdd = () => {
 
   const handleInputChange = (event) => {
     const { name, value, files } = event.target;
-  
-    // If files are selected
+
     if (files && files.length > 0) {
       const file = files[0];
-  
-      // Update state to store the file object
+
       setFormData((prevData) => ({
         ...prevData,
         [name]: file,
       }));
-  
-      
+
+
       const reader = new FileReader();
       reader.onload = (e) => {
-       
+
         setFormData((prevData) => ({
           ...prevData,
           imagePreviewUrl: e.target.result,
@@ -147,13 +165,13 @@ const PartnerDetailsAdd = () => {
       };
       reader.readAsDataURL(file);
     } else {
-      
+
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
     }
-  
+
     validateField(name, files && files.length > 0 ? files[0] : value);
 
     const errorMessage = validateField(name, files && files.length > 0 ? files[0] : value);
@@ -164,7 +182,7 @@ const PartnerDetailsAdd = () => {
     }));
   };
 
-  
+
   const validateForm = () => {
     let valid = true;
     const requiredFields = requiredFieldsByTab[selectedTabIndex];
@@ -200,11 +218,9 @@ const PartnerDetailsAdd = () => {
     if (validateForm()) {
       setSelectedTabIndex((prev) => prev + 1);
     } else {
-      // alert('Fill Required Input then Move to next Page');
+   
     }
   };
-
-
 
   const submitFormData = (e) => {
     e.preventDefault();
@@ -246,6 +262,8 @@ const PartnerDetailsAdd = () => {
           draggable: true,
           progress: undefined,
         });
+
+        setShowModal(true);
 
       } else {
 
@@ -571,6 +589,16 @@ const PartnerDetailsAdd = () => {
             </div>
           )}
         </Tabs>
+
+        {
+          showModal && (
+            <OptionModel onClose={handleModalClose}
+              onYesClick={handleYesClick}
+              onNoClick={handleNoClick}>
+              
+            </OptionModel>
+          )
+        }
       </Card>
     </Layout>
   );
