@@ -250,8 +250,10 @@ const PartnerDetailsAdd = () => {
           draggable: true,
           progress: undefined,
         });
+        setFormData({});
 
         setShowModal(true);
+
 
       } else {
 

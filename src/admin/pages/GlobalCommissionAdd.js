@@ -17,7 +17,7 @@ const GlobalCommissionAdd = () => {
         makes: '',
         policy_type: '',
         models: '',
-        vehicle_types: '',
+        vehicle_types: '0',
         two_wheeler_types: '',
         fuel_types: '',
         od_percent: '',
@@ -27,6 +27,11 @@ const GlobalCommissionAdd = () => {
         tp_percent: '',
         agecapacity: []
     });
+
+    console.log("Initial formData state:", formData);
+
+    console.log("Partner data:", partnerData);
+
 
     const [errors, setErrors] = useState({
         insurer: '',
@@ -115,15 +120,19 @@ const GlobalCommissionAdd = () => {
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
 
-        console.log("before", formData.vehicle_types);
+        console.log("before", formData);
 
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: type === 'checkbox' ? checked : value,
-            
-        }));
 
-        console.log("After", formData.vehicle_types);
+        setFormData((prevData) => {
+            const updateFormData = {
+                ...prevData,
+                [name]: type === 'checkbox' ? checked : value,
+            }
+            console.log("After", updateFormData); 
+            return updateFormData;
+        })
+
+
 
         setErrors({});
     };
@@ -214,7 +223,7 @@ const GlobalCommissionAdd = () => {
                                 )}
 
                                 {/* Form Element 4 (Coverage Type) */}
-                                { (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
+                                {formData.business_type == '1' && (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium text-gray-600">Coverage Type</label>
                                         <select
@@ -237,7 +246,7 @@ const GlobalCommissionAdd = () => {
                                 )}
 
                                 {/* Form Element 4 (Vehicle Sub Type) */}
-                                {(formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
+                                {formData.business_type == '1' && (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium text-gray-600">Two Wheeler Type</label>
                                         <select
@@ -262,7 +271,7 @@ const GlobalCommissionAdd = () => {
 
 
                                 {/* Form Element 5 */}
-                                {(formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
+                                {formData.business_type == '1' && (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium text-gray-600">Fuel Type</label>
                                         <select
@@ -285,7 +294,7 @@ const GlobalCommissionAdd = () => {
                                 )}
 
                                 {/* Form Element 5 */}
-                                {formData.vehicle_types === '1' && (
+                                {formData.business_type == '1' && (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium text-gray-600">Makes</label>
                                         <select
@@ -340,7 +349,7 @@ const GlobalCommissionAdd = () => {
 
                         {/* TABLE CONTAINER START HERE */}
 
-                        {(formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
+                        {formData.business_type == '1' && (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
                             <div className="table_container">
 
                                 <table className="min-w-full table-auto border-2 border-gray-300 comission">
@@ -397,7 +406,7 @@ const GlobalCommissionAdd = () => {
                                                     value={formData.od_percent}
                                                     onChange={handleInputChange}
                                                     placeholder="OD Commission %"
-                                                    disabled={!formData.net_percent_checkbox}
+
                                                 />
                                             </div>
                                         )}
@@ -411,7 +420,7 @@ const GlobalCommissionAdd = () => {
                                                     value={formData.tp_percent}
                                                     onChange={handleInputChange}
                                                     placeholder="TP Comission %"
-                                                    disabled={!formData.net_percent_checkbox}
+
                                                 />
                                                 {errors.tp_percent && (
                                                     <span className="error">{errors.tp_percent}</span>

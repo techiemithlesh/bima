@@ -3,6 +3,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const OptionModel = ({ onClose, partnerId }) => {
     
@@ -51,21 +52,36 @@ const OptionModel = ({ onClose, partnerId }) => {
     };
 
     const handleSubmit = () => {
-
+        const apiUrl = `https://premium.treatweb.com/public/api/admin/partner/set/globalcommission`;
+    
         const formData = {
             partnerid: partnerId,
             globalid: selectedCommissions[0],
         };
-
+    
         console.log("Global Form Submitted", formData);
-        axios.post('your-submit-url', formData)
+        axios.post(apiUrl, formData)
             .then(response => {
                 console.log("Form submitted successfully:", response);
+                const { status, message } = response.data; 
+                toast.success(message, {
+                    position: 'top-right'
+                });
+                setTimeout(() => {
+                    navigate('/admin/partners');
+                }, 5000);   
+              
             })
             .catch(error => {
                 console.error("Error submitting form:", error);
+                // Display error toast
+                toast.error('An error occurred while submitting the form. Please try again later.', {
+                    position: 'top-right'
+                });
             });
     };
+    
+    
 
     return (
         <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex justify-center items-center">
