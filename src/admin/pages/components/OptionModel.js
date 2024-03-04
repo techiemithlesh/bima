@@ -1,30 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const OptionModel = ({ onClose, onYesClick }) => {
-    const [step, setStep] = useState(1);
+const OptionModel = ({ onClose, partnerId }) => {
+    
+    const [showGlobalList, setShowGlobalList] = useState(false);
     const [selectedCommissions, setSelectedCommissions] = useState([]);
-    const [globalCommissions, setGlobalCommissions] = useState([]);
     const [commissionData, setCommissionData] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
 
-    useEffect(() => {
-        if (step === 3) {
-            fetchGlobalCommissions();
-        }
-    }, [step]);
+    const navigate = useNavigate();
 
+    const handleCreateNew = () => {
+        navigate(`/partner/addcommision/${partnerId}`);
+    };
+
+    const handleSelectGlobal = () => {
+        // Show global list when clicked on "Select from Global"
+        setShowGlobalList(true);
+        fetchGlobalCommissions();
+    };
 
     const fetchGlobalCommissions = () => {
         const apiUrl = `https://premium.treatweb.com/public/api/admin/global-commissions/list?currentPage=${currentPage}`;
 
         axios.get(apiUrl)
             .then(response => {
-                console.log(response);
+                console.log("globalcommission Form Response", response);
                 const responseData = response.data.global_commissions.data;
+                
                 setCommissionData(responseData);
                 setTotalPages(response.data.global_commissions.last_page);
             })
@@ -33,52 +40,42 @@ const OptionModel = ({ onClose, onYesClick }) => {
             });
     };
 
-
-    const handleYesClick = () => {
-        setStep(2);
-    };
-
-    const handleCreateNew = () => {
-        console.log("Redirecting to create new commission...");
-    };
-
-    const handleSelectGlobal = () => {
-        setStep(3);
-        console.log("Showing list of global commissions...");
-    };
-
-
     const handleCheckboxChange = (commissionId) => {
-       
-        setSelectedCommissions((prevSelectedCommissions) => {
-            if (prevSelectedCommissions.includes(commissionId)) {
-               
-                return prevSelectedCommissions.filter((id) => id !== commissionId);
-            } else {
-                
-                return [...prevSelectedCommissions, commissionId];
-            }
-        });
+        if (selectedCommissions.includes(commissionId)) {
+            // If the commission is already selected, deselect it
+            setSelectedCommissions(selectedCommissions.filter(id => id !== commissionId));
+        } else {
+            // Otherwise, select it and clear previously selected commissions
+            setSelectedCommissions([commissionId]);
+        }
+    };
+
+    const handleSubmit = () => {
+
+        const formData = {
+            partnerid: partnerId,
+            globalid: selectedCommissions[0],
+        };
+
+        console.log("Global Form Submitted", formData);
+        axios.post('your-submit-url', formData)
+            .then(response => {
+                console.log("Form submitted successfully:", response);
+            })
+            .catch(error => {
+                console.error("Error submitting form:", error);
+            });
     };
 
     return (
         <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white rounded-lg w-1/3 p-8 policymodal">
+            <div className="bg-white rounded-lg w-auto p-8 policymodal">
                 <div className="flex justify-end">
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                         <FontAwesomeIcon icon={faTimes} className="w-6 h-6" />
                     </button>
                 </div>
-                {step === 1 && (
-                    <div>
-                        <h1>Do you wish to continue with commission ad?</h1>
-                        <div className="option-buttons mt-4 space-x-4">
-                            <button onClick={handleYesClick} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Yes</button>
-                            <button onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">No</button>
-                        </div>
-                    </div>
-                )}
-                {step === 2 && (
+                {!showGlobalList && (
                     <div>
                         <h1>How do you want to add commission?</h1>
                         <div className="option-buttons mt-4 space-x-4">
@@ -87,28 +84,49 @@ const OptionModel = ({ onClose, onYesClick }) => {
                         </div>
                     </div>
                 )}
+                {showGlobalList && (
 
-                {step === 3 && (
                     <div>
-                        <h1 className="py-4">Global commission List</h1>
-                        <ul className="">
-                            {commissionData.map((commission) => (
-                                <li key={commission.id}>
-                                    <label>
-                                        <input
+                        <h1 className="py-4 px-4 text-xl font-bold">Global commission List</h1>
+                        <table className="min-w-full table-auto border border-gray-300 tablez" style={{ tableLayout: 'auto' }}>
+                            <thead className="shade">
+                                <tr>
+                                    <th className="px-4 py-2">Name</th>
+                                    <th className="px-4 py-2">Commision Type</th>
+                                    <th className="px-4 py-2">Company name</th>
+                                    <th className="px-4 py-2">Coverage Type</th>
+                                    <th className="px-4 py-2">Vehicle Type</th>
+                                    <th className="px-4 py-2">OD %</th>
+                                    <th className="px-4 py-2">TP %</th>
+                                    <th className="px-4 py-2">NET %</th>
+                                    <th className="px-4 py-2">Flat Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {commissionData.map((commission) => (
+                                    <tr key={commission.id}>
+                                        <td className="px-4 py-2"><input
                                             type="checkbox"
+                                            name="globalid"
                                             checked={selectedCommissions.includes(commission.id)}
                                             onChange={() => handleCheckboxChange(commission.id)}
-                                        />
-                                        {commission.insurer.name}
-                                    </label>
-                                    
-                                </li>
-                                
-                            ))}
-                            
-                        </ul>
-                        <button className="px-4 my-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">SUBMIT</button>
+                                        /></td>
+                                        <td className="px-4 py-2">{commission.commission_type.name ?? 'NA'}</td>
+                                        <td className="px-4 py-2">{commission.insurer.name ?? 'NA'}</td>
+                                        <td className="px-4 py-2">{commission.coverage_type?.name ?? 'NA'}</td>
+
+                                        <td className="px-4 py-2">{commission.vehicle_type.name ?? 'NA'}</td>
+                                        <td className="px-4 py-2">{commission.od_percent ?? 'NA'}</td>
+                                        <td className="px-4 py-2">{commission.tp_percent ?? 'NA'}</td>
+                                        <td className="px-4 py-2">{commission.net_percent ?? 'NA'}</td>
+                                        <td className="px-4 py-2">{commission.flat_amount ?? 'NA'}</td>
+                                    </tr>
+                                ))}
+
+                            </tbody>
+                        </table>
+                        
+                        <button onClick={handleSubmit} className="px-4 my-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">SUBMIT</button>
                     </div>
                 )}
             </div>

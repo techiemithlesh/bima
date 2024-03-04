@@ -12,6 +12,7 @@ import OptionModel from "./components/OptionModel";
 
 
 const PartnerDetailsAdd = () => {
+  const [partnerId, setPartnerId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [formData, setFormData] = useState({
@@ -79,20 +80,6 @@ const PartnerDetailsAdd = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
-  };
-
-  const handleYesClick = () => {
-    setShowModal(true);
-    console.log("Working yes");
-  };
-
-  const handleCreateNewClick = () => {
-    setShowModal(false);
-  };
-
-  const handleNoClick = () => {
-    setShowModal(false);
-    
   };
 
 
@@ -218,7 +205,7 @@ const PartnerDetailsAdd = () => {
     if (validateForm()) {
       setSelectedTabIndex((prev) => prev + 1);
     } else {
-   
+
     }
   };
 
@@ -249,11 +236,12 @@ const PartnerDetailsAdd = () => {
       },
     }).then((res) => {
       console.log(res);
-      const { success, message } = res.data;
-      console.log(res.data);
+      const { success, message, partnerid } = res.data;
+      console.log("Response Data",res.data);
       if (res.data.success) {
-        // alert(res.data.messages || 'Partner added successfully Alert!');
-        toast.success(res.data.messages || 'Partner added successfully kfkj!', {
+        setPartnerId(partnerid);
+        
+        toast.success(res.data.messages || 'Partner added successfully Added!', {
           position: 'top-right',
           autoClose: 5000,
           hideProgressBar: false,
@@ -590,15 +578,12 @@ const PartnerDetailsAdd = () => {
           )}
         </Tabs>
 
-        {
-          showModal && (
-            <OptionModel onClose={handleModalClose}
-              onYesClick={handleYesClick}
-              onNoClick={handleNoClick}>
-              
-            </OptionModel>
-          )
-        }
+        {showModal && (
+          <OptionModel
+            onClose={handleModalClose}
+            partnerId={partnerId}
+          />
+        )}
       </Card>
     </Layout>
   );
