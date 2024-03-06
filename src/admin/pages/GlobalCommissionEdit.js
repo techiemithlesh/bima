@@ -60,14 +60,25 @@ const GlobalCommissionEdit = () => {
     axios
       .get(commissionApiUrl)
       .then((response) => {
-        console.log(response.data.global_commission);
-        setCommissionData(response.data.global_commission);
+        console.log("Response from server", response.data.global_commission);
+        
+        const commissionDataFromServer = response.data.global_commission;
+
+      if (commissionDataFromServer.vehicle_type === null) {
+        commissionDataFromServer.vehicle_type = 0;
+      }
+      
+      setCommissionData(commissionDataFromServer);
+
         setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching global commissions:", error);
       });
   }, [id]);
+
+
+  console.log("Value in form", commissionData);
   
 
   const handleSave = () => {
