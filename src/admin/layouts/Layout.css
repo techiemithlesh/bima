@@ -1,7 +1,10 @@
 .sidebar_container{
     background: #f8f7f3;
+    flex-basis: 13.4%;
 }
-
+main{
+    flex-basis: 86.6%;
+}
 /* .sidebar_container li span{
     color: black;
     font-weight: 600;
@@ -10,10 +13,11 @@
 
 .sidebar_container .sidebar_ul li{
     flex-direction: column;
-    margin-top: 12px;
-    padding: 15px;
+    margin-bottom: 0px;
+    padding: 7px 15px;
     font-size: 20px;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    border-bottom: 2px solid #dfdedb;
 }
 
 .active{

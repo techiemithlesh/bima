@@ -4,10 +4,9 @@ import Card from "../Components/Card";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { data } from "autoprefixer";
-import { TabsIcon } from "../../shared/Assets";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAdd, faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
+import { Icons, TabsIcon } from "../../shared/Assets";
 import ViewDetailsModal from "./components/ViewDetailsModal";
+import {count} from "react-table/src/aggregations";
 
 
 const PartnerComissionList = () => {
@@ -36,24 +35,23 @@ const PartnerComissionList = () => {
                 { label: "Partners", link: "/admin/partners" },
                 { label: "Commission", link: "#" },
             ],
-            middleContent: "Test / 2345",
+            middleContent: (count(commissionsList)>0 ? commissionsList[0].name:"") + " / "+ (count(commissionsList)>0 ? commissionsList[0].partner_code:""),
             rightItems: rightContent
         };
     }
 
     const searchRightContent = (
-        <input
-            type="text"
-            placeholder="Search with name"
-            onChange={(e) => console.log("Search:", e.target.value)}
-            className="border border-gray-300 px-8 py-2 rounded focus:outline-none focus:border-blue-500"
-        />
+
+            <Link to={`/partner/addcommision/${id}`} className="px-1">
+                <img src={Icons.Addcommision} alt="View Details" style={{width:"40px"}} />
+            </Link>
     );
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const apiUrl = `https://premium.treatweb.com/public/api/admin/partner/commission/${id}`;
+                // const apiUrl = `http://127.0.0.1:9000/api/admin/partner/commission/${id}`;
                 const res = await axios.get(apiUrl);
                 const comissionData = res.data;
                 SetComissionList(comissionData);
@@ -66,10 +64,10 @@ const PartnerComissionList = () => {
     }, [id]);
 
     return (
-        <Layout title="Partner Comission List " breadcrumbData={generateBreadcrumbData()}>
+        <Layout title="Partner Commission List " breadcrumbData={generateBreadcrumbData(searchRightContent)}>
             <Card>
                
-                <table className="min-w-full table-auto border border-gray-300">
+                <table className="min-w-full table-auto border border-gray-300 tablez">
                 
                     <thead>
                         <tr className="bg-gray-300 ">
@@ -78,9 +76,6 @@ const PartnerComissionList = () => {
                             <th className="px-2 py-2">Vehicle Type</th>
                             <th className="px-2 py-2">Vehicle SubType</th>
                             <th className="px-2 py-2">Fuel Type</th>
-                            <th className="px-2 py-2">Vehicle Age</th>
-                            <th className="px-2 py-2">Engine</th>
-                            <th className="px-2 py-2">Make</th>
                             <th className="px-2 py-2">Seat</th>
                             <th className="px-2 py-2">OD Commission %</th>
                             <th className="px-2 py-2">TP Commission %</th>
@@ -94,35 +89,25 @@ const PartnerComissionList = () => {
                             <tr key={commission.id}>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.business_types_name}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.insurers_name}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.vehcle_type ?? 'NA'}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.vehicle_subtype_id}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.fuel_type_id}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.vehicle_age_id ?? 'NA'}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.vehicle_engine_capacity_id ?? 'NA'}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.vehicle_make_id ?? 'NA'}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.vehicle_seat_capacity_id ?? 'NA'}</td>
+                                <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.vehicle_types_name ?? 'NA'}</td>
+                                <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.vehicle_subtypename}</td>
+                                <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.fuel_type_name}</td>
+                                <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.vehicle_engine_capacity_name ?? 'NA'}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.od_percent}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.tp_percent}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.net_percent}</td>
                                 <td className="px-4 py-4 border-b border-gray-300 text-center">{commission.flat_amount}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">
-                                    <div className="flex justify-between items-center">
-                                        <button
-                                            onClick={() => handleViewDetails(commission.id)}
-                                            className="rounded mr-2"
-                                        >
-                                        <FontAwesomeIcon icon={faEye}/>
+                                <td className="px-4 py-2 flex justify-center" style={{width:'150px'}}>
+                                        <button onClick={() => handleViewDetails(commission.id)}
+                                            className="text-white rounded mr-2">
+                                            <img src={TabsIcon.eye} alt="View Details" />
                                         </button>
-                                        <Link to={`/partner/addcommision/${commission.partner_id}`} className="px-1">
-                                            <FontAwesomeIcon icon={faAdd} />
-                                        </Link>
-
-                                        <Link to={`/partner/editcommision/${commission.id}`} className="px-1">
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </Link>
-                                    </div>
+                                       {/*<button className=" text-white rounded mr-2" >*/}
+                                       {/* <Link to={`/partner/editcommision/${commission.id}`} className="px-1">*/}
+                                       {/*     <img src={TabsIcon.editpartner} alt="View Details" />*/}
+                                       {/* </Link>*/}
+                                       {/*</button>*/}
                                 </td>
-
                             </tr>
                         ))}
                     </tbody>
@@ -131,7 +116,89 @@ const PartnerComissionList = () => {
 
             {isModalVisible && (
                 <ViewDetailsModal onClose={closeModal} data={selectedComission} title="Commission Details">
-                  <h1>ID : {selectedComission.id}</h1>
+                    <div className="mt-1">
+                        <div className="grid grid-cols-3 gap-1 mb-2">
+                            <div className="col-span-1">
+                                <p className="font-semibold label">Commission Type:</p>
+                                <span className="labelvalue">
+                                     {selectedComission.business_types_name}
+                                </span>
+                            </div>
+                            <div className="col-span-1">
+                                <p className="font-semibold label">Vehicle Type:</p>
+                                <span className="labelvalue">
+                                     {selectedComission.insurers_name}
+                                </span>
+                            </div>
+                            <div className="col-span-1">
+                                <p className="font-semibold label">OD Commission:</p>
+                                <span className="labelvalue">
+                                     {selectedComission.od_percent+'%'}
+                                </span>
+                            </div>
+                            <div className="col-span-1">
+                                <p className="font-semibold label">TP Commission:</p>
+                                <span className="labelvalue">
+                                     {selectedComission.tp_percent+'%'}
+                                </span>
+                            </div>
+                            <div className="col-span-1">
+                                <p className="font-semibold label">Net Commission:</p>
+                                <span className="labelvalue">
+                                     {selectedComission.net_percent+'%'}
+                                </span>
+                            </div>
+                            <div className="col-span-1">
+                                <p className="font-semibold label">Last Updated:</p>
+                                <span className="labelvalue">
+                                     NA
+                                </span>
+                            </div>
+                        </div>
+
+                            <div className="grid gap-1 mb-2">
+                                <table className="min-w-full table-auto border tablecommission">
+                                    <tbody>
+                                    {/*{JSON.parse(selectedComission.engines)}*/}
+
+                                    {
+                                        (JSON.parse(selectedComission.engines)!=null) &&
+                                        Object.keys(JSON.parse(selectedComission.engines)).length>0 ? (
+                                            Object.entries(JSON.parse(selectedComission.engines)).map((engines, c_index) => (
+                                                <tr>
+                                                    {c_index === 0 ?
+                                                        <th key={c_index}>{engines[1]}</th>
+                                                        :
+                                                        <th key={c_index}>{engines[1]}</th>
+                                                    }
+                                                    {
+                                                        Object.entries(JSON.parse(selectedComission.ages)).map((age, index) => (
+                                                            c_index === 0 ? (
+                                                                <th key={index}>{age[1]}</th>
+                                                            ):(
+
+                                                                <td>
+                                                                    {JSON.parse(selectedComission.agecapacity)[engines[0]][age[0]].value}
+                                                                </td>
+                                                            )
+                                                        ))
+                                                    }
+                                                    {c_index === 0 ? (
+                                                        <th className="border-2 shade text-center">
+                                                            DEAL
+                                                        </th>
+                                                    ) : (
+                                                        <td>{selectedComission.agecapacity[engines[0]].deal}</td>
+                                                    )}
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr><td style={{display:'none'}}>No Age/Capacity found.</td></tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                    </div>
                 </ViewDetailsModal>
             )}
         </Layout>

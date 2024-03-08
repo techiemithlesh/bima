@@ -1,39 +1,32 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import axios, { formToJSON } from "axios";
 import Loading from "react-loading";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { validateAgeCapacity, validateCommission, validateFuelType, validateInsurer, validateVehicleSubType, validateVehicleType } from "../../utils/Validation";
-
+import { useNavigate } from 'react-router-dom';
 
 
 const AddComission = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
 
   const location = useLocation();
-  const navigate = useNavigate();
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
+    mobile: '',
+    branch_name: '',
+    image: '',
+    partner_status: ''
+  })
 
   const [partnerData, setPartnerData] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
-
   let [formData, setFormData] = useState({
-    insurer: '',
-    commission_type: '',
-    vehicle_type: '',
-    vehicle_subtype: '',
-    fuel_type: '',
-    seat: '',
-    od_percent: '',
-    flat_amount: '',
-    net_percent: '',
-    tp_percent: '',
-    agecapacity: []
-  })
-
-  const [errors, setErrors] = useState({
     insurer: '',
     commission_type: '',
     vehicle_type: '',
@@ -64,7 +57,6 @@ const AddComission = () => {
 
   };
 
-
   const validateForm = () => {
     const newErrors = {};
 
@@ -78,7 +70,7 @@ const AddComission = () => {
     }
 
     setErrors(newErrors);
-    
+
     const isValid = Object.values(newErrors).every((error) => !error);
     return isValid;
 
@@ -86,47 +78,53 @@ const AddComission = () => {
 
   const handleSave = () => {
 
-    if (validateForm()){
-      const Data = new FormData(document.getElementById('form'));
-      formData = formToJSON(Data);
-  
-      const csrfToken = Cookies.get('XSRF-TOKEN');
-      // console.log('CSRF Token:', csrfToken);
-  
-      axios.post('https://premium.treatweb.com/public/api/admin/partner/commission/save', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'X-CSRF-TOKEN': csrfToken,
-        },
-      }).then((response) => {
-        console.log("Form Submitted", response.data.message);
-        const { success, message } = response.data;
-  
-        if (success) {
-          toast.success(message, {
-            position: 'top-right'
-          })
-          setFormData({
-          });
-          navigate(`/partner/comissions/list/${id}`)
-  
-        } else {
-          toast.error("Oops! Something Went Wrong");
-        }
-  
-      })
-        .catch((error) => {
-          console.error("Error submitting form:", error);
-          setErrors(error);
-  
+    const Data = new FormData(document.getElementById('form'));
+    formData = formToJSON(Data);
+    formData.ages=Object.assign({}, formData.ages);
+    formData.engines=Object.assign({},formData.engines);
+    console.log('Form Data:', formData);
+    const csrfToken = Cookies.get('XSRF-TOKEN');
+    axios.post('https://premium.treatweb.com/public/api/admin/partner/commission/save', formData, {
+    // axios.post('http://127.0.0.1:9000/api/admin/partner/commission/save', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'X-CSRF-TOKEN': csrfToken,
+      },
+    }).then((response) => {
+      console.log("Form Submitted", response.data.message);
+      const { success, message } = response.data;
+      if (success) {
+        // alert(message);
+        setFormData({
+          insurer: '',
+          commission_type: '',
+          vehicle_type: '',
+          vehicle_subtype: '',
+          fuel_type: '',
+          seat: '',
+          od_percent: '',
+          flat_amount: '',
+          net_percent: '',
+          tp_percent: '',
+          agecapacity: []
         });
-    }
+        toast.success(message);
+        navigate('/admin/partners');
 
+      } else {
+        toast.error("Oops! Something Went Wrong");
+      }
+
+    })
+      .catch((error) => {
+        console.error("Error submitting form:", error);
+      });
   };
 
   useEffect(() => {
 
     const apiUrl = `https://premium.treatweb.com/public/api/admin/partner/commissionoptions/${id}`;
+     // const apiUrl = `http://127.0.0.1:9000/api/admin/partner/commissionoptions/${id}`;
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => {
@@ -141,20 +139,20 @@ const AddComission = () => {
 
 
   function generateBreadcrumbData(data, RightContent = null) {
-
+    
     const { partner } = data || {};
 
     const isActive = location.pathname.includes('/admin/partners') && location.pathname.includes('/addcommision');
 
     return {
-      leftItems: [
-        { label: "Partners", link: "/admin/partners", className: isActive ? "active" : "" },
-        { label: "Commision", link: "/admin/dashboard" },
-      ],
-      middleContent: partner && partner.name ? ` ${partner.name}` : "User Name",
-      rightItems: RightContent,
+        leftItems: [
+            { label: "Partners", link: "/admin/partners", className: isActive ? "active" : "" },
+            { label: "Commision", link: "/admin/dashboard" },
+        ],
+        middleContent: partner && partner.name ? `You are adding revenue for ${partner.name}` : "User Name",
+        rightItems: RightContent,
     };
-  }
+}
 
   const RightContent = (
     <button onClick={handleSave} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full">
@@ -163,7 +161,7 @@ const AddComission = () => {
   );
 
   return (
-    <Layout title="Add Partner Comission" breadcrumbData={generateBreadcrumbData(partnerData, RightContent)}>
+    <Layout title="Add Partner Commission" breadcrumbData={generateBreadcrumbData(partnerData, RightContent)}>
       <Card bgColor="gray">
         {/* FORM INPUT CONTAINER START HERE */}
         {loading ? <div className="loading-overlay">
@@ -183,22 +181,18 @@ const AddComission = () => {
                   onChange={handleInputChange}
                   className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                 >
-                  <option value="">Select Insurer</option>
                   {partnerData && partnerData.commission_options.insurer_list.map((item) => (
                     <option key={item.value} value={item.value}>
                       {item.text}
                     </option>
                   ))}
                 </select>
-                {errors.insurer && (
-                  <span className="error">{errors.insurer}</span>
-                )}
               </div>
 
 
               {/* Form Element 2 */}
               <div className="mb-2">
-                <label className="block text-sm font-medium text-gray-600">Lines Of Business</label>
+                <label className="block text-sm font-medium text-gray-600">Lines of Business</label>
                 <select
                   className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                   disabled={!formData.insurer}
@@ -214,8 +208,6 @@ const AddComission = () => {
                       </option>
                     ))}
                 </select>
-                {errors.commission_type && (
-                  <span className="error">{errors.commission_type}</span>)}
 
               </div>
 
@@ -232,13 +224,11 @@ const AddComission = () => {
                   >
                     {partnerData &&
                       partnerData.commission_options.vehicle_types.map((item) => (
-                        <option key={item.value} value={item.value}>
+                        <option key={item.value} value={item.value} data-vid={item.id}>
                           {item.text}
                         </option>
                       ))}
                   </select>
-                  {errors.vehicle_type && (
-                  <span className="error">{errors.vehicle_type}</span>)}
                 </div>
               )}
 
@@ -260,10 +250,9 @@ const AddComission = () => {
                         </option>
                       ))}
                   </select>
-                  {errors.vehicle_subtype && (
-                  <span className="error">{errors.vehicle_subtype}</span>)}
                 </div>
               )}
+
 
 
               {/* Form Element 5 */}
@@ -277,15 +266,14 @@ const AddComission = () => {
                     value={formData.fuel_type}
                     onChange={handleInputChange}
                   >
+                    {console.log(formData.vehicle_type,partnerData.commission_options.fuel_type_list[formData.vehicle_type])}
                     {partnerData &&
-                      partnerData.commission_options.fuel_types.map((item) => (
-                        <option key={item.value} value={item.value}>
-                          {item.text}
-                        </option>
+                        partnerData.commission_options.fuel_type_list[formData.vehicle_type].map((item) => (
+                                  <option key={item.value} value={item.value}>
+                                    {item.text}
+                                  </option>
                       ))}
                   </select>
-                  {errors.fuel_type && (
-                  <span className="error">{errors.fuel_type}</span>)}
                 </div>
               )}
 
@@ -301,15 +289,14 @@ const AddComission = () => {
                     value={formData.seat}
                     onChange={handleInputChange}
                   >
-                    {partnerData &&
-                      partnerData.commission_options.seats.map((item) => (
-                        <option key={item.value} value={item.value}>
-                          {item.text}
-                        </option>
-                      ))}
+                    <option value="2">2</option>
+                    {/*{partnerData &&*/}
+                    {/*  partnerData.commission_options.seats.map((item) => (*/}
+                    {/*    <option key={item.value} value={item.value}>*/}
+                    {/*      {item.text}*/}
+                    {/*    </option>*/}
+                    {/*  ))}*/}
                   </select>
-                  {errors.seat && (
-                  <span className="error">{errors.seat}</span>)}
                 </div>
               )}
 
@@ -320,32 +307,35 @@ const AddComission = () => {
           {/* FORM INPUT CONTAINER END HERE */}
 
           {/* TABLE CONTAINER START HERE */}
-          {formData.vehicle_type === 'two-wheeler' && (
+          {(formData.vehicle_type === 'two-wheeler' && formData.fuel_type != 0) && (
             <div className="table_container">
               <table className="min-w-full table-auto border-2 border-gray-300 comission">
 
                 <tbody>
                   {
                     partnerData &&
-                    partnerData.commission_options.engines
-                      .filter((engine) => engine.text.toLowerCase().includes('cc') | engine.text.toLowerCase().includes('age'))
+                    partnerData.commission_options.engine_type_list[formData.vehicle_type][formData.fuel_type]
                       .map((engine, index) => (
 
-                        <tr className="shade" data-index={engine} data-index_={index == '0'}>
-                          {index === '0' ? <th className="border-b shade p-2">{partnerData.commission_options.engines[0].text}</th> :
-                            <th className=""> <input className="text-x text-center shade" value={engine.text} />
+                        <tr className="shade" data-index={engine} data-index_={index === 0}>
+                          {index === 0 ? <th className="border-b shade p-2">{partnerData.commission_options.engine_type_list[formData.vehicle_type][formData.fuel_type][0].text}
+                                <input type="hidden" name={"engines[0]"} className="text-x text-center shade" value={engine.text}/>
+                          </th> :
+                            <th className=""> <input className="text-x text-center shade" name={"engines["+engine.value+"]"} value={engine.text} />
                             </th>
                           }
                           {partnerData &&
-                            partnerData.commission_options.vehicle_ages.map((ages, sn) => (
+                                partnerData.commission_options.age_type_list[formData.vehicle_type][formData.fuel_type].map((ages, sn) => (
 
-                              index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}</th> : <td className="border-2 text-center" key={sn}>
+                              index === 0 ? <th className="border-2 shade text-center">{ages.text}  <input
+                                  className="text-x text-center shade" type="hidden"
+                                  name={"ages["+ages.value+"]"}
+                                  value={ages.text}/>
+                              </th> : <td className="border-2 text-center">
                                 <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
                                 <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
                                 <input type="number" className={" text-x p-2 bordersm"} name={"agecapacity[" + engine.value + "][" + ages.value + "][value]"} />
-
                               </td>
-
                             ))}
                           {index === 0 ? <th className="border-2 shade text-center">DEAL</th> :
                             <td className="text-center">
@@ -360,74 +350,67 @@ const AddComission = () => {
 
               </table>
               {/* FOOTER INPUT BOX CONTAINER START HERE */}
-              <div className="footer_input_box_container mt-4 mb-24">
-                <div className="flex">
-                  {/* First Input Box */}
-                  <div className="flex-1 mr-2">
-                    <input className="w-full p-2"
-                      name="od_percent" id="od_percent"
-                      value={formData.od_percent}
-                      onChange={handleInputChange} placeholder="OD Commission %" />
-                      {errors.od_percent && (
-                  <span className="error">{errors.od_percent}</span>)}
-                  </div>
 
-                  {/* Second Input Box */}
-                  <div className="flex-1 mr-2">
-                    <input className="w-full p-2"
-                      name="tp_percent"
-                      value={formData.tp_percent}
-                      onChange={handleInputChange}
-                      placeholder="TP Comission %" />
-                      {errors.tp_percent && (
-                  <span className="error">{errors.tp_percent}</span>)}
-                  </div>
-
-                  {/* Third Input Box with Checkbox */}
-                  <div className="flex-1 flex items-center mr-2">
-                    <input
-                      name="net_percent"
-                      className="w-full p-2 border"
-                      id="net_percent"
-                      value={formData.net_percent}
-                      onChange={handleInputChange}
-                      placeholder="Net Commission %"
-                      disabled={!isChecked}
-                    />
-                    {errors.net_percent && (
-                  <span className="error">{errors.net_percent}</span>)}
-                    <input
-                      type="checkbox"
-                      name="net_percent_checkbox"
-                      className="ml-2"
-                      checked={isChecked}
-                      onChange={() => setIsChecked(!isChecked)}
-                    />
-                    {errors.net_percent_checkbox && (
-                  <span className="error">{errors.net_percent_checkbox}</span>)}
-                  </div>
-
-                  {/* Fourth Input Box */}
-                  <div className="flex-1">
-                    <input name="flat_amount"
-                      id="flat_amount"
-                      value={formData.flat_amount}
-                      onChange={handleInputChange}
-                      className="w-full p-2" placeholder="Flat Amount" />
-                      {errors.flat_amount && (
-                  <span className="error">{errors.flat_amount}</span>)}
-                  </div>
-
-                  <div className="flex-1">
-                    <input name="partner_id" on type="hidden" className="w-full p-2" value={partnerData.partner.id} />
-                  </div>
-                </div>
-              </div>
 
               {/* FOOTER INPUT BOX CONTAINER END HERE */}
             </div>
           )}
+          <div className="footer_input_box_container mt-4 mb-24">
+            <div className="flex">
+              {/* First Input Box */}
+              <div className="flex-1 mr-2">
+                <input className="w-full p-2"
+                       name="od_percent" id="od_percent"
+                       value={formData.od_precent} type="number" max="100"
+                       onChange={handleInputChange} placeholder="OD Commission %" />
+                {(errors.od_percent!=="undefined")?
+                    <span className="error text-red-400">{errors.od_percent}</span>
+                    :""}
+              </div>
 
+              {/* Second Input Box */}
+              <div className="flex-1 mr-2">
+                <input className="w-full p-2"
+                       name="tp_percent"
+                       value={formData.tp_percent}
+                       onChange={handleInputChange}
+                       placeholder="TP Commission %" />
+              </div>
+
+              {/* Third Input Box with Checkbox */}
+              <div className="flex-1 flex items-center mr-2">
+                <input
+                    name="net_percent"
+                    className="w-full p-2 border"
+                    id="net_percent"
+                    value={formData.net_percent}
+                    onChange={handleInputChange}
+                    placeholder="Net Commission %"
+                    disabled={!isChecked}
+                />
+                <input
+                    type="checkbox"
+                    name="net_percent_checkbox"
+                    className="ml-2 checkbox"
+                    checked={isChecked}
+                    onChange={() => setIsChecked(!isChecked)}
+                />
+              </div>
+
+              {/* Fourth Input Box */}
+              <div className="flex-1">
+                <input name="flat_amount"
+                       id="flat_amount"
+                       value={formData.flat_amount}
+                       onChange={handleInputChange}
+                       className="w-full p-2" placeholder="Flat Amount" />
+              </div>
+
+              <div className="flex-1">
+                <input name="partner_id" on type="hidden" className="w-full p-2" value={partnerData.partner.id} />
+              </div>
+            </div>
+          </div>
           {/* TABLE CONTAINER END HERE */}
 
         </form>}

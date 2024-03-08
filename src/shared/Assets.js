@@ -21,8 +21,10 @@ import addpartner from "../assets/icons/user-add 1.svg";
 import partnercommision from "../assets/icons/wallet-money 1.svg";
 import editpartner from "../assets/icons/useredit.svg";
 import UserProfile from "../assets/images/user-profile.png";
-import UserAdd from "../assets/icons/add-friend 1.svg";
 import { tab } from '@testing-library/user-event/dist/tab';
+import UserAdd from "../assets/icons/add-friend 1.svg";
+import globalpolicy from "../assets/icons/refund.png";
+import addcommission from "../assets/icons/add-payment.png";
 
 export const Icons = {
     DashboardIcon: Dashboard,
@@ -32,7 +34,8 @@ export const Icons = {
     About: About,
     UserIcon: User,
     UserAdd: UserAdd,
-
+    Globalpolicy    : globalpolicy,
+    Addcommision    : addcommission,
 }
 
 

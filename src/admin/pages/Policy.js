@@ -5,11 +5,8 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { TabsIcon } from "../../shared/Assets";
 import axios, { formToJSON } from "axios";
 import Cookies from "js-cookie";
-
-import { useNavigate } from 'react-router-dom';
 import toast from "react-hot-toast";
-
-
+import { useNavigate } from 'react-router-dom';
 const Policy = () => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [kycdocument, setKycDocument] = useState("");
@@ -113,14 +110,13 @@ const Policy = () => {
           "ages": Object.assign({},updatedFormData.ages)
         }));
      }
-      console.log(Object.assign({},updatedFormData.engines));
-
     }
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
+  let isSaveDisabled = true;
 
   function generateBreadcrumbData(selectedTabIndex, rightContent = null) {
     let middleContent;
@@ -153,13 +149,14 @@ const Policy = () => {
     return {
       leftItems: [
         { label: "", link: "/" },
-        { label: "Policies", link: "/policy/list" },
+        { label: "Policies ", link: "/policy/list" },
+        { label: "Add Policy", link: "/policy/list" },
       ],
       middleContent: middleContent,
       rightItems: (
         <button
           onClick={handleSave}
-          className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full ${isSaveDisabled? 'cursor-not-allowed': ''}`}
+          className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full breadcumsave ${isSaveDisabled? 'cursor-not-allowed': ''}`}
           disabled={isSaveDisabled}
         >
           Save
@@ -197,11 +194,12 @@ const Policy = () => {
           setErrors(message);
           alert('one or more filed is blank or invalid.')
         } else {
-          alert(message);
           toast.success(message, {
             position: "top-right",
           });
-          navigate('/policy/list');
+
+          navigate('/policy/list')
+
         }
       })
       .catch((error) => {
@@ -268,7 +266,7 @@ const Policy = () => {
               <div className="flex justify-between">
                 {/* DROPDOWN CONTAINER START HERE */}
                 <div className="input_container w-full">
-                  <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-12">
+                  <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Form Element 1 */}
                     <div className="mb-2">
                       <select
@@ -412,12 +410,20 @@ const Policy = () => {
                           value={formData.fuel_type}
                           onChange={handleInputChange}
                         >
+                          <option value="">All</option>
                           {insurance &&
                             insurance.business_options.fuel_types.map(
                               (item) => (
-                                <option key={item.value} value={item.value}>
-                                  {item.text}
-                                </option>
+                                  (formData.vehicle_type === "1") ? (
+                                      (item.text=="Petrol" || item.text=="EV") && (
+                                    <option key={item.value} value={item.value}>
+                                      {item.text}
+                                    </option>
+                                      )
+                                  ) :
+                                    <option key={item.value} value={item.value}>
+                                      {item.text}
+                                    </option>
                               )
                             )}
                         </select>
@@ -433,119 +439,119 @@ const Policy = () => {
                 {/* DROPDOWN CONTAINER END HERE */}
               </div>
 
-              {/* TABLE CONTAINER START HERE  */}
-              {(formData.policy_type === "1" ||
-                formData.policy_type === "2" ||
-                formData.policy_type === "3") && (
-                <form id="form">
-                  <table className="min-w-full table-auto border comission">
-                    <tbody>
-                      {insurance &&
-                        insurance.business_options.engines
-                          .filter(
-                            (engine) =>
-                              engine.text.toLowerCase().includes("cc") |
-                              engine.text.toLowerCase().includes("age")
-                          )
-                          .map((engine, index) => (
-                            <tr className="shade">
-                              {index === 0 ? (
-                                <th className="border-b shade p-2">
-                                  {insurance.business_options.engines[0].text}
-                                  <input type="hidden" name={"engines[0]"}
-                                         className="text-x text-center shade"
-                                         value={engine.text}
-                                  />
-                                </th>
-                              ) : (
-                                <th className="">
-                                  {" "}
-                                  <input name={"engines["+engine.value+"]"}
-                                    className="text-x text-center shade"
-                                    value={engine.text}
-                                  />
-                                </th>
-                              )}
-                              {insurance &&
-                                insurance.business_options.vehicle_ages.map(
-                                  (ages, sn) =>
-                                    index === 0 ? (
-                                      <th
-                                        className="border-2 shade text-center"
-                                        key={sn}
-                                      >
-                                        {ages.text}
-                                        <input
-                                            className="text-x text-center shade" type="hidden"
-                                            name={"ages["+ages.value+"]"}
-                                            value={ages.text}
-                                        />
-                                      </th>
-                                    ) : (
-                                      <td
-                                        className="border-2 text-center"
-                                        key={sn}
-                                      >
-                                        <input
-                                          type="hidden"
-                                          className={
-                                            engine.value + " text-x bordersm"
-                                          }
-                                          value={ages.value}
-                                          name={
-                                            "agecapacity[" +
-                                            engine.value +
-                                            "][" +
-                                            ages.value +
-                                            "][age]"
-                                          }
-                                        />
-                                        <input
-                                          type="hidden"
-                                          value={engine.value}
-                                          name={
-                                            "agecapacity[" +
-                                            engine.value +
-                                            "][" +
-                                            ages.value +
-                                            "][capacity]"
-                                          }
-                                        />
-                                        <input
-                                          type="number"
-                                          className={" text-x p-2 bordersm"}
-                                          name={
-                                            "agecapacity[" +
-                                            engine.value +
-                                            "][" +
-                                            ages.value +
-                                            "][value]"
-                                          }
-                                        />
-                                      </td>
-                                    )
-                                )}
-                              {index === 0 ? (
-                                <th className="border-2 shade text-center">
-                                  DEAL
-                                </th>
-                              ) : (
-                                <td className="text-center">
-                                  <input
-                                    type="text"
-                                    className="text-x p-2 bordersm"
-                                    name={
-                                      "agecapacity[" + engine.value + "][deal]"
-                                    }
-                                  />
-                                </td>
-                              )}
-                            </tr>
-                          ))}
-                    </tbody>
-                  </table>
-                </form>
-              )}
+              {/*/!* TABLE CONTAINER START HERE  *!/*/}
+              {/*{(formData.policy_type === "1" ||*/}
+              {/*  formData.policy_type === "2" ||*/}
+              {/*  formData.policy_type === "3") && (*/}
+              {/*  <form id="form">*/}
+              {/*    <table className="min-w-full table-auto border comission">*/}
+              {/*      <tbody>*/}
+              {/*        {insurance &&*/}
+              {/*          insurance.business_options.engines*/}
+              {/*            .filter(*/}
+              {/*              (engine) =>*/}
+              {/*                engine.text.toLowerCase().includes("cc") |*/}
+              {/*                engine.text.toLowerCase().includes("age")*/}
+              {/*            )*/}
+              {/*            .map((engine, index) => (*/}
+              {/*              <tr className="shade">*/}
+              {/*                {index === 0 ? (*/}
+              {/*                  <th className="border-b shade p-2">*/}
+              {/*                    {insurance.business_options.engines[0].text}*/}
+              {/*                    <input type="hidden" name={"engines[0]"}*/}
+              {/*                           className="text-x text-center shade"*/}
+              {/*                           value={engine.text}*/}
+              {/*                    />*/}
+              {/*                  </th>*/}
+              {/*                ) : (*/}
+              {/*                  <th className="">*/}
+              {/*                    {" "}*/}
+              {/*                    <input name={"engines["+engine.value+"]"}*/}
+              {/*                      className="text-x text-center shade"*/}
+              {/*                      value={engine.text}*/}
+              {/*                    />*/}
+              {/*                  </th>*/}
+              {/*                )}*/}
+              {/*                {insurance &&*/}
+              {/*                  insurance.business_options.vehicle_ages.map(*/}
+              {/*                    (ages, sn) =>*/}
+              {/*                      index === 0 ? (*/}
+              {/*                        <th*/}
+              {/*                          className="border-2 shade text-center"*/}
+              {/*                          key={sn}*/}
+              {/*                        >*/}
+              {/*                          {ages.text}*/}
+              {/*                          <input*/}
+              {/*                              className="text-x text-center shade" type="hidden"*/}
+              {/*                              name={"ages["+ages.value+"]"}*/}
+              {/*                              value={ages.text}*/}
+              {/*                          />*/}
+              {/*                        </th>*/}
+              {/*                      ) : (*/}
+              {/*                        <td*/}
+              {/*                          className="border-2 text-center"*/}
+              {/*                          key={sn}*/}
+              {/*                        >*/}
+              {/*                          <input*/}
+              {/*                            type="hidden"*/}
+              {/*                            className={*/}
+              {/*                              engine.value + " text-x bordersm"*/}
+              {/*                            }*/}
+              {/*                            value={ages.value}*/}
+              {/*                            name={*/}
+              {/*                              "agecapacity[" +*/}
+              {/*                              engine.value +*/}
+              {/*                              "][" +*/}
+              {/*                              ages.value +*/}
+              {/*                              "][age]"*/}
+              {/*                            }*/}
+              {/*                          />*/}
+              {/*                          <input*/}
+              {/*                            type="hidden"*/}
+              {/*                            value={engine.value}*/}
+              {/*                            name={*/}
+              {/*                              "agecapacity[" +*/}
+              {/*                              engine.value +*/}
+              {/*                              "][" +*/}
+              {/*                              ages.value +*/}
+              {/*                              "][capacity]"*/}
+              {/*                            }*/}
+              {/*                          />*/}
+              {/*                          <input*/}
+              {/*                            type="number"*/}
+              {/*                            className={" text-x p-2 bordersm"}*/}
+              {/*                            name={*/}
+              {/*                              "agecapacity[" +*/}
+              {/*                              engine.value +*/}
+              {/*                              "][" +*/}
+              {/*                              ages.value +*/}
+              {/*                              "][value]"*/}
+              {/*                            }*/}
+              {/*                          />*/}
+              {/*                        </td>*/}
+              {/*                      )*/}
+              {/*                  )}*/}
+              {/*                {index === 0 ? (*/}
+              {/*                  <th className="border-2 shade text-center">*/}
+              {/*                    DEAL*/}
+              {/*                  </th>*/}
+              {/*                ) : (*/}
+              {/*                  <td className="text-center">*/}
+              {/*                    <input*/}
+              {/*                      type="text"*/}
+              {/*                      className="text-x p-2 bordersm"*/}
+              {/*                      name={*/}
+              {/*                        "agecapacity[" + engine.value + "][deal]"*/}
+              {/*                      }*/}
+              {/*                    />*/}
+              {/*                  </td>*/}
+              {/*                )}*/}
+              {/*              </tr>*/}
+              {/*            ))}*/}
+              {/*      </tbody>*/}
+              {/*    </table>*/}
+              {/*  </form>*/}
+              {/*)}*/}
 
               {/* TABLE CONTAINER END HERE  */}
 
@@ -590,7 +596,7 @@ const Policy = () => {
                   {(formData.policy_type === "1" ||
                     formData.policy_type === "2" ||
                     formData.policy_type === "3") && (
-                    <div className="flex-1 flex items-center mr-2">
+                    <div className="flex-1 items-center mr-2">
                       <input
                         type="text"
                         className="w-full p-2 border"
@@ -599,7 +605,8 @@ const Policy = () => {
                         onChange={handleInputChange}
                       />
                       {errors.registration_number && (
-                        <span className="error">
+
+                        <span className="error block">
                           {errors.registration_number}
                         </span>
                       )}
@@ -919,14 +926,24 @@ const Policy = () => {
                   <div className="w-full grid grid-cols-1 md:grid-cols-1 gap-8">
                     <div className="flex-1 mr-2">
                       <label for="">Any Comment or Remark ?</label>
-                      <textarea
-                        className="w-full p-2 custom-file-input w-full"
+                      <textarea rows={10}
+                        className="w-full p-2 custom-file-input"
                         name="comments"
                         value={formData.comments}
                         onChange={handleInputChange}
                         placeholder=""
                       />
                     </div>
+
+                  </div>
+                  <div className="w-full grid grid-cols-1 md:grid-cols-1 gap-8 text-center">
+                  <button
+                      onClick={handleSave}
+                      className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 save ${isSaveDisabled? 'cursor-not-allowed': ''}`}
+                      // disabled={isSaveDisabled}
+                  >
+                    Save
+                  </button>
                   </div>
                 </div>
               </div>

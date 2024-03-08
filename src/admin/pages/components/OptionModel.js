@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import {count} from "react-table/src/aggregations";
 
 const OptionModel = ({ onClose, partnerId }) => {
     
@@ -69,7 +70,7 @@ const OptionModel = ({ onClose, partnerId }) => {
                 });
                 setTimeout(() => {
                     navigate('/admin/partners');
-                }, 5000);   
+                }, 1500);
               
             })
             .catch(error => {
@@ -95,8 +96,8 @@ const OptionModel = ({ onClose, partnerId }) => {
                     <div>
                         <h1>How do you want to add commission?</h1>
                         <div className="option-buttons mt-4 space-x-4">
-                            <button onClick={handleCreateNew} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Create New</button>
-                            <button onClick={handleSelectGlobal} className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Select from Global</button>
+                            <button onClick={handleSelectGlobal} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Global Commission</button>
+                            <button onClick={handleCreateNew} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Specific</button>
                         </div>
                     </div>
                 )}
@@ -104,11 +105,11 @@ const OptionModel = ({ onClose, partnerId }) => {
 
                     <div>
                         <h1 className="py-4 px-4 text-xl font-bold">Global commission List</h1>
-                        <table className="min-w-full table-auto border border-gray-300 tablez" style={{ tableLayout: 'auto' }}>
+                        <table className="min-w-full table-auto border border-gray-300 tablez mb-3" style={{ tableLayout: 'auto' }}>
                             <thead className="shade">
                                 <tr>
                                     <th className="px-4 py-2">Name</th>
-                                    <th className="px-4 py-2">Commision Type</th>
+                                    <th className="px-4 py-2">Commission Type</th>
                                     <th className="px-4 py-2">Company name</th>
                                     <th className="px-4 py-2">Coverage Type</th>
                                     <th className="px-4 py-2">Vehicle Type</th>
@@ -129,9 +130,8 @@ const OptionModel = ({ onClose, partnerId }) => {
                                         /></td>
                                         <td className="px-4 py-2">{commission.commission_type.name ?? 'NA'}</td>
                                         <td className="px-4 py-2">{commission.insurer.name ?? 'NA'}</td>
-                                        <td className="px-4 py-2">{commission.coverage_type?.name ?? 'NA'}</td>
-
-                                        <td className="px-4 py-2">{commission.vehicle_type.name ?? 'NA'}</td>
+                                        <td className="px-4 py-2">{(commission.coverage_type)?commission.coverage_type.name : 'NA'}</td>
+                                        <td className="px-4 py-2">{(commission.vehicle_type)?commission.vehicle_type.name : 'NA'}</td>
                                         <td className="px-4 py-2">{commission.od_percent ?? 'NA'}</td>
                                         <td className="px-4 py-2">{commission.tp_percent ?? 'NA'}</td>
                                         <td className="px-4 py-2">{commission.net_percent ?? 'NA'}</td>
@@ -142,7 +142,7 @@ const OptionModel = ({ onClose, partnerId }) => {
                             </tbody>
                         </table>
                         
-                        <button onClick={handleSubmit} className="px-4 my-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">SUBMIT</button>
+                        <button onClick={handleSubmit} className="text-white mt-3 rounded save">SUBMIT</button>
                     </div>
                 )}
             </div>

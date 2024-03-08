@@ -8,7 +8,7 @@ const Dashboard = () => {
     return {
         leftItems: [
             { label: "", link: "/" },
-            { label: "Partners", link: "/admin/partners" },
+            { label: "Dashboard", link: "/admin/dashboard" },
         ],
         middleContent: "",
         rightItems: rightContent
@@ -16,9 +16,7 @@ const Dashboard = () => {
 }
 
 const RightContent = (
-  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-    Save
-  </button>
+  ''
 );
 
 

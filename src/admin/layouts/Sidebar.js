@@ -12,7 +12,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="text-white mr-4 sidebar_container mb-4 w-44 shadow-sm">
+    <div className="text-white sidebar_container mb-4 w-44 shadow-sm">
       
       <ul className="sidebar_ul">
         <li className={`flex items-center mb-4 ${isActive("/admin/dashboard")}`}>
@@ -26,6 +26,10 @@ const Sidebar = () => {
         <li className={`flex items-center mb-4 ${isActive("/policy/list")}`}>
           <img src={Icons.PolicyIcon} alt="Policy" className="object-fill"/>
           <Link to='/policy/list'>Policies</Link>
+        </li>
+        <li className={`flex items-center mb-4 ${isActive("/global/commision/list")}`}>
+          <img src={Icons.Globalpolicy} alt="Payout"/>
+          <Link to='/global/commision/list'>Global</Link>
         </li>
         <li className={`flex items-center mb-4 ${isActive("/payout")}`}>
           <img src={Icons.PayoutIcon} alt="Payout"/>

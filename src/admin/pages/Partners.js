@@ -10,6 +10,7 @@ import Loading from "react-loading";
 import { Icons, Images, TabsIcon } from "../../shared/Assets";
 import ViewDetailsModal from "./components/ViewDetailsModal";
 
+
 const Partners = () => {
     const [PartnerList, SetPartnerList] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -28,6 +29,7 @@ const Partners = () => {
     }
 
     useEffect(() => {
+        // const apiUrl = 'http://127.0.0.1:9000/api/admin/partner/list';
         const apiUrl = 'https://premium.treatweb.com/public/api/admin/partner/list';
 
         const requestOptions = {
@@ -41,7 +43,6 @@ const Partners = () => {
                 console.log(data.data);
                 SetPartnerList(data.data);
                 setLoading(false);
-
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -166,9 +167,9 @@ const Partners = () => {
                     <div className="loading">
                         <Loading type="ball-triangle" color="#4fa94d" height={100} width={100} />
                     </div>
-                </div> : <table className="min-w-full table-auto border border-gray-300">
+                </div> : <table className="min-w-full table-auto border tablez">
                     <thead>
-                        <tr className="bg-gray-300 ">
+                        <tr className="shade">
                             <th className="px-4 py-2">Imd Code.</th>
                             <th className="px-4 py-2">Name</th>
                             <th className="px-4 py-2">Number</th>
@@ -180,27 +181,33 @@ const Partners = () => {
                     <tbody>
                         {PartnerList.map((partner) => (
                             <tr key={partner.id} className={partner.id % 2 === 0 ? "bg-gray-50" : ""}>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.partner_code}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.name}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.mobile}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.partner_type}</td>
-                                <td className="px-4 py-4 border-b border-gray-300 text-center">{partner.partner_status.toUpperCase()}</td>
-                                <td className="px-2 py-4 border-b border-gray-300 text-center">
-                                    <div className="flex justify-center items-center">
-                                        <button
-                                            onClick={() => handleViewDetails(partner)}
-                                            className="text-white rounded mx-1"
-                                        >
-                                            <img src={TabsIcon.eye} alt="" />
-                                        </button>
-
+                                <td className="px-4  border-b border-gray-300 text-center">{partner.partner_code}</td>
+                                <td className="px-4 border-b border-gray-300 text-center">{partner.name}</td>
+                                <td className="px-4 border-b border-gray-300 text-center">{partner.mobile}</td>
+                                <td className="px-4 border-b border-gray-300 text-center">{partner.partner_type}</td>
+                                <td className="px-4  border-b border-gray-300 text-center">{partner.partner_status.toUpperCase()}</td>
+                                <td className="px-4 flex justify-center">
+                                    <button onClick={() => handleViewDetails(partner)} className="text-white rounded mr-2">
+                                        <img src={TabsIcon.eye} alt="" />
+                                    </button>
+                                    <button className=" text-white rounded mr-2" >
                                         <Link
                                             to={`/partner/comissions/list/${partner.id}`}
-                                            className="text-white rounded mx-1"
-                                            >
-                                            <img src={Icons.PartnerIcon} />
+                                            className=" text-white rounded mr-2">
+                                            
+                                            <img src={TabsIcon.partnercommision} alt=""/>
                                         </Link>
-                                    </div>
+                                    </button>
+
+                                    <button
+                                       className=" text-white rounded mr-2" >
+                                       <Link
+                                           to={`/partner/details/edit/${partner.id}`}
+                                           className=" text-white rounded mr-2" >
+                                           
+                                           <img src={TabsIcon.editpartner} alt=""/>
+                                       </Link>
+                                    </button>
                                 </td>
                             </tr>
                         ))}
@@ -228,48 +235,39 @@ const Partners = () => {
             {isModalVisible && (
                 <ViewDetailsModal onClose={closeModal} title="Partner Details" data={selectedPartner}>
                     <div className="grid grid-cols-3 gap-4">
-                        <div className="col-span-3">
-
-                        </div>
                         <div>
                             <p className="font-semibold">Partner Code:</p>
+                            <p>{selectedPartner.partner_code}</p>
+                            <p className="font-semibold mt-3">Email:</p>
+                            <p>{selectedPartner.email}</p>
+                            <p className="font-semibold mt-3">Partner Code:</p>
                             <p>{selectedPartner.partner_code}</p>
                         </div>
                         <div>
                             <p className="font-semibold">Name:</p>
                             <p>{selectedPartner.name}</p>
-                        </div>
-                        <div>
-                            <p className="font-semibold">Email:</p>
-                            <p>{selectedPartner.email}</p>
-                        </div>
-                        <div>
-                            <p className="font-semibold">Mobile:</p>
+                            <p className="font-semibold mt-3">Mobile:</p>
                             <p>{selectedPartner.mobile}</p>
-                        </div>
-                        <div>
-                            <p className="font-semibold">Partner Code:</p>
-                            <p>{selectedPartner.partner_code}</p>
-                        </div>
-                        <div>
-                            <p className="font-semibold">Partner Branch:</p>
+                            <p className="font-semibold mt-3">Partner Branch:</p>
                             <p>{selectedPartner.partner_branch}</p>
                         </div>
-
+                        <div>
+                            {selectedPartner.partner_info.profile_image ? (
+                                <img src={'https://premium.treatweb.com/public'+selectedPartner.partner_info.profile_image} className="w-auto" alt="Partner Profile" />
+                            ) : (
+                                <img src={Images.UserProfile} alt="Default Profile"  className="w-30 h-44"/>
+                            )}
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
                         <div>
                             <p className="font-semibold">Partner Status:</p>
                             <p>{selectedPartner.partner_status}</p>
                         </div>
-
                         <div>
                             <p className="font-semibold">Partner Type:</p>
                             <p>{selectedPartner.partner_type}</p>
                         </div>
-
-                        <div className="col-span-3">
-                            <h3 className="text-center">Partner Geographical Details</h3>
-                        </div>
-
                         <div>
                             <p className="font-semibold">Address</p>
                             <p>{selectedPartner.partner_info.address}</p>
@@ -291,19 +289,9 @@ const Partners = () => {
                             <p>{selectedPartner.partner_info.pin_code}</p>
                         </div>
 
-                        <div>
-                            <p className="font-semibold">Profile Image</p>
-                            {selectedPartner.partner_info.profile_image ? (
-                                <img src={selectedPartner.partner_info.profile_image} className="w-44 h-44" alt="Partner Profile" />
-                            ) : (
-                                <img src={Images.UserProfile} alt="Default Profile" />
-                            )}
-                        </div>
-
                     </div>
                 </ViewDetailsModal>
             )}
-
             {/* MODAL END HERE */}
         </Layout>
     );

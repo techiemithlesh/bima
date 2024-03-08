@@ -5,9 +5,10 @@ import Loading from "react-loading";
 import axios, { formToJSON } from "axios";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
-
+import { useNavigate } from 'react-router-dom';
 
 const GlobalCommissionAdd = () => {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [partnerData, setPartnerData] = useState(null);
 
@@ -27,11 +28,6 @@ const GlobalCommissionAdd = () => {
         tp_percent: '',
         agecapacity: []
     });
-
-    console.log("Initial formData state:", formData);
-
-    console.log("Partner data:", partnerData);
-
 
     const [errors, setErrors] = useState({
         insurer: '',
@@ -53,6 +49,7 @@ const GlobalCommissionAdd = () => {
     useEffect(() => {
 
         const apiUrl = `https://premium.treatweb.com/public/api/admin/global-commissions/options`;
+        // const apiUrl = `http://127.0.0.1:9000/api/admin/global-commissions/options`;
         fetch(apiUrl)
             .then((response) => response.json())
             .then((data) => {
@@ -70,11 +67,13 @@ const GlobalCommissionAdd = () => {
 
         const formDataFromForm = new FormData(document.getElementById('form'));
         const formDataJSON = formToJSON(formDataFromForm);
-
+        formDataJSON.engines=Object.assign({},formDataJSON.engines);
+        formDataJSON.ages=Object.assign({},formDataJSON.ages);
         console.log("formdata", formDataJSON);
         const csrfToken = Cookies.get('XSRF-TOKEN');
 
         axios.post('https://premium.treatweb.com/public/api/admin/global-commissions/store', formDataJSON, {
+        // axios.post('http://127.0.0.1:9000/api/admin/global-commissions/store', formDataJSON, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'X-CSRF-TOKEN': csrfToken,
@@ -87,6 +86,8 @@ const GlobalCommissionAdd = () => {
                 toast.success("Commission saved successfully!", {
                     position: 'top-right'
                 });
+                navigate('/global/commision/list');
+
             } else {
                 setErrors(message);
                 toast.error("Failed to save commission. Please try again.", {
@@ -96,7 +97,7 @@ const GlobalCommissionAdd = () => {
 
         }).catch((error) => {
             if (error.response && error.response.data && error.response.data.data) {
-                console.log("error", error);
+                console.log("error",error);
                 const { message } = error.response.data;
 
                 const serverErrors = Object.values(message).flat().join(", ");
@@ -107,8 +108,6 @@ const GlobalCommissionAdd = () => {
                 })
             }
         });
-
-
     }
 
     const RightContent = (
@@ -128,7 +127,7 @@ const GlobalCommissionAdd = () => {
                 ...prevData,
                 [name]: type === 'checkbox' ? checked : value,
             }
-            console.log("After", updateFormData); 
+            console.log("After", updateFormData);
             return updateFormData;
         })
 
@@ -160,7 +159,6 @@ const GlobalCommissionAdd = () => {
                                         onChange={handleInputChange}
                                         className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                                     >
-                                        <option value="">Select Insurer</option>
                                         {partnerData && partnerData.global_commission_options.insurers.map((item) => (
                                             <option key={item.value} value={item.value}>
                                                 {item.text}
@@ -176,7 +174,7 @@ const GlobalCommissionAdd = () => {
                                 {/* Form Element 2 */}
                                 {formData.insurer && (
                                     <div className="mb-2">
-                                        <label className="block text-sm font-medium text-gray-600">Lines Of Business</label>
+                                        <label className="block text-sm font-medium text-gray-600">Lines of Business</label>
                                         <select
                                             required
                                             className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
@@ -223,7 +221,7 @@ const GlobalCommissionAdd = () => {
                                 )}
 
                                 {/* Form Element 4 (Coverage Type) */}
-                                {formData.business_type == '1' && (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
+                                { formData.business_type == '1' && (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium text-gray-600">Coverage Type</label>
                                         <select
@@ -271,7 +269,7 @@ const GlobalCommissionAdd = () => {
 
 
                                 {/* Form Element 5 */}
-                                {formData.business_type == '1' && (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
+                                {formData.business_type == '1' && (formData.vehicle_types === '1' ) && (
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium text-gray-600">Fuel Type</label>
                                         <select
@@ -282,7 +280,7 @@ const GlobalCommissionAdd = () => {
                                             onChange={handleInputChange}
                                         >
                                             {partnerData &&
-                                                partnerData.global_commission_options.fuel_types.map((item) => (
+                                                partnerData.global_commission_options.fuel_type_list[formData.vehicle_types].map((item) => (
                                                     <option key={item.value} value={item.value}>
                                                         {item.text}
                                                     </option>
@@ -304,6 +302,7 @@ const GlobalCommissionAdd = () => {
                                             value={formData.makes}
                                             onChange={handleInputChange}
                                         >
+                                            <option value={0}>All</option>
                                             {partnerData &&
                                                 partnerData.global_commission_options.makes.map((item, index) => (
                                                     <option key={index} value={item}>
@@ -318,7 +317,7 @@ const GlobalCommissionAdd = () => {
 
 
                                 {/* Form Element 5 */}
-                                {formData.vehicle_types === '1' && (
+                                {formData.business_type == '1' && (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium text-gray-600">Model</label>
                                         <select
@@ -328,6 +327,7 @@ const GlobalCommissionAdd = () => {
                                             value={formData.models}
                                             onChange={handleInputChange}
                                         >
+                                            <option value={0}>All</option>
                                             {partnerData &&
                                                 partnerData.global_commission_options.models.map((item, index) => (
                                                     <option key={index} value={item}>
@@ -349,27 +349,30 @@ const GlobalCommissionAdd = () => {
 
                         {/* TABLE CONTAINER START HERE */}
 
-                        {formData.business_type == '1' && (formData.vehicle_types === '1' || formData.vehicle_types === '0') && (
+                        {((formData.vehicle_types === '1' || formData.vehicle_types === '0') && (formData.fuel_types!=0)) && (
                             <div className="table_container">
 
                                 <table className="min-w-full table-auto border-2 border-gray-300 comission">
-
                                     <tbody>
                                         {
                                             partnerData &&
-                                            partnerData.global_commission_options.engines
-                                                .filter((engine) => engine.text.toLowerCase().includes('cc') | engine.text.toLowerCase().includes('age'))
+                                            partnerData.global_commission_options.engine_type_list[formData.vehicle_types][formData.fuel_types]
                                                 .map((engine, index) => (
 
-                                                    <tr className="shade" data-index={engine} data-index_={index == '0'}>
-                                                        {index === '0' ? <th className="border-b shade p-2">{partnerData.global_commission_options.engines[0].text}</th> :
-                                                            <th className=""> <input className="text-x text-center shade" value={engine.text} />
+                                                    <tr className="shade">
+                                                        {index === 0 ? <th className="border-b shade p-2">{partnerData.global_commission_options.engine_type_list[formData.vehicle_types][formData.fuel_types][0].text}
+                                                                <input type="hidden" name={"engines[0]"} className="text-x text-center shade" value={engine.text}/>
+                                                            </th> :
+                                                            <th className=""> <input className="text-x text-center shade" name={"engines["+engine.value+"]"} value={engine.text} />
                                                             </th>
                                                         }
                                                         {partnerData &&
-                                                            partnerData.global_commission_options.vehicle_ages.map((ages, sn) => (
+                                                            partnerData.global_commission_options.age_type_list[formData.vehicle_types][formData.fuel_types].map((ages, sn) => (
 
-                                                                index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}</th> : <td className="border-2 text-center" key={sn}>
+                                                                index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}<input
+                                                                    className="text-x text-center shade" type="hidden"
+                                                                    name={"ages["+ages.value+"]"}
+                                                                    value={ages.text}/></th> : <td className="border-2 text-center" key={sn}>
                                                                     <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
                                                                     <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
                                                                     <input type="number" className={" text-x p-2 bordersm"} name={"agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
@@ -406,7 +409,6 @@ const GlobalCommissionAdd = () => {
                                                     value={formData.od_percent}
                                                     onChange={handleInputChange}
                                                     placeholder="OD Commission %"
-
                                                 />
                                             </div>
                                         )}
@@ -414,13 +416,12 @@ const GlobalCommissionAdd = () => {
                                         {!(formData.net_percent_checkbox || formData.flat_checkbox) && (
                                             <div className="flex-1 mr-2">
                                                 <input
-                                                    className={`w-full p-2 ${formData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
+                                                    className={`w-100 p-2 ${formData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
                                                     name="tp_percent"
                                                     type="number"
                                                     value={formData.tp_percent}
                                                     onChange={handleInputChange}
                                                     placeholder="TP Comission %"
-
                                                 />
                                                 {errors.tp_percent && (
                                                     <span className="error">{errors.tp_percent}</span>
@@ -435,16 +436,15 @@ const GlobalCommissionAdd = () => {
                                                 <input
                                                     type="checkbox"
                                                     name="net_percent_checkbox"
-                                                    className="mr-2"
+                                                    className="mr-2 checkbox w-100 "
                                                     value={formData.net_percent_checkbox}
-
                                                     checked={formData.net_percent_checkbox}
                                                     onChange={handleInputChange}
                                                 />
 
                                                 <input
                                                     name="net_percent"
-                                                    className={`w-full p-2 ${formData.net_percent_checkbox ? 'editable-input' : 'disabled-input'}`}
+                                                    className={`w-100 p-2 ${formData.net_percent_checkbox ? 'editable-input' : 'disabled-input'}`}
                                                     id="net_percent"
                                                     type="number"
 
@@ -466,7 +466,7 @@ const GlobalCommissionAdd = () => {
                                                 <input
                                                     type="checkbox"
                                                     name="flat_checkbox"
-                                                    className="mr-2"
+                                                    className="mr-2 checkbox"
                                                     value={formData.flat_checkbox}
                                                     checked={formData.flat_checkbox}
                                                     onChange={handleInputChange}
@@ -480,7 +480,7 @@ const GlobalCommissionAdd = () => {
                                                     onChange={handleInputChange}
                                                     type="number"
                                                     min="0"
-                                                    className={`w-full p-2 ${formData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
+                                                    className={`w-100 p-2 ${formData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
                                                     placeholder="Flat Amount"
                                                     disabled={!formData.flat_checkbox}
                                                 />
@@ -509,7 +509,7 @@ function generateBreadcrumbData(RightContent = null) {
 
     return {
         leftItems: [
-            { label: "Global", link: "/partner/global/commision/list" },
+            { label: "Global", link: "/global/commision/list" },
             { label: "Commision", link: "/admin/dashboard" },
         ],
         middleContent: "",
