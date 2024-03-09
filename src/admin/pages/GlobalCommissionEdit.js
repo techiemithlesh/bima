@@ -168,8 +168,9 @@ const GlobalCommissionEdit = () => {
 
   };
 
-  console.log(commissionData.agecapacity, ">>>>commissionData in globalCommissionEdit");
-  console.log(globalOptions, ">>>>globalOptions in globalCommissionEdit", );
+  console.log("Fuel Type",commissionData.fuel_type);
+  console.log("Age Capacity",commissionData.agecapacity);
+ 
   return (
     <Layout
       title="Edit Global commission"
@@ -317,7 +318,6 @@ const GlobalCommissionEdit = () => {
                         <option
                           key={item.value}
                           value={item.value}
-                        //   selected={item.value === commissionData.coverage_type}
                         >
                           {item.text}
                         </option>
@@ -414,7 +414,7 @@ const GlobalCommissionEdit = () => {
                         <option
                           key={item.value}
                           value={item}
-                        //   selected={item.value === commissionData.makes}
+                       
                         >
                           {item}
                         </option>
