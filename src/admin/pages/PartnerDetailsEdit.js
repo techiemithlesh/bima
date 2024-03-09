@@ -245,7 +245,7 @@ const PartnerDetailsEdit = () => {
         });
     }, [id]);
     
-      console.log("Partner Url", formData.imagePreviewUrl);
+      console.log("Partner type", formData.partner_type);
       const submitFormData = () => {
         console.log("FormData", formData);
       }
@@ -349,7 +349,7 @@ const PartnerDetailsEdit = () => {
                                             <label htmlFor="">Partner Type</label>
                                             <select name="partner_type" value={formData.partner_type} onChange={handleInputChange} className="w-full p-2" >
                                                 <option value="">Select Partner Type</option>
-                                                <option value="sales_person">Sales Person</option>
+                                                <option value="Sales Person">Sales Person</option>
                                                 <option value="partner">Partner</option>
                                             </select>
                                             {(errors.partner_type !== "undefined") ?
@@ -507,7 +507,7 @@ const PartnerDetailsEdit = () => {
                     {selectedTabIndex != 4 && (
                         <div className="flex justify-center">
                             <button onClick={handleSaveAndNext} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 save">
-                                Save & Next
+                                Update & Next
                             </button>
                         </div>
                     )}
