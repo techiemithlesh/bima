@@ -26,7 +26,9 @@ const GlobalCommissionAdd = () => {
         net_percent_checkbox: '',
         net_percent: '',
         tp_percent: '',
-        agecapacity: []
+        od_agecapacity: [],
+        tp_agecapacity: [],
+        flatamount_agecapacity: []
     });
 
     const [errors, setErrors] = useState({
@@ -131,10 +133,14 @@ const GlobalCommissionAdd = () => {
             return updateFormData;
         })
 
-
-
         setErrors({});
     };
+
+    const handleFlatAmountChange = (engineValue, ageValue, value) => {
+        // Update od and tp inputs to 0 for the same key
+        document.querySelector(`input[name="od_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+        document.querySelector(`input[name="tp_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+      };
 
     return (
         <Layout title="Global Comission Setting" breadcrumbData={generateBreadcrumbData(RightContent)}>
@@ -369,22 +375,24 @@ const GlobalCommissionAdd = () => {
                                                         {partnerData &&
                                                             partnerData.global_commission_options.age_type_list[formData.vehicle_types][formData.fuel_types].map((ages, sn) => (
 
-                                                                index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}<input
+                                                                index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}
+                                                                <input
                                                                     className="text-x text-center shade" type="hidden"
                                                                     name={"ages["+ages.value+"]"}
-                                                                    value={ages.text}/></th> : <td className="border-2 text-center" key={sn}>
+                                                                    value={ages.text}/></th> : 
+                                                                    <td className="border-2 text-center" key={sn}>
+                                                                     <div className="flex">
                                                                     <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
                                                                     <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
-                                                                    <input type="number" className={" text-x p-2 bordersm"} name={"agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
-
+                                                                    <input type="number" className={" text-x p-2 bordersm"} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
+                                                                    <input type="number" className={" text-x p-2 bordersm"} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
+                                                                    <input type="number" className={" text-x p-2 bordersm"} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" 
+                                                                    onChange={(e) => handleFlatAmountChange(engine.value, ages.value, e.target.value)}/>
+                                                                    </div>
                                                                 </td>
 
                                                             ))}
-                                                        {index === 0 ? <th className="border-2 shade text-center">DEAL</th> :
-                                                            <td className="text-center">
-                                                                <input type="text" className="text-x p-2 bordersm" name={"agecapacity[" + engine.value + "][deal]"} />
-                                                            </td>
-                                                        }
+                                                       
                                                     </tr>
 
                                                 ))}
@@ -395,103 +403,6 @@ const GlobalCommissionAdd = () => {
                                 {/* FOOTER INPUT BOX CONTAINER START HERE */}
 
 
-                                <div className="footer_input_box_container mt-4 mb-24">
-                                    <div className="flex">
-                                        {/* First Input Box */}
-
-                                        {!(formData.net_percent_checkbox || formData.flat_checkbox) && (
-                                            <div className="flex-1 mr-2">
-                                                <input
-                                                    className={`w-full p-2 ${formData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
-                                                    type="number"
-                                                    name="od_percent"
-                                                    id="od_percent"
-                                                    value={formData.od_percent}
-                                                    onChange={handleInputChange}
-                                                    placeholder="OD Commission %"
-                                                />
-                                            </div>
-                                        )}
-
-                                        {!(formData.net_percent_checkbox || formData.flat_checkbox) && (
-                                            <div className="flex-1 mr-2">
-                                                <input
-                                                    className={`w-100 p-2 ${formData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
-                                                    name="tp_percent"
-                                                    type="number"
-                                                    value={formData.tp_percent}
-                                                    onChange={handleInputChange}
-                                                    placeholder="TP Comission %"
-                                                />
-                                                {errors.tp_percent && (
-                                                    <span className="error">{errors.tp_percent}</span>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        {/* Third Input Box with Checkbox */}
-
-                                        {!formData.flat_checkbox && (
-                                            <div className="flex-1 flex items-center mr-2">
-                                                <input
-                                                    type="checkbox"
-                                                    name="net_percent_checkbox"
-                                                    className="mr-2 checkbox w-100 "
-                                                    value={formData.net_percent_checkbox}
-                                                    checked={formData.net_percent_checkbox}
-                                                    onChange={handleInputChange}
-                                                />
-
-                                                <input
-                                                    name="net_percent"
-                                                    className={`w-100 p-2 ${formData.net_percent_checkbox ? 'editable-input' : 'disabled-input'}`}
-                                                    id="net_percent"
-                                                    type="number"
-
-                                                    value={formData.net_percent}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Net Commission %"
-                                                    disabled={!formData.net_percent_checkbox}
-                                                />
-                                                {errors.net_percent && (
-                                                    <span className="error">{errors.net_percent}</span>
-                                                )}
-                                            </div>
-                                        )}
-
-
-                                        {/* Fourth Input Box */}
-                                        {!formData.net_percent_checkbox && (
-                                            <div className="flex-1 flex items-center mr-2">
-                                                <input
-                                                    type="checkbox"
-                                                    name="flat_checkbox"
-                                                    className="mr-2 checkbox"
-                                                    value={formData.flat_checkbox}
-                                                    checked={formData.flat_checkbox}
-                                                    onChange={handleInputChange}
-                                                />
-
-
-                                                <input
-                                                    name="flat_amount"
-                                                    id="flat_amount"
-                                                    value={formData.flat_amount}
-                                                    onChange={handleInputChange}
-                                                    type="number"
-                                                    min="0"
-                                                    className={`w-100 p-2 ${formData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
-                                                    placeholder="Flat Amount"
-                                                    disabled={!formData.flat_checkbox}
-                                                />
-                                                {errors.flat_amount && (
-                                                    <span className="error">{errors.flat_amount}</span>
-                                                )}
-                                            </div>
-                                        )}
-
-                                    </div>
-                                </div>
 
                                 {/* FOOTER INPUT BOX CONTAINER END HERE */}
                             </div>

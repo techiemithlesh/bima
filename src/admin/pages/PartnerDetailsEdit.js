@@ -194,7 +194,7 @@ const PartnerDetailsEdit = () => {
   ];
 
   const handleSaveAndNext = () => {
-    console.log("Validate Form", validateForm());
+   
     if (validateForm()) {
       setSelectedTabIndex((prev) => prev + 1);
     } else {

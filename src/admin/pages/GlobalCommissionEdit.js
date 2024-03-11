@@ -168,7 +168,7 @@ const GlobalCommissionEdit = () => {
 
   };
 
-  console.log("Fuel Type",commissionData.fuel_type);
+  console.log("Fuel Type",commissionData.fuel_type ?? 'NA');
   console.log("Age Capacity",commissionData.agecapacity);
  
   return (
