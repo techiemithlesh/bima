@@ -75,7 +75,7 @@ const GlobalCommissionAdd = () => {
         const csrfToken = Cookies.get('XSRF-TOKEN');
 
         axios.post('https://premium.treatweb.com/public/api/admin/global-commissions/store', formDataJSON, {
-        // axios.post('http://127.0.0.1:9000/api/admin/global-commissions/store', formDataJSON, {
+            // axios.post('http://127.0.0.1:9000/api/admin/global-commissions/store', formDataJSON, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'X-CSRF-TOKEN': csrfToken,
@@ -136,21 +136,22 @@ const GlobalCommissionAdd = () => {
         setErrors({});
     };
 
-    const handleFlatAmountChange = (engineValue, ageValue, value) => {
+    const handleFlatAmountChange = (engineValue, ageValue, value, event) => {
         // Update od and tp inputs to 0 for the same key
+
         document.querySelector(`input[name="od_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
         document.querySelector(`input[name="tp_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
-      };
+    };
 
     return (
         <Layout title="Global Comission Setting" breadcrumbData={generateBreadcrumbData(RightContent)}>
             <Card bgColor="gray">
                 {/* FORM INPUT CONTAINER START HERE */}
                 {loading ? <div className="loading-overlay">
-                    <div className="loading">
-                        <Loading type="ball-triangle" color="#4fa94d" height={100} width={100} />
-                    </div>
-                </div> :
+                        <div className="loading">
+                            <Loading type="ball-triangle" color="#4fa94d" height={100} width={100} />
+                        </div>
+                    </div> :
                     <form id="form">
                         <div className="input_container">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -360,42 +361,57 @@ const GlobalCommissionAdd = () => {
 
                                 <table className="min-w-full table-auto border-2 border-gray-300 comission">
                                     <tbody>
-                                        {
-                                            partnerData &&
-                                            partnerData.global_commission_options.engine_type_list[formData.vehicle_types][formData.fuel_types]
-                                                .map((engine, index) => (
+                                    {
+                                        partnerData &&
+                                        partnerData.global_commission_options.engine_type_list[formData.vehicle_types][formData.fuel_types]
+                                            .map((engine, index) => (
 
-                                                    <tr className="shade">
-                                                        {index === 0 ? <th className="border-b shade p-2">{partnerData.global_commission_options.engine_type_list[formData.vehicle_types][formData.fuel_types][0].text}
-                                                                <input type="hidden" name={"engines[0]"} className="text-x text-center shade" value={engine.text}/>
-                                                            </th> :
-                                                            <th className=""> <input className="text-x text-center shade" name={"engines["+engine.value+"]"} value={engine.text} />
-                                                            </th>
-                                                        }
-                                                        {partnerData &&
-                                                            partnerData.global_commission_options.age_type_list[formData.vehicle_types][formData.fuel_types].map((ages, sn) => (
+                                                <tr className="shade">
+                                                    {index === 0 ? <th className="border-b shade th p-2">{partnerData.global_commission_options.engine_type_list[formData.vehicle_types][formData.fuel_types][0].text}
+                                                            <input type="hidden" name={"engines[0]"} className="text-x text-center shade" value={engine.text}/>
+                                                        </th> :
+                                                        <th className="th"> <input className="text-x text-center  shade" name={"engines["+engine.value+"]"} value={engine.text} /> </th>
+                                                    }
+                                                    {partnerData &&
+                                                        partnerData.global_commission_options.age_type_list[formData.vehicle_types][formData.fuel_types].map((ages, sn) => (
 
-                                                                index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}
-                                                                <input
-                                                                    className="text-x text-center shade" type="hidden"
-                                                                    name={"ages["+ages.value+"]"}
-                                                                    value={ages.text}/></th> : 
-                                                                    <td className="border-2 text-center" key={sn}>
-                                                                     <div className="flex">
-                                                                    <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
-                                                                    <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
-                                                                    <input type="number" className={" text-x p-2 bordersm"} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
-                                                                    <input type="number" className={" text-x p-2 bordersm"} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
-                                                                    <input type="number" className={" text-x p-2 bordersm"} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" 
-                                                                    onChange={(e) => handleFlatAmountChange(engine.value, ages.value, e.target.value)}/>
+                                                            index === 0 ? <th className="border-2 shade text-center" key={sn}>{ages.text}
+                                                                    <input
+                                                                        className="text-x text-center shade" type="hidden"
+                                                                        name={"ages["+ages.value+"]"}
+                                                                        value={ages.text}/></th> :
+                                                                <td className="border-2 text-center" key={sn}>
+                                                                    <div className="flex">
+                                                                        <input type="hidden"  className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
+                                                                        <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
+
+                                                                       <div className={'od'}>
+                                                                           <input type="number" required max={100}  className={" text-x p-2 bordersm"} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
+                                                                           <label>OD</label>
+                                                                       </div>
+                                                                        <div className={'tp'}>
+                                                                            <input type="number" required max={100}  className={" text-x p-2 bordersm"} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
+                                                                            <label>TP</label>
+                                                                        </div>
+                                                                        <div className={'flatamount'}>
+                                                                            <input max={100}  type="number"  required className={" text-x p-2 bordersm"} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0"
+                                                                               onChange={(e) => handleFlatAmountChange(engine.value, ages.value, e.target.value)}
+                                                                               onInput={(e) => {
+                                                                                e.target.value = Math.min(parseInt(e.target.value), 100);
+                                                                                if (e.target.value.length > 3) {
+                                                                                    e.target.value = e.target.value.slice(0, 3);
+                                                                                }
+                                                                            }} />
+                                                                            <label>Flat Amount</label>
+                                                                        </div>
                                                                     </div>
                                                                 </td>
 
-                                                            ))}
-                                                       
-                                                    </tr>
+                                                        ))}
 
-                                                ))}
+                                                </tr>
+
+                                            ))}
                                     </tbody>
 
 
