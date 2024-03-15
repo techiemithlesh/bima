@@ -183,9 +183,11 @@ const GlobalCommissionAdd = () => {
     if (e.target.name.startsWith('od_agecapacity')) {
         document.querySelector(`input[name="tp_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
         document.querySelector(`input[name="flatamount_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+        document.querySelector(`input[name="flatamount_agecapacity[${engineValue}][${ageValue}][value]"]`).disabled = false;
     } else if (e.target.name.startsWith('tp_agecapacity')) {
         document.querySelector(`input[name="od_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
         document.querySelector(`input[name="flatamount_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+        document.querySelector(`input[name="flatamount_agecapacity[${engineValue}][${ageValue}][value]"]`).disabled = false;
     } else if (e.target.name.startsWith('flatamount_agecapacity')) {
         document.querySelector(`input[name="od_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
         document.querySelector(`input[name="tp_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
