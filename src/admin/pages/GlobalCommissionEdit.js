@@ -465,7 +465,7 @@ const GlobalCommissionEdit = () => {
             {/* FORM INPUT CONTAINER END HERE */}
 
             {/* TABLE CONTAINER START HERE */}
-            {globalOptions && (commissionData.vehicle_type === 1 || commissionData.vehicle_type === 0) && (commissionData.fuel_type!=0) && (
+            {globalOptions && (commissionData.vehicle_type === 1 || commissionData.vehicle_type === 0)  && (
               <div className="table_container">
                 <table className="min-w-full table-auto border-2 border-gray-300 comission">
                   <tbody>
@@ -543,137 +543,18 @@ const GlobalCommissionEdit = () => {
                                           ages.value +
                                           "][value]"
                                         }
-                                        value={(isset(commissionData.agecapacity[engine.value])?commissionData.agecapacity[engine.value][ages.value].value:"")}
+                                        value=""
                                         min="0"
                                       />
                                     </td>
                                   )
                               )}
-                            {index === 0 ? (
-                              <th className="border-2 shade text-center">
-                                DEAL
-                              </th>
-                            ) : (
-                              <td className="text-center">
-                                <input
-                                  type="text"
-                                  className="text-x p-2 bordersm"
-                                  name={
-                                    "agecapacity[" + engine.value + "][deal]"
-                                  }
-                                  value={(isset(commissionData.agecapacity[engine.value])?commissionData.agecapacity[engine.value].deal:'')}
-                                />
-                              </td>
-                            )}
+                           
                           </tr>
                         ))}
                   </tbody>
                 </table>
-                {/* FOOTER INPUT BOX CONTAINER START HERE */}
-
-                <div className="footer_input_box_container mt-4 mb-24">
-                  <div className="flex">
-                    {/* First Input Box */}
-
-                    {!(commissionData.net_percent_checkbox || commissionData.flat_checkbox) && (
-                      <div className="flex-1 mr-2">
-                        <input
-                          className={`w-full p-2 ${commissionData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
-                          type="number"
-                          name="od_percent"
-                          id="od_percent"
-                          value={commissionData.od_percent}
-                          onChange={handleInputChange}
-                          placeholder="OD Commission %"
-                          disabled={!commissionData.net_percent_checkbox}
-                        />
-                      </div>
-                    )}
-
-                    {!(commissionData.net_percent_checkbox || commissionData.flat_checkbox) && (
-                      <div className="flex-1 mr-2">
-                        <input
-                          className={`w-full p-2 ${commissionData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
-                          name="tp_percent"
-                          type="number"
-                          min="0"
-                          value={commissionData.tp_percent}
-                          onChange={handleInputChange}
-                          placeholder="TP Comission %"
-                          disabled={!commissionData.net_percent_checkbox}
-                        />
-                        {errors.tp_percent && (
-                          <span className="error">{errors.tp_percent}</span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Third Input Box with Checkbox */}
-
-                    {!commissionData.flat_checkbox && (
-                      <div className="flex-1 flex items-center mr-2">
-                      <input
-                        type="checkbox"
-                        name="net_percent_checkbox"
-                        className="mr-2"
-                        value={commissionData.net_percent_checkbox}
-                        
-                        checked={commissionData.net_percent_checkbox}
-                        onChange={handleInputChange}
-                      />
-
-                      <input
-                        name="net_percent"
-                        className={`w-full p-2 ${commissionData.net_percent_checkbox ? 'editable-input' : 'disabled-input'}`}
-                        id="net_percent"
-                        type="number"
-                        
-                        value={commissionData.net_percent}
-                        onChange={handleInputChange}
-                        placeholder="Net Commission %"
-                        disabled={!commissionData.net_percent_checkbox}
-                      />
-                      {errors.net_percent && (
-                        <span className="error">{errors.net_percent}</span>
-                      )}
-                    </div>
-                    )}
-                    
-
-                    {/* Fourth Input Box */}
-                    {!commissionData.net_percent_checkbox && (
-                       <div className="flex-1 flex items-center mr-2">
-                       <input
-                       type="checkbox"
-                       name="flat_checkbox"
-                       className="mr-2"
-                       value={commissionData.flat_checkbox}
-                       checked={commissionData.flat_checkbox}
-                       onChange={handleInputChange}
-                     />
-                    
-                   
-                     <input
-                       name="flat_amount"
-                       id="flat_amount"
-                       value={commissionData.flat_amount}
-                       onChange={handleInputChange}
-                       type="number"
-                       min="0"
-                       className={`w-full p-2 ${commissionData.flat_checkbox ? 'editable-input' : 'disabled-input'}`}
-                       placeholder="Flat Amount"
-                       disabled={!commissionData.flat_checkbox}
-                     />
-                     {errors.flat_amount && (
-                       <span className="error">{errors.flat_amount}</span>
-                     )}
-                   </div>
-                    )}
-                   
-                  </div>
-                </div>
-
-                {/* FOOTER INPUT BOX CONTAINER END HERE */}
+                
               </div>
             )}
             {/* TABLE CONTAINER END HERE */}

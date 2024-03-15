@@ -20,11 +20,6 @@ const GlobalCommissionAdd = () => {
         vehicle_types: '0',
         two_wheeler_types: '',
         fuel_types: '',
-        od_percent: '',
-        flat_amount: '',
-        net_percent_checkbox: '',
-        net_percent: '',
-        tp_percent: '',
         od_agecapacity: [],
         tp_agecapacity: [],
         flatamount_agecapacity: []
@@ -462,7 +457,7 @@ const GlobalCommissionAdd = () => {
                                                                                    onInput={handleInputValidation}
                                                                                 //    onChange={(e) => handleFlatAmountChange(engine.value, ages.value, e.target.value)}
                                                                             />
-                                                                            <label>Flat Amount</label>
+                                                                            <label>Flat</label>
                                                                         </div>
                                                                     </div>
                                                                 </td>

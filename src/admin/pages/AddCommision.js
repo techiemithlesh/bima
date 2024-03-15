@@ -33,12 +33,37 @@ const AddComission = () => {
     vehicle_subtype: '',
     fuel_type: '',
     seat: '',
-    od_percent: '',
-    flat_amount: '',
-    net_percent: '',
-    tp_percent: '',
-    agecapacity: []
+    od_agecapacity: [],
+    tp_agecapacity: [],
+    flatamount_agecapacity: []
   })
+
+  const [disabled, setDisabled] = useState(true);
+  const handleDoubleClick = (e) => {
+      e.stopPropagation();
+      if(e.target.tagName=="INPUT"){
+          if (e.target.disabled===false)
+          {
+              e.target.value='';
+              e.target.disabled=true;
+              e.target.style.zIndex=-1;
+          }else{
+              e.target.disabled=false;
+              e.target.style.zIndex=0;
+          }
+          return 1;
+      }
+      if (e.target.querySelector('input').disabled===false)
+      {
+          e.target.querySelector('input').value='';
+          console.log(e.target);
+          e.target.querySelector('input').disabled=true;
+          e.target.querySelector('input').style.zIndex=-1;
+      }else{
+          e.target.querySelector('input').disabled=false;
+          e.target.querySelector('input').style.zIndex=0;
+      }
+  };
 
   const [loading, setLoading] = useState(true);
 
@@ -63,9 +88,9 @@ const AddComission = () => {
     newErrors.insurer = validateInsurer(formData.insurer);
     newErrors.commission_type = validateCommission(formData.commission_type);
 
-    if(formData.vehicle_type === 'two-wheeler'){
+    if (formData.vehicle_type === 'two-wheeler') {
       newErrors.vehicle_type = validateVehicleType(formData.vehicle_type);
-      newErrors.vehicle_subtype =validateVehicleSubType(formData.vehicle_subtype);
+      newErrors.vehicle_subtype = validateVehicleSubType(formData.vehicle_subtype);
       newErrors.fuel_type = validateFuelType(formData.fuel_type);
     }
 
@@ -80,12 +105,12 @@ const AddComission = () => {
 
     const Data = new FormData(document.getElementById('form'));
     formData = formToJSON(Data);
-    formData.ages=Object.assign({}, formData.ages);
-    formData.engines=Object.assign({},formData.engines);
+    formData.ages = Object.assign({}, formData.ages);
+    formData.engines = Object.assign({}, formData.engines);
     console.log('Form Data:', formData);
     const csrfToken = Cookies.get('XSRF-TOKEN');
     axios.post('https://premium.treatweb.com/public/api/admin/partner/commission/save', formData, {
-    // axios.post('http://127.0.0.1:9000/api/admin/partner/commission/save', formData, {
+      // axios.post('http://127.0.0.1:9000/api/admin/partner/commission/save', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'X-CSRF-TOKEN': csrfToken,
@@ -124,7 +149,7 @@ const AddComission = () => {
   useEffect(() => {
 
     const apiUrl = `https://premium.treatweb.com/public/api/admin/partner/commissionoptions/${id}`;
-     // const apiUrl = `http://127.0.0.1:9000/api/admin/partner/commissionoptions/${id}`;
+    // const apiUrl = `http://127.0.0.1:9000/api/admin/partner/commissionoptions/${id}`;
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => {
@@ -139,26 +164,60 @@ const AddComission = () => {
 
 
   function generateBreadcrumbData(data, RightContent = null) {
-    
+
     const { partner } = data || {};
 
     const isActive = location.pathname.includes('/admin/partners') && location.pathname.includes('/addcommision');
 
     return {
-        leftItems: [
-            { label: "Partners", link: "/admin/partners", className: isActive ? "active" : "" },
-            { label: "Commision", link: "/admin/dashboard" },
-        ],
-        middleContent: partner && partner.name ? `You are adding revenue for ${partner.name}` : "User Name",
-        rightItems: RightContent,
+      leftItems: [
+        { label: "Partners", link: "/admin/partners", className: isActive ? "active" : "" },
+        { label: "Commision", link: "/admin/dashboard" },
+      ],
+      middleContent: partner && partner.name ? `You are adding revenue for ${partner.name}` : "User Name",
+      rightItems: RightContent,
     };
-}
+  }
 
   const RightContent = (
     <button onClick={handleSave} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full">
       Save
     </button>
   );
+
+  const handleInputValidation = (e) => {
+    let value = e.target.value;
+
+    value = value.replace(/^0+(?=\d)/, '');
+
+    const isFractional = /^\d*\.?\d{0,2}$/.test(value);
+    const floatValue = parseFloat(value);
+
+    if (!isFractional || value.length > 7 || floatValue > 100) {
+        if (!isFractional) {
+          
+            e.target.value = value.slice(0, 3);
+        } else if (floatValue > 100) {
+            // If the value is greater than 100, set it to 100
+            e.target.value = '100';
+        }
+    }
+
+    const [engineValue, ageValue] = e.target.name.match(/\[(\d+)\]/g).map(val => val.replace(/\[|\]/g, ''));
+
+
+if (e.target.name.startsWith('od_agecapacity')) {
+    document.querySelector(`input[name="tp_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+    document.querySelector(`input[name="flatamount_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+} else if (e.target.name.startsWith('tp_agecapacity')) {
+    document.querySelector(`input[name="od_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+    document.querySelector(`input[name="flatamount_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+} else if (e.target.name.startsWith('flatamount_agecapacity')) {
+    document.querySelector(`input[name="od_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+    document.querySelector(`input[name="tp_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+}
+};
+
 
   return (
     <Layout title="Add Partner Commission" breadcrumbData={generateBreadcrumbData(partnerData, RightContent)}>
@@ -266,12 +325,12 @@ const AddComission = () => {
                     value={formData.fuel_type}
                     onChange={handleInputChange}
                   >
-                    {console.log(formData.vehicle_type,partnerData.commission_options.fuel_type_list[formData.vehicle_type])}
+                    {console.log(formData.vehicle_type, partnerData.commission_options.fuel_type_list[formData.vehicle_type])}
                     {partnerData &&
-                        partnerData.commission_options.fuel_type_list[formData.vehicle_type].map((item) => (
-                                  <option key={item.value} value={item.value}>
-                                    {item.text}
-                                  </option>
+                      partnerData.commission_options.fuel_type_list[formData.vehicle_type].map((item) => (
+                        <option key={item.value} value={item.value}>
+                          {item.text}
+                        </option>
                       ))}
                   </select>
                 </div>
@@ -319,29 +378,48 @@ const AddComission = () => {
 
                         <tr className="shade" data-index={engine} data-index_={index === 0}>
                           {index === 0 ? <th className="border-b shade p-2">{partnerData.commission_options.engine_type_list[formData.vehicle_type][formData.fuel_type][0].text}
-                                <input type="hidden" name={"engines[0]"} className="text-x text-center shade" value={engine.text}/>
+                            <input type="hidden" name={"engines[0]"} className="text-x text-center shade" value={engine.text} />
                           </th> :
-                            <th className=""> <input className="text-x text-center shade" name={"engines["+engine.value+"]"} value={engine.text} />
+                            <th className=""> <input className="text-x text-center shade" name={"engines[" + engine.value + "]"} value={engine.text} />
                             </th>
                           }
                           {partnerData &&
-                                partnerData.commission_options.age_type_list[formData.vehicle_type][formData.fuel_type].map((ages, sn) => (
+                            partnerData.commission_options.age_type_list[formData.vehicle_type][formData.fuel_type].map((ages, sn) => (
 
                               index === 0 ? <th className="border-2 shade text-center">{ages.text}  <input
-                                  className="text-x text-center shade" type="hidden"
-                                  name={"ages["+ages.value+"]"}
-                                  value={ages.text}/>
+                                className="text-x text-center shade" type="hidden"
+                                name={"ages[" + ages.value + "]"}
+                                value={ages.text} />
                               </th> : <td className="border-2 text-center">
-                                <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
-                                <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
-                                <input type="number" className={" text-x p-2 bordersm"} name={"agecapacity[" + engine.value + "][" + ages.value + "][value]"} />
+                                <div className="flex mx-2">
+                                  <input type="hidden" className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
+                                  <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
+                                  <div className={'od'}>
+                                    <input type="number" className={" text-x p-2 bordersm"} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][value]"} 
+                                    step={0.01}
+                                    onInput={handleInputValidation}/>
+                                    <label>OD</label>
+                                  </div>
+
+                                  <div className={'tp'}>
+                                    <input type="number" className={" text-x p-2 bordersm"} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][value]"} 
+                                    step={0.01}
+                                    onInput={handleInputValidation}/>
+                                    <label>TP</label>
+                                  </div>
+
+                                  <div className={'flatamount'} onDoubleClick={handleDoubleClick}>
+                                    <input type="number" className={" text-x p-2 bordersm"} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][value]"} 
+                                    disabled={true}
+                                    step={0.01}
+                                    onInput={handleInputValidation}/>
+                                    <label>Flat Amount</label>
+                                  </div>
+                                </div>
+
                               </td>
                             ))}
-                          {index === 0 ? <th className="border-2 shade text-center">DEAL</th> :
-                            <td className="text-center">
-                              <input type="text" className="text-x p-2 bordersm" name={"agecapacity[" + engine.value + "][deal]"} />
-                            </td>
-                          }
+
                         </tr>
 
                       ))}
@@ -349,69 +427,12 @@ const AddComission = () => {
 
 
               </table>
-              {/* FOOTER INPUT BOX CONTAINER START HERE */}
 
 
-              {/* FOOTER INPUT BOX CONTAINER END HERE */}
+
             </div>
           )}
-          <div className="footer_input_box_container mt-4 mb-24">
-            <div className="flex">
-              {/* First Input Box */}
-              <div className="flex-1 mr-2">
-                <input className="w-full p-2"
-                       name="od_percent" id="od_percent"
-                       value={formData.od_precent} type="number" max="100"
-                       onChange={handleInputChange} placeholder="OD Commission %" />
-                {(errors.od_percent!=="undefined")?
-                    <span className="error text-red-400">{errors.od_percent}</span>
-                    :""}
-              </div>
 
-              {/* Second Input Box */}
-              <div className="flex-1 mr-2">
-                <input className="w-full p-2"
-                       name="tp_percent"
-                       value={formData.tp_percent}
-                       onChange={handleInputChange}
-                       placeholder="TP Commission %" />
-              </div>
-
-              {/* Third Input Box with Checkbox */}
-              <div className="flex-1 flex items-center mr-2">
-                <input
-                    name="net_percent"
-                    className="w-full p-2 border"
-                    id="net_percent"
-                    value={formData.net_percent}
-                    onChange={handleInputChange}
-                    placeholder="Net Commission %"
-                    disabled={!isChecked}
-                />
-                <input
-                    type="checkbox"
-                    name="net_percent_checkbox"
-                    className="ml-2 checkbox"
-                    checked={isChecked}
-                    onChange={() => setIsChecked(!isChecked)}
-                />
-              </div>
-
-              {/* Fourth Input Box */}
-              <div className="flex-1">
-                <input name="flat_amount"
-                       id="flat_amount"
-                       value={formData.flat_amount}
-                       onChange={handleInputChange}
-                       className="w-full p-2" placeholder="Flat Amount" />
-              </div>
-
-              <div className="flex-1">
-                <input name="partner_id" on type="hidden" className="w-full p-2" value={partnerData.partner.id} />
-              </div>
-            </div>
-          </div>
-          {/* TABLE CONTAINER END HERE */}
 
         </form>}
       </Card>
