@@ -1,6 +1,7 @@
 .bordersm{
     border: 1px solid #d6c9c9 !important;
-    width: 80%;
+    width: 90%;
+    margin: 0 8px;
 }
 .shade{
     background: #e0dfdc;
@@ -194,7 +195,7 @@
 }
 .tablecommission td,.tablecommission th{
     border: 1px solid #000;
-    text-align: center;
+    text-align: left;
 }
 .partner label{
     font-size: 23.5px;
@@ -252,4 +253,55 @@
  }
 .w-120{
     width: 120px;
+}
+th.th input {
+    width: 180px !important;
+}
+.od,.tp,.flatamount{
+    position: relative;
+    z-index: 1;
+}
+.od input,.tp input,.flatamount input{
+    /*width: 350px;*/
+    /*height: 60px;*/
+    /*border-radius: 6px;*/
+    /*font-size: 14px;*/
+    /*padding: 0 15px;*/
+    /*border: 2px solid #fff;*/
+    /*background: transparent;*/
+    /*color: #fff;*/
+    outline: none;
+
+}
+.flatamount input{
+    z-index: -1;
+    position: relative;
+}
+.od label,.tp label,.flatamount label{
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    /*color: #fff;*/
+    font-size: 12px;
+    pointer-events: none;
+    transition: 0.3s;
+}
+.od input:focus,.tp input:focus,.flatamount input:focus{
+    border: 2px solid #18ffff;
+}
+.od input:focus ~ label,.tp input:focus ~ label,.flatamount input:focus ~ label,
+.od input:valid ~ label,.tp input:valid ~ label,.flatamount input:valid ~ label{
+/*.od input:focus ~ label,*/
+/*.od input:valid ~ label{*/
+    top: 0;
+    left: 15px;
+    /*font-size: 14px;*/
+    /*padding: 0 2px;*/
+    background: #e0dfdc;
+}
+.flatamount input[disabled]
+{
+    background: #c8c8c8;
+    cursor: pointer;
 }

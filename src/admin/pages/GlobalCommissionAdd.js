@@ -6,7 +6,6 @@ import axios, { formToJSON } from "axios";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { useNavigate } from 'react-router-dom';
-
 const GlobalCommissionAdd = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -30,6 +29,33 @@ const GlobalCommissionAdd = () => {
         tp_agecapacity: [],
         flatamount_agecapacity: []
     });
+
+        const [disabled, setDisabled] = useState(true);
+        const handleDoubleClick = (e) => {
+            e.stopPropagation();
+            if(e.target.tagName=="INPUT"){
+                if (e.target.disabled===false)
+                {
+                    e.target.value='';
+                    e.target.disabled=true;
+                    e.target.style.zIndex=-1;
+                }else{
+                    e.target.disabled=false;
+                    e.target.style.zIndex=0;
+                }
+                return 1;
+            }
+            if (e.target.querySelector('input').disabled===false)
+            {
+                e.target.querySelector('input').value='';
+                console.log(e.target);
+                e.target.querySelector('input').disabled=true;
+                e.target.querySelector('input').style.zIndex=-1;
+            }else{
+                e.target.querySelector('input').disabled=false;
+                e.target.querySelector('input').style.zIndex=0;
+            }
+        };
 
     const [errors, setErrors] = useState({
         insurer: '',
@@ -74,8 +100,8 @@ const GlobalCommissionAdd = () => {
         console.log("formdata", formDataJSON);
         const csrfToken = Cookies.get('XSRF-TOKEN');
 
-        axios.post('https://premium.treatweb.com/public/api/admin/global-commissions/store', formDataJSON, {
-            // axios.post('http://127.0.0.1:9000/api/admin/global-commissions/store', formDataJSON, {
+        // axios.post('https://premium.treatweb.com/public/api/admin/global-commissions/store', formDataJSON, {
+            axios.post('https://premium.treatweb.com/public/api/admin/global-commissions/store', formDataJSON, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'X-CSRF-TOKEN': csrfToken,
@@ -136,12 +162,41 @@ const GlobalCommissionAdd = () => {
         setErrors({});
     };
 
-    const handleFlatAmountChange = (engineValue, ageValue, value, event) => {
-        // Update od and tp inputs to 0 for the same key
 
+
+    const handleInputValidation = (e) => {
+        let value = e.target.value;
+
+        value = value.replace(/^0+(?=\d)/, '');
+
+        const isFractional = /^\d*\.?\d{0,2}$/.test(value);
+        const floatValue = parseFloat(value);
+    
+        if (!isFractional || value.length > 7 || floatValue > 100) {
+            if (!isFractional) {
+              
+                e.target.value = value.slice(0, 3);
+            } else if (floatValue > 100) {
+                // If the value is greater than 100, set it to 100
+                e.target.value = '100';
+            }
+        }
+
+        const [engineValue, ageValue] = e.target.name.match(/\[(\d+)\]/g).map(val => val.replace(/\[|\]/g, ''));
+
+    
+    if (e.target.name.startsWith('od_agecapacity')) {
+        document.querySelector(`input[name="tp_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+        document.querySelector(`input[name="flatamount_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+    } else if (e.target.name.startsWith('tp_agecapacity')) {
+        document.querySelector(`input[name="od_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+        document.querySelector(`input[name="flatamount_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+    } else if (e.target.name.startsWith('flatamount_agecapacity')) {
         document.querySelector(`input[name="od_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
         document.querySelector(`input[name="tp_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+    }
     };
+
 
     return (
         <Layout title="Global Comission Setting" breadcrumbData={generateBreadcrumbData(RightContent)}>
@@ -381,27 +436,32 @@ const GlobalCommissionAdd = () => {
                                                                         name={"ages["+ages.value+"]"}
                                                                         value={ages.text}/></th> :
                                                                 <td className="border-2 text-center" key={sn}>
-                                                                    <div className="flex">
-                                                                        <input type="hidden"  className={engine.value + " text-x bordersm"} value={ages.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
-                                                                        <input type="hidden" value={engine.value} name={"agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
+                                                                    <div className="flex mx-2">
+                                                                        <input type="hidden"  className={engine.value + " text-x bordersm"} value={ages.value} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
+                                                                        <input type="hidden" value={engine.value} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
+                                                                        <input type="hidden"  className={engine.value + " text-x bordersm"} value={ages.value} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
+                                                                        <input type="hidden" value={engine.value} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
+                                                                        <input type="hidden"  className={engine.value + " text-x bordersm"} value={ages.value} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
+                                                                        <input type="hidden" value={engine.value} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
 
                                                                        <div className={'od'}>
-                                                                           <input type="number" required max={100}  className={" text-x p-2 bordersm"} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
+                                                                           <input type="number" required max={100} step={0.01} className={" text-x p-2 bordersm"} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0"
+                                                                                  onInput={handleInputValidation}
+                                                                        />
                                                                            <label>OD</label>
                                                                        </div>
                                                                         <div className={'tp'}>
-                                                                            <input type="number" required max={100}  className={" text-x p-2 bordersm"} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0" />
+                                                                            <input type="number" required max={100} step={0.01}  className={" text-x p-2 bordersm"} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0"
+                                                                                   onInput={handleInputValidation}/>
                                                                             <label>TP</label>
                                                                         </div>
-                                                                        <div className={'flatamount'}>
-                                                                            <input max={100}  type="number"  required className={" text-x p-2 bordersm"} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0"
-                                                                               onChange={(e) => handleFlatAmountChange(engine.value, ages.value, e.target.value)}
-                                                                               onInput={(e) => {
-                                                                                e.target.value = Math.min(parseInt(e.target.value), 100);
-                                                                                if (e.target.value.length > 3) {
-                                                                                    e.target.value = e.target.value.slice(0, 3);
-                                                                                }
-                                                                            }} />
+                                                                        <div className={'flatamount'} onDoubleClick={handleDoubleClick}>
+                                                                            <input max={100} type="number" required className={" text-x p-2 bordersm"} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0"
+                                                                                   disabled={true}
+                                                                                   step={0.01}
+                                                                                   onInput={handleInputValidation}
+                                                                                //    onChange={(e) => handleFlatAmountChange(engine.value, ages.value, e.target.value)}
+                                                                            />
                                                                             <label>Flat Amount</label>
                                                                         </div>
                                                                     </div>
@@ -418,13 +478,10 @@ const GlobalCommissionAdd = () => {
                                 </table>
                                 {/* FOOTER INPUT BOX CONTAINER START HERE */}
 
-
-
                                 {/* FOOTER INPUT BOX CONTAINER END HERE */}
                             </div>
                         )}
                         {/* TABLE CONTAINER END HERE */}
-
                     </form>}
             </Card>
         </Layout >
