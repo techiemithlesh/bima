@@ -14,6 +14,57 @@ const GlobalCommissionEdit = () => {
 
   const [globalOptions, setGlobalOptions] = useState(null);
 
+  const handleDoubleClick = (e) => {
+    e.stopPropagation();
+    if(e.target.tagName=="INPUT"){
+      if (e.target.disabled===false)
+      {
+        e.target.value='';
+        e.target.disabled=true;
+        e.target.style.zIndex=-1;
+      }else{
+        e.target.disabled=false;
+        e.target.style.zIndex=0;
+      }
+      return 1;
+    }
+    if (e.target.querySelector('input').disabled===false)
+    {
+      e.target.querySelector('input').value='';
+      console.log(e.target);
+      e.target.querySelector('input').disabled=true;
+      e.target.querySelector('input').style.zIndex=-1;
+    }else{
+      e.target.querySelector('input').disabled=false;
+      e.target.querySelector('input').style.zIndex=0;
+    }
+  };
+
+  const handleFlatAmountChange = (engineValue, ageValue, value) => {
+    // Update od and tp inputs to 0 for the same key
+    document.querySelector(`input[name="od_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+    document.querySelector(`input[name="tp_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
+  };
+
+  const handleInputValidation = (e) => {
+    let value = e.target.value;
+
+    value = value.replace(/^0+(?=\d)/, '');
+
+    const isFractional = /^\d*\.?\d{0,2}$/.test(value);
+    const floatValue = parseFloat(value);
+
+    if (!isFractional || value.length > 7 || floatValue > 100) {
+      if (!isFractional) {
+
+        e.target.value = value.slice(0, 3);
+      } else if (floatValue > 100) {
+
+        e.target.value = '100';
+      }
+    }
+  };
+
   const [commissionData, setCommissionData] = useState({
     insurer: '',
     business_type: '',
@@ -47,6 +98,7 @@ const GlobalCommissionEdit = () => {
   useEffect(() => {
     // Fetch global commission options
     const apiUrl = `https://premium.treatweb.com/public/api/admin/global-commissions/options`;
+    // const apiUrl = `http://127.0.0.1:9000/api/admin/global-commissions/options`;
     fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
@@ -58,6 +110,7 @@ const GlobalCommissionEdit = () => {
         });
 
     const commissionApiUrl = `https://premium.treatweb.com/public/api/admin/global-commissions/${id}`;
+    // const commissionApiUrl = `http://127.0.0.1:9000/api/admin/global-commissions/${id}`;
     axios
         .get(commissionApiUrl)
         .then((response) => {
@@ -93,6 +146,7 @@ const GlobalCommissionEdit = () => {
     axios
       .post(
         `https://premium.treatweb.com/public/api/admin/global-commissions/update/${id}`,
+        // `http://127.0.0.1:9000/api/admin/global-commissions/update/${id}`,
         commissionData,
         {
           headers: {
@@ -168,9 +222,8 @@ const GlobalCommissionEdit = () => {
 
   };
 
-  console.log("Fuel Type",commissionData.fuel_type ?? 'NA');
-  console.log("Age Capacity",commissionData.agecapacity);
- 
+  console.log(commissionData.agecapacity, ">>>>commissionData in globalCommissionEdit");
+  console.log(globalOptions, ">>>>globalOptions in globalCommissionEdit", );
   return (
     <Layout
       title="Edit Global commission"
@@ -318,6 +371,7 @@ const GlobalCommissionEdit = () => {
                         <option
                           key={item.value}
                           value={item.value}
+                        //   selected={item.value === commissionData.coverage_type}
                         >
                           {item.text}
                         </option>
@@ -338,7 +392,6 @@ const GlobalCommissionEdit = () => {
                       className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                       name="two_wheeler_type"
                       id="two_wheeler_type"
-
                       value={
                         commissionData.vehicle_type === 0 ? '0' :
                         commissionData.two_wheeler_type == null ||
@@ -414,7 +467,7 @@ const GlobalCommissionEdit = () => {
                         <option
                           key={item.value}
                           value={item}
-                       
+                        //   selected={item.value === commissionData.makes}
                         >
                           {item}
                         </option>
@@ -465,18 +518,14 @@ const GlobalCommissionEdit = () => {
             {/* FORM INPUT CONTAINER END HERE */}
 
             {/* TABLE CONTAINER START HERE */}
-            {globalOptions && (commissionData.vehicle_type === 1 || commissionData.vehicle_type === 0)  && (
+            {globalOptions && (commissionData.vehicle_type === 1) && (commissionData.fuel_type!=0) && (
               <div className="table_container">
                 <table className="min-w-full table-auto border-2 border-gray-300 comission">
                   <tbody>
                     {globalOptions &&
                       globalOptions.engine_type_list[commissionData.vehicle_type][commissionData.fuel_type]
                         .map((engine, index) => (
-                          <tr
-                            className="shade"
-                            data-index={engine}
-                            data-index_={index == "0"}
-                          >
+                          <tr className="shade">
                             {index === "0" ? (
                               <th className="border-b shade p-2">
                                 {
@@ -485,7 +534,7 @@ const GlobalCommissionEdit = () => {
                                 }
                               </th>
                             ) : (
-                              <th className="">
+                              <th className="th">
                                 {" "}
                                 <input
                                   className="text-x text-center shade"
@@ -497,64 +546,58 @@ const GlobalCommissionEdit = () => {
                               globalOptions.age_type_list[commissionData.vehicle_type][commissionData.fuel_type].map(
                                 (ages, sn) =>
                                   index === 0 ? (
-                                    <th
-                                      className="border-2 shade text-center"
-                                      key={sn}
-                                    >
-                                      {ages.text}
-                                    </th>
+                                    <th className="border-2 shade text-center ">{ages.text}</th>
                                   ) : (
-                                    <td
-                                      className="border-2 text-center"
-                                      key={sn}
-                                    >
-                                      <input
-                                        type="hidden"
-                                        className={
-                                          engine.value + " text-x bordersm"
-                                        }
-                                        value={ages.value}
-                                        name={
-                                          "agecapacity[" +
-                                          engine.value +
-                                          "][" +
-                                          ages.value +
-                                          "][age]"
-                                        }
-                                      />
-                                      <input
-                                        type="hidden"
-                                        value={engine.value}
-                                        name={
-                                          "agecapacity[" +
-                                          engine.value +
-                                          "][" +
-                                          ages.value +
-                                          "][capacity]"
-                                        }
-                                      />
-                                      <input
-                                        type="number"
-                                        className={" text-x p-2 bordersm"}
-                                        name={
-                                          "agecapacity[" +
-                                          engine.value +
-                                          "][" +
-                                          ages.value +
-                                          "][value]"
-                                        }
-                                        value=""
-                                        min="0"
-                                      />
+                                    <td className="border-2 text-center">
+                                      <div className="flex mx-2">
+
+                                        <input type="hidden"  className={engine.value + " text-x bordersm"} value={ages.value} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
+                                        <input type="hidden" value={engine.value} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
+                                        <input type="hidden"  className={engine.value + " text-x bordersm"} value={ages.value} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
+                                        <input type="hidden" value={engine.value} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
+                                        <input type="hidden"  className={engine.value + " text-x bordersm"} value={ages.value} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][age]"} />
+                                        <input type="hidden" value={engine.value} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
+
+                                      <div className={'od'}>
+                                        <input type="number" required max={100} step={0.01}
+                                               value={(isset(commissionData.od_agecapacity[engine.value])?commissionData.od_agecapacity[engine.value][ages.value].value??"":"")}
+                                               className={" text-x p-2 bordersm"} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0"
+                                               onInput={handleInputValidation}
+                                        />
+                                        <label>OD</label>
+                                      </div>
+                                      <div className={'tp'}>
+                                        <input type="number" required max={100} step={0.01}
+                                               value={(isset(commissionData.tp_agecapacity[engine.value])?commissionData.tp_agecapacity[engine.value][ages.value].value??"":"")}
+                                               className={" text-x p-2 bordersm"} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0"
+                                               onInput={handleInputValidation}/>
+                                        <label>TP</label>
+                                      </div>
+                                      <div className={'flatamount'} onDoubleClick={handleDoubleClick}>
+                                        <input max={100} type="number" required className={"text-x p-2 bordersm"} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0"
+                                               step={0.01}
+                                               onInput={handleInputValidation}
+                                               onChange={(e) => handleFlatAmountChange(engine.value, ages.value, e.target.value)}
+                                               value={(isset(commissionData.flatamount_agecapacity[engine.value])?commissionData.flatamount_agecapacity[engine.value][ages.value].value??"":"")}
+                                               disabled={(isset(commissionData.flatamount_agecapacity[engine.value])?
+                                                   isset(commissionData.flatamount_agecapacity[engine.value][ages.value].value)?false:true :
+                                                   true)}
+                                               style={{
+                                                 zIndex: (isset(commissionData.flatamount_agecapacity[engine.value]) ?
+                                                     isset(commissionData.flatamount_agecapacity[engine.value][ages.value].value)?0 : -1 :
+                                                     -1)
+                                               }}
+                                        />
+                                        <label>Flat Amount</label>
+                                      </div>
+                                      </div>
                                     </td>
                                   )
                               )}
-                           
                           </tr>
                         ))}
                   </tbody>
                 </table>
-                
               </div>
             )}
             {/* TABLE CONTAINER END HERE */}
