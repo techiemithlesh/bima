@@ -74,8 +74,13 @@ const GlobalCommissionEdit = () => {
     fuel_type:0,
     make: '',
     model: '',
-    agecapacity: '',
+    od_agecapacity: {},
+    tp_agecapacity: {},
+    flatamount_agecapacity: {}
+
   });
+
+
   function isset (ref) { return typeof ref !== 'undefined' }
   const [errors, setErrors] = useState({
     insurer: "",
@@ -86,13 +91,9 @@ const GlobalCommissionEdit = () => {
     vehicle_types: "",
     two_wheeler_types: "",
     fuel_types: "",
-    od_percent: "",
-    flat_checkbox: "",
-    flat_amount: "",
-    net_percent_checkbox: "",
-    net_percent: "",
-    tp_percent: "",
-    agecapacity: [],
+    od_agecapacity: {},
+    tp_agecapacity: {},
+    flatamount_agecapacity: {}
   });
 
   useEffect(() => {
@@ -198,32 +199,73 @@ const GlobalCommissionEdit = () => {
 
 
   const handleInputChange = (event) => {
-    let val =
-      event.target.value * 1 !== NaN
-        ? event.target.value * 1
-        : event.target.value;
-
-    if (event.target.name === "net_percent_checkbox" || event.target.name === "flat_checkbox") {
-      val = event.target.checked;
-    }
-
-    console.log("Vehicle Type Value BEFORE:", commissionData.vehicle_type);
+    const { name, value } = event.target;
+    console.log("Input name:", name);
+    console.log("Input value:", value);
+  
     setCommissionData((prevCommissionData) => {
-      const updatedCommissionData = {
-        ...prevCommissionData,
-        [event.target.name]: val,
-      };
+      let updatedCommissionData = { ...prevCommissionData };
   
-      console.log("Vehicle Type Value AFTER:", updatedCommissionData.vehicle_type);
+      if (name.startsWith("od_agecapacity")) {
+        const [engine, age, key] = name.match(/\[(.*?)\]/g);
+        updatedCommissionData = {
+          ...updatedCommissionData,
+          od_agecapacity: {
+            ...updatedCommissionData.od_agecapacity,
+            [engine]: {
+              ...updatedCommissionData.od_agecapacity?.[engine],
+              [age]: {
+                ...updatedCommissionData.od_agecapacity?.[engine]?.[age],
+                [key]: value,
+              },
+            },
+          },
+        };
+      } else if (name.startsWith("tp_agecapacity")) {
+        const [engine, age, key] = name.match(/\[(.*?)\]/g);
+        updatedCommissionData = {
+          ...updatedCommissionData,
+          tp_agecapacity: {
+            ...updatedCommissionData.tp_agecapacity,
+            [engine]: {
+              ...updatedCommissionData.tp_agecapacity?.[engine],
+              [age]: {
+                ...updatedCommissionData.tp_agecapacity?.[engine]?.[age],
+                [key]: value,
+              },
+            },
+          },
+        };
+      } else if (name.startsWith("flatamount_agecapacity")) {
+        const [engine, age, key] = name.match(/\[(.*?)\]/g);
+        updatedCommissionData = {
+          ...updatedCommissionData,
+          flatamount_agecapacity: {
+            ...updatedCommissionData.flatamount_agecapacity,
+            [engine]: {
+              ...updatedCommissionData.flatamount_agecapacity?.[engine],
+              [age]: {
+                ...updatedCommissionData.flatamount_agecapacity?.[engine]?.[age],
+                [key]: value,
+              },
+            },
+          },
+        };
+      } else {
+        updatedCommissionData = {
+          ...updatedCommissionData,
+          [name]: value,
+        };
+      }
   
+      console.log("Updated Commission Data:", updatedCommissionData);
       return updatedCommissionData;
-
     });
-
   };
+  
+  
+  
 
-  console.log(commissionData.agecapacity, ">>>>commissionData in globalCommissionEdit");
-  console.log(globalOptions, ">>>>globalOptions in globalCommissionEdit", );
   return (
     <Layout
       title="Edit Global commission"
@@ -559,26 +601,28 @@ const GlobalCommissionEdit = () => {
                                         <input type="hidden" value={engine.value} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][capacity]"} />
 
                                       <div className={'od'}>
-                                        <input type="number" required max={100} step={0.01}
-                                               value={(isset(commissionData.od_agecapacity[engine.value])?commissionData.od_agecapacity[engine.value][ages.value].value??"":"")}
+                                        <input type="number" required max={100} step={1}
+                                               defaultValue={(isset(commissionData.od_agecapacity[engine.value])?commissionData.od_agecapacity[engine.value][ages.value].value??"":"")}
                                                className={" text-x p-2 bordersm"} name={"od_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0"
                                                onInput={handleInputValidation}
+                                               onChange={handleInputChange}
                                         />
                                         <label>OD</label>
                                       </div>
                                       <div className={'tp'}>
                                         <input type="number" required max={100} step={0.01}
-                                               value={(isset(commissionData.tp_agecapacity[engine.value])?commissionData.tp_agecapacity[engine.value][ages.value].value??"":"")}
+                                               defaultValue={(isset(commissionData.tp_agecapacity[engine.value])?commissionData.tp_agecapacity[engine.value][ages.value].value??"":"")}
                                                className={" text-x p-2 bordersm"} name={"tp_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0"
-                                               onInput={handleInputValidation}/>
+                                               onInput={handleInputValidation}
+                                               onChange={handleInputChange}/>
                                         <label>TP</label>
                                       </div>
                                       <div className={'flatamount'} onDoubleClick={handleDoubleClick}>
                                         <input max={100} type="number" required className={"text-x p-2 bordersm"} name={"flatamount_agecapacity[" + engine.value + "][" + ages.value + "][value]"} min="0"
                                                step={0.01}
                                                onInput={handleInputValidation}
-                                               onChange={(e) => handleFlatAmountChange(engine.value, ages.value, e.target.value)}
-                                               value={(isset(commissionData.flatamount_agecapacity[engine.value])?commissionData.flatamount_agecapacity[engine.value][ages.value].value??"":"")}
+                                               onChange={handleInputChange}
+                                               defaultValue={(isset(commissionData.flatamount_agecapacity[engine.value])?commissionData.flatamount_agecapacity[engine.value][ages.value].value??"":"")}
                                                disabled={(isset(commissionData.flatamount_agecapacity[engine.value])?
                                                    isset(commissionData.flatamount_agecapacity[engine.value][ages.value].value)?false:true :
                                                    true)}
