@@ -132,19 +132,17 @@ const PartnerDetailsAdd = () => {
 
   const handleInputChange = (event) => {
     const { name, value, files } = event.target;
-
-    if (files && files.length > 0) {
+  
+    if (files && files.length > 0 && name === 'image') {
       const file = files[0];
-
+  
       setFormData((prevData) => ({
         ...prevData,
         [name]: file,
       }));
-
-
+  
       const reader = new FileReader();
       reader.onload = (e) => {
-
         setFormData((prevData) => ({
           ...prevData,
           imagePreviewUrl: e.target.result,
@@ -152,38 +150,22 @@ const PartnerDetailsAdd = () => {
       };
       reader.readAsDataURL(file);
     } else {
-
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
     }
-
+  
     validateField(name, files && files.length > 0 ? files[0] : value);
-
+  
     const errorMessage = validateField(name, files && files.length > 0 ? files[0] : value);
-
+  
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: errorMessage,
     }));
   };
-
-  // let preview = Icons.UserAdd;
-  // let image = preview;
-  // let previewImage = (e)=>{
-  //   var input = e.target;
-  //   var reader = new FileReader();
-  //  // reader.readAsDataURL(input.files[0])
-  //   reader.onload = (e) => {
-  //     image = e.result;
-  //   }
-  //
-  //   console.log(input.files[0]);
-  //   console.log(reader.readAsDataURL(input.files[0]));
-  // //  console.log(reader.readAsDataURL(input.files[0]));
-  // //   reader.readAsDataURL(input.files[0]);
-  // }
+  
 
 
   const validateForm = () => {

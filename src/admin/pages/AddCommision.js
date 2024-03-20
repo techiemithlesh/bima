@@ -218,6 +218,7 @@ if (e.target.name.startsWith('od_agecapacity')) {
     document.querySelector(`input[name="od_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
     document.querySelector(`input[name="tp_agecapacity[${engineValue}][${ageValue}][value]"]`).value = 0;
 }
+
 };
 
 
