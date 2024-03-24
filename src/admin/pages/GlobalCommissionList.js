@@ -11,8 +11,6 @@ import {TabsIcon} from "../../shared/Assets";
 
 const GlobalCommissionList = () => {
     const [commissionData, setCommissionData] = useState([]);
-
-
     const [commissionsList, SetComissionList] = useState([]);
     const [isModalVisible, SetIsModalVisible] = useState(false);
     const [SelectedComission, SetSelectedCommission] = useState(null);

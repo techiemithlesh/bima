@@ -17,6 +17,8 @@ const Partners = () => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedPartner, setSelectedPartner] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
 
     function handleViewDetails(partner) {
         setSelectedPartner(partner);
@@ -30,7 +32,7 @@ const Partners = () => {
 
     useEffect(() => {
         // const apiUrl = 'http://127.0.0.1:9000/api/admin/partner/list';
-        const apiUrl = 'https://premium.treatweb.com/public/api/admin/partner/list';
+        const apiUrl = 'https://premium.treatweb.com/public/api/admin/partner/list?currentPage=${currentPage}';
 
         const requestOptions = {
             method: 'GET',
@@ -40,14 +42,16 @@ const Partners = () => {
         fetch(apiUrl, requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data.data);
-                SetPartnerList(data.data);
+                console.log("response", data.data);
+                const responseData = data.data.data;
+                SetPartnerList(responseData);
+                setTotalPages(data.data.last_page);
                 setLoading(false);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-    }, []);
+    }, [currentPage]);
 
 
 
@@ -71,95 +75,22 @@ const Partners = () => {
                 onChange={(e) => console.log("Search:", e.target.value)}
                 className="border border-gray-300 px-8 py-2 searchbox focus:outline-none focus:border-blue-500"
             />
-            <Link to={`/partner/details/add`}><img src={TabsIcon.addpartner} alt=""/></Link>
+            <Link to={`/partner/details/add`}><img src={TabsIcon.addpartner} alt="" /></Link>
         </>
     );
 
 
-    /* PAGINATION START HERE */
+    let handlePrevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
 
-    const pageSize = 5;
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const currentData = PartnerList.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(PartnerList.length / pageSize);
-
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
-    };
-
-    const renderPaginationButtons = () => {
-        const buttons = [];
-
-        // Previous button
-        buttons.push(
-            <button
-                key="prev"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="px-2 py-2 text-xl"
-            >
-                <FontAwesomeIcon icon={faCircleChevronLeft} />
-            </button>
-        );
-
-        // Current page number
-        buttons.push(
-            <div key="current" className="px-2 py-2">
-                {currentPage}
-            </div>
-        );
-
-        // Next button
-        buttons.push(
-            <button
-                key="next"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="px-2 py-2 text-black text-xl"
-            >
-                <FontAwesomeIcon icon={faCircleChevronRight} />
-            </button>
-        );
-
-        return buttons;
-    };
-
-
-    const renderLeftPaginationButtons = () => {
-        const buttons = [];
-
-        // Calculate the page range
-        const pageRangeStart = Math.max(currentPage - 4, 1);
-        const pageRangeEnd = Math.min(pageRangeStart + 7, totalPages);
-
-        // Previous button
-        buttons.push(
-            <button
-                key="prev"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="px-4 py-2 text-xl text-black"
-            >
-
-            </button>
-        );
-
-        // Display the page range
-        buttons.push(
-            <div key="pageRange" className="px-4 py-2 text-black">
-                [{pageRangeStart}-{pageRangeEnd}({totalPages})]
-            </div>
-        );
-
-        return buttons;
-    };
-
-
-    /* PAGINATION END HERE */
-
+    let handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
     return (
         <Layout title="Partner List" breadcrumbData={generateBreadcrumbData(searchRightContent)}>
             <Card>
@@ -194,19 +125,19 @@ const Partners = () => {
                                         <Link
                                             to={`/partner/comissions/list/${partner.id}`}
                                             className=" text-white rounded mr-2">
-                                            
-                                            <img src={TabsIcon.partnercommision} alt=""/>
+
+                                            <img src={TabsIcon.partnercommision} alt="" />
                                         </Link>
                                     </button>
 
                                     <button
-                                       className=" text-white rounded mr-2" >
-                                       <Link
-                                           to={`/partner/details/edit/${partner.id}`}
-                                           className=" text-white rounded mr-2" >
-                                           
-                                           <img src={TabsIcon.editpartner} alt=""/>
-                                       </Link>
+                                        className=" text-white rounded mr-2" >
+                                        <Link
+                                            to={`/partner/details/edit/${partner.id}`}
+                                            className=" text-white rounded mr-2" >
+
+                                            <img src={TabsIcon.editpartner} alt="" />
+                                        </Link>
                                     </button>
                                 </td>
                             </tr>
@@ -217,18 +148,16 @@ const Partners = () => {
 
                 {/* PAGINATION */}
 
-                {loading ? <div className="loading-overlay">
-                    <div className="loading">
-                        <Loading type="ball-triangle" color="#4fa94d" height={100} width={100} />
+                <div className="flex justify-between">
+                    <div>
+                        [{(currentPage - 1) * PartnerList.length + 1} -
+                        {Math.min(currentPage * PartnerList.length, totalPages * PartnerList.length)} ({totalPages})]
                     </div>
-                </div> : <div className="flex justify-between mt-4">
-                    <div className="flex justify-around items-center">
-                        {renderLeftPaginationButtons("left")}
+                    <div className="">
+                        <button onClick={handlePrevPage} className="px-2 text-xl py-2"><FontAwesomeIcon icon={faCircleChevronLeft} /></button>
+                        <button onClick={handleNextPage} className="px-2 text-xl py-2"><FontAwesomeIcon icon={faCircleChevronRight} /></button>
                     </div>
-                    <div className="flex justify-around items-center">
-                        {renderPaginationButtons("right")}
-                    </div>
-                </div>}
+                </div>
             </Card>
 
             {/* MODAL START HERE*/}
@@ -253,9 +182,9 @@ const Partners = () => {
                         </div>
                         <div>
                             {selectedPartner.partner_info.profile_image ? (
-                                <img src={'https://premium.treatweb.com/public'+selectedPartner.partner_info.profile_image} className="w-auto" alt="Partner Profile" />
+                                <img src={'https://premium.treatweb.com/public' + selectedPartner.partner_info.profile_image} className="w-auto" alt="Partner Profile" />
                             ) : (
-                                <img src={Images.UserProfile} alt="Default Profile"  className="w-30 h-44"/>
+                                <img src={Images.UserProfile} alt="Default Profile" className="w-30 h-44" />
                             )}
                         </div>
                     </div>
