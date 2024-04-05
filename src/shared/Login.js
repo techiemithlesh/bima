@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import Logo from '../assets/logo.jpeg';
 import axios from "axios";
 import { setAuthToken } from "../utils/auth";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import Cookies from "js-cookie";
+
 
 
 const Login = () => {

@@ -21,12 +21,12 @@ const Policy = () => {
     coverage_type: "",
     fuel_type: "",
     agecapacity: [],
+    own_damage: "",
+    third_party: "",
+    net_amount: ""
   });
-  // const errors = [];
-  // const setErrors = (message)=>{
-  //   console.log(4,message);
-  //   // errors=0;
-  // }
+
+
 
   const [errors, setErrors] = useState({
     vehicle_manufacture: "",
@@ -218,6 +218,19 @@ const Policy = () => {
       setSelectedTabIndex((prevIndex) => prevIndex + 1);
     }
   };
+
+  useEffect(() => {
+    const ownDamage = parseFloat(formData.own_damage ?? 0);
+    const thirdParty = parseFloat(formData.third_party ?? 0);
+
+    const net_amount = ownDamage + thirdParty;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      net_amount: isNaN(net_amount) ? "" : net_amount
+    }));
+
+  }, [formData.own_damage,  formData.third_party]);
 
   return (
     <Layout
