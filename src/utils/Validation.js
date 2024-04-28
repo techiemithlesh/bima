@@ -209,4 +209,104 @@ export const validateVehicleRegistrationDate = (vehicle_registration_date) => {
 
 
 
+export const validateBusinessType = (business_type) => {
+   if (!business_type.trim()) {
+    return 'Business Type is required';
+  }
+
+  return '';
+}
+
+export const validatePolicyType = (policy_type) => {
+  if(!policy_type.trim()){
+    return 'Policy Type is required';
+  }
+
+  return '';
+}
+
+
+export const validateNetAmount = (net_amount) => {
+  
+  if (!net_amount) {
+      return "Net amount is required.";
+  }
+
+  if (isNaN(net_amount)) {
+      return "Net amount must be a number.";
+  }
+
+  if (parseFloat(net_amount) < 0 || parseFloat(net_amount) > 99999999.99) {
+      return "Net amount must be between 0 and 99999999.99.";
+  }
+
+  return null;
+};
+
+export const validatePaymentMethod = (payment_type) => {
+  if(!payment_type.trim()){
+    return "Payment Type is required";
+  }
+
+  return '';
+}
+
+export const validateCustomerName = (customer_name) => {
+  if(!customer_name.trim()){
+    return "Customer Name is required";
+  }
+  return '';
+}
+
+export const validateMobileNumber = (customer_mobile) => {
+  const mobilePattern = /^\d{10}$/;
+
+  if (!customer_mobile) {
+    return 'Mobile is required';
+  } else if (!mobilePattern.test(customer_mobile)) {
+    return 'Invalid mobile number';
+  }
+
+  return '';
+}
+
+
+export const validatePolicyNumber = (policy_number) =>{
+  if(!policy_number.trim()){
+    return 'Policy Number is required';
+  }
+
+  return '';
+}
+
+
+export const validateRiskStartDate = (risk_start_date) => {
+  if(!risk_start_date.trim()){
+    return 'Risk start Date is required';
+  }
+
+  return '';
+}
+
+
+export const validateOwnDamage = (own_damage) => {
+  if(!own_damage.trim()){
+    return 'Own Damage field is required';
+  }
+  return '';
+}
+
+export const validateThirdParty = (third_party) => {
+  if(!third_party.trim()){
+    return 'Third Party Field is required';
+  }
+
+  return '';
+}
+
+
+
+
+
+
 

@@ -18,6 +18,7 @@ import GlobalCommissionEdit from './admin/pages/GlobalCommissionEdit';
 import PolicyEdit from './admin/pages/PolicyEdit';
 import {Toaster} from "react-hot-toast";
 import PartnerDetailsEdit from './admin/pages/PartnerDetailsEdit';
+import PolicyAdd from './admin/pages/PolicyAdd';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
 
       <Route path='/policy/list' element={<PrivateRoute><PolicyList/></PrivateRoute>}/>
       <Route path='/policy/add' element={<Policy/>}/>
+      <Route path='/policy/add/new' element={<PolicyAdd/>}/>
       <Route path='/policy/edit/:id' element={<PrivateRoute><PolicyEdit/></PrivateRoute>}/>
 
     </Routes>
