@@ -17,7 +17,6 @@ const PartnerDetailsAdd = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [formData, setFormData] = useState({
-
     name: '',
     email: '',
     mobile: '',
