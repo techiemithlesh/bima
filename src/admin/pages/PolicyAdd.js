@@ -28,6 +28,8 @@ import { useNavigate } from "react-router-dom";
 
 const PolicyAdd = () => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
+
   const [insurance, setInsurance] = useState(null);
   const [kycdocument, setKycDocument] = useState("");
   const navigate = useNavigate();
@@ -51,6 +53,14 @@ const PolicyAdd = () => {
     risk_start_date: "",
     customer_name: "",
     customer_mobile: "",
+    current_policy_file: null,
+    previous_policy_file: null,
+    rc_file: null,
+    vehicle_photo_file: null,
+    kyc_document: "",
+    adhar_document: null,
+    pancard_document: null,
+    other_document: null,
   });
 
   const [errors, setErrors] = useState({
@@ -99,6 +109,7 @@ const PolicyAdd = () => {
 
   function generateBreadcrumbData(selectedTabIndex, rightContent = null) {
     let middleContent;
+
     let isSaveDisabled = true;
 
     switch (selectedTabIndex) {
@@ -258,6 +269,17 @@ const PolicyAdd = () => {
       }));
   };
 
+  const handleFileInputChange = (e) => {
+    const { name, files } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: files[0], 
+    }));
+  
+
+    validateField(name, files && files.length > 0 ? files[0] : null);
+  };
+
   const handleSave = (e) => {
     e.preventDefault();
     const isValid = validateForm();
@@ -285,6 +307,7 @@ const PolicyAdd = () => {
         // console.log(response);
         if (success === false) {
           setErrors(message);
+          
         } else {
           toast.success(message, {
             position: "top-right",
@@ -299,6 +322,7 @@ const PolicyAdd = () => {
           server:
             "An error occurred while processing your request. Please try again later.",
         });
+        
       });
   };
 
@@ -339,6 +363,9 @@ const PolicyAdd = () => {
     }
     
   }, [formData.own_damage, formData.third_party, formData.net_amount]);
+
+
+
 
   return (
     <Layout
@@ -711,7 +738,7 @@ const PolicyAdd = () => {
                           className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                           name="vehicle_manufacture"
                           id="makes"
-                          value={formData.makes}
+                          value={formData.vehicle_manufacture}
                           onChange={handleInputChange}
                       >
                         <option value={0}>Select Vehicle Make</option>
@@ -741,7 +768,7 @@ const PolicyAdd = () => {
                           className="mt-1 p-2 w-full bg-white border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                           name="vehicle_model"
                           id="models"
-                          value={formData.models}
+                          value={formData.vehicle_model}
                           onChange={handleInputChange}
                       >
                         <option value={0}>Select Vehicle Model</option>
@@ -767,6 +794,7 @@ const PolicyAdd = () => {
                         placeholder="Vehicle Registration No."
                         name="registration_number"
                         onChange={handleInputChange}
+                        value={formData.registration_number}
                       />
                       {errors.registration_number && (
 
@@ -786,6 +814,7 @@ const PolicyAdd = () => {
                         className="w-full p-2"
                         name="vehicle_registration_date"
                         onChange={handleInputChange}
+                        value={formData.vehicle_registration_date}
                         placeholder="Vehicle Registration Date"
                         onFocus={(e) => (e.target.type = "date")}
                         onBlur={(e) => (e.target.type = "text")}
@@ -882,7 +911,9 @@ const PolicyAdd = () => {
                       <input
                         type="file"
                         id="currentpolicy"
+                        name="current_policy_file"
                         className="w-full p-2 custom-file-input"
+                        onChange={handleFileInputChange}
                         title="s e "
                       />
                     </div>
@@ -891,7 +922,9 @@ const PolicyAdd = () => {
                       <input
                         type="file"
                         id="inscopy"
+                        name="previous_policy_file"
                         className="w-full p-2 custom-file-input"
+                        onChange={handleFileInputChange}
                         title="s e "
                       />
                     </div>
@@ -900,7 +933,9 @@ const PolicyAdd = () => {
                       <input
                         type="file"
                         id="rccopy"
+                        name="rc_file"
                         className="w-full p-2 custom-file-input"
+                        onChange={handleFileInputChange}
                         title="s e "
                       />
                     </div>
@@ -909,7 +944,9 @@ const PolicyAdd = () => {
                       <input
                         type="file"
                         id="vehiclephoto"
+                        name="vehicle_photo_file"
                         className="w-full p-2 custom-file-input"
+                        onChange={handleFileInputChange}
                         title="s e "
                       />
                     </div>
@@ -962,15 +999,7 @@ const PolicyAdd = () => {
                     </div>
 
                   </div>
-                  <div className="w-full grid grid-cols-1 md:grid-cols-1 gap-8 text-center">
-                  <button
-                      onClick={handleSave}
-                      className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 save ${isSaveDisabled? 'cursor-not-allowed': ''}`}
-                      // disabled={isSaveDisabled}
-                  >
-                    Save
-                  </button>
-                  </div>
+                  
                 </div>
               </div>
             </div>
