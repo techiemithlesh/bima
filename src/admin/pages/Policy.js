@@ -904,7 +904,7 @@ const Policy = () => {
                     {/* KYC Document Input */}
                     <div className="flex-1 mr-2">
                       <select
-                        value={FormData.kycdocument}
+                        value={formData.kycdocument}
                         name="kyc_document"
                         onChange={handleKYCDocumentChange}
                         className="w-full p-2 custom-file-input"

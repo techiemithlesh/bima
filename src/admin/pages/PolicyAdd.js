@@ -250,8 +250,13 @@ const PolicyAdd = () => {
   };
 
   const handleKYCDocumentChange = (e) => {
-    setKycDocument(e.target.value);
+    const selectedDocument = e.target.value;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      kyc_document: selectedDocument,
+    }));
   };
+  
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
@@ -281,14 +286,16 @@ const PolicyAdd = () => {
   };
 
   const handleSave = (e) => {
+
     e.preventDefault();
     const isValid = validateForm();
     if (!isValid) {
       return;
     }
+    console.log("Form data", formData);
     setErrors({});
     const csrfToken = Cookies.get("XSRF-TOKEN");
-    console.log("formdata", formData);
+    
     axios
       .post(
         // "http://phpstorm.local:9000/api/admin/policies/store",
@@ -954,7 +961,7 @@ const PolicyAdd = () => {
                     {/* KYC Document Input */}
                     <div className="flex-1 mr-2">
                       <select
-                        value={FormData.kycdocument}
+                        value={formData.kycdocument}
                         name="kyc_document"
                         onChange={handleKYCDocumentChange}
                         className="w-full p-2 custom-file-input"
@@ -965,7 +972,7 @@ const PolicyAdd = () => {
                         <option value="other">Other</option>
                       </select>
                     </div>
-                    {kycdocument && (
+                    {formData.kyc_document && (
                       <div className="flex-1 mr-2">
                         <input
                           type="file"
@@ -973,6 +980,7 @@ const PolicyAdd = () => {
                           name={`kyc_${kycdocument}_document`}
                           className="w-full p-2"
                           title={`Upload ${kycdocument.toUpperCase()} Document`}
+                          onChange={handleFileInputChange}
                         />
                       </div>
                     )}
