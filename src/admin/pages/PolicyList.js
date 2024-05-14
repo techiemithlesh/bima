@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import Card from "../Components/Card";
 import axios from "axios";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronLeft, faCircleChevronRight, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import { TabsIcon } from "../../shared/Assets";
@@ -13,20 +13,25 @@ const PolicyList = () => {
   const [policies, setPolicies] = useState([]);
   const [selectedPolicy, setSelectedPolicy] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  
 
   useEffect(() => {
-    const apiUrl = "https://premium.treatweb.com/public/api/admin/policies/list";
+    const apiUrl = `https://premium.treatweb.com/public/api/admin/policies/list?currentPage=${currentPage}`;
         // const apiUrl = "http://phpstorm.local:9000/api/admin/policies/list";
     axios
         .get(apiUrl)
         .then((res) => {
+          console.log("Response", res);
           const data = res.data;
           setPolicies(data.policies);
+          setTotalPages(data.last_page);
         })
         .catch((error) => {
           console.log("Error Fetching Data", error);
         });
-  }, []);
+  }, [currentPage]);
 
   function generateBreadcrumbData(rightContent = null) {
     return {
@@ -56,6 +61,18 @@ const PolicyList = () => {
     setIsModalVisible(false);
     setSelectedPolicy(null);
   }
+
+  let handlePrevPage = () => {
+    if (currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+    }
+}
+
+let handleNextPage = () => {
+    if (currentPage < totalPages) {
+        setCurrentPage(currentPage - 1);
+    }
+}
 
   return (
       <Layout
@@ -112,6 +129,16 @@ const PolicyList = () => {
             ))}
             </tbody>
           </table>
+          <div className="flex justify-between">
+                    <div>
+                        [{(currentPage - 1) * policies.length + 1} -
+                        {Math.min(currentPage * policies.length, totalPages * policies.length)} ({totalPages})]
+                    </div>
+                    <div className="">
+                        <button onClick={handlePrevPage} className="px-2 text-xl py-2"><FontAwesomeIcon icon={faCircleChevronLeft} /></button>
+                        <button onClick={handleNextPage} className="px-2 text-xl py-2"><FontAwesomeIcon icon={faCircleChevronRight} /></button>
+                    </div>
+                </div>
         </Card>
 
         {isModalVisible && (

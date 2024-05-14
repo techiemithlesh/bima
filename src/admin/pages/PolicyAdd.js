@@ -10,6 +10,7 @@ import {
   validateMobileNumber,
   validateNetAmount,
   validateOwnDamage,
+  validatePartnerCode,
   validatePaymentMethod,
   validatePolicyNumber,
   validatePolicyType,
@@ -78,6 +79,7 @@ const PolicyAdd = () => {
     own_damage: "",
     third_party: "",
     net_amount: "",
+    partner_code: "",
     risk_start_date: "",
     customer_name: "",
     customer_mobile: "",
@@ -176,7 +178,7 @@ const PolicyAdd = () => {
 
   const requiredFieldsByTab = [
     ["business_type", "policy_type", "vehicle_type", "fuel_type", "registration_number", "vehicle_registration_date", "vehicle_manufacture", 
-    "vehicle_model", "insurer", "policy_number", "risk_start_date", "own_damage", "third_party", "net_amount", "payment_type"],
+    "vehicle_model", "insurer", "policy_number", "risk_start_date", "own_damage", "third_party", "net_amount", "partner_code", "payment_type"],
     ["customer_name", "customer_mobile"],
     [],
     [],
@@ -211,6 +213,10 @@ const PolicyAdd = () => {
       case "vehicle_model":
         errorMessage = validateVehicleModel(value);
         break;
+      
+      case "partner_code":
+       errorMessage = validatePartnerCode(value);
+       break;
       case "net_amount":
         errorMessage = validateNetAmount(value);
         break;

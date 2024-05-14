@@ -305,7 +305,13 @@ export const validateThirdParty = (third_party) => {
 }
 
 
+export const validatePartnerCode = (partner_code) => {
+  if(!partner_code.trim()){
+    return 'Partner code is required';
+  }
 
+  return '';
+}
 
 
 

@@ -40,8 +40,8 @@ function App() {
         <Route path='/global/commision/edit/:id' element={<PrivateRoute><GlobalCommissionEdit/></PrivateRoute>} />
 
       <Route path='/policy/list' element={<PrivateRoute><PolicyList/></PrivateRoute>}/>
-      <Route path='/policy/add' element={<Policy/>}/>
-      <Route path='/policy/add/new' element={<PolicyAdd/>}/>
+      {/* <Route path='/policy/add' element={<Policy/>}/> */}
+      <Route path='/policy/add/' element={<PolicyAdd/>}/>
       <Route path='/policy/edit/:id' element={<PrivateRoute><PolicyEdit/></PrivateRoute>}/>
 
     </Routes>
