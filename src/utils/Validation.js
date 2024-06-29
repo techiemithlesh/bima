@@ -174,10 +174,10 @@ export const validateRegistrationNo = (registration_number) => {
     return 'Vehicle Registration No. is required.';
   }
 
-  const regex = /^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/;
-  if (!regex.test(registration_number)) {
-    return 'Please enter a valid vehicle registration number.';
-  }
+  // const regex = /^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/;
+  // if (!regex.test(registration_number)) {
+  //   return 'Please enter a valid vehicle registration number.';
+  // }
 
   return '';
 };
